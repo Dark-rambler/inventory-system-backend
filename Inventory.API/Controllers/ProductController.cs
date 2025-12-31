@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Inventory.Application.Services.ProductService;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController(IProductService service ) : ControllerBase
     {
         [HttpGet("{id}")]
-        public IActionResult GetProduct(int id)
+        public async Task<IActionResult> GetProduct(Guid id)
         {
-            var product = new { Id = id, Name = "Sample Product", Price = 9.99 };
-            return Ok(product);
+            return Ok(await service.GetProductByIdAsync(id));
         }
         [HttpGet]
         public IActionResult GetAllProducts()

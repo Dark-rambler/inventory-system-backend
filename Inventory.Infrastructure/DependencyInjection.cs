@@ -1,4 +1,6 @@
-﻿using Inventory.Infrastructure.Context;
+﻿using Inventory.Application.Common.Abstracts;
+using Inventory.Infrastructure.Context;
+using Inventory.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,7 @@ public static class DependencyInjection
         services.AddDbContext<InventoryDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
         );
+        services.AddScoped<IProductRepository, ProductRepository>();
         return services;
     }
 }
