@@ -11,6 +11,9 @@ namespace Inventory.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(
+                @"CREATE EXTENSION IF NOT EXISTS ""uuid-ossp"";"
+            );
             migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
@@ -53,6 +56,9 @@ namespace Inventory.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(
+                @"DROP EXTENSION IF EXISTS ""uuid-ossp"";"
+            );
             migrationBuilder.DropTable(
                 name: "Products");
 
