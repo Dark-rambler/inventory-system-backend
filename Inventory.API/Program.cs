@@ -1,3 +1,4 @@
+using Inventory.API.Middlewares;
 using Inventory.Application;
 using Inventory.Infrastructure;
 
@@ -20,5 +21,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.Run();

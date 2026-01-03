@@ -1,11 +1,9 @@
-﻿namespace Inventory.Domain.Entities
+﻿namespace Inventory.Application.DataTransferObjects.ProductDto
 {
-    public class Product
+    public class ProductRequest
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Guid CategoryId { get; set; }
-        public Category Category { get; set; } = default!;
     }
 }

@@ -1,9 +1,13 @@
-﻿using Inventory.Domain.Entities;
+﻿using Inventory.Application.Common.Pagination;
+using Inventory.Application.DataTransferObjects.ProductDto;
 
 namespace Inventory.Application.Services.ProductService
 {
     public interface IProductService
     {
-        public Task<Product> GetProductByIdAsync(Guid id);
+        Task<PaginatedList<ProductResponse>> GetProductsAsync(string? name, int page, int pageSize);
+        Task<ProductResponse> GetProductByIdAsync(Guid id);
+        Task<ProductResponse> CreateProductAsync(ProductRequest request);
+        Task UpdateProductAsync(Guid id, ProductRequest request);
     }
 }

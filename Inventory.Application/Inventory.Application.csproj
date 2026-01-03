@@ -11,8 +11,6 @@
   <ItemGroup>
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Utils\" />
-    <Folder Include="DataTransferObjects\" />
-    <Folder Include="Profiles\" />
   </ItemGroup>
 
   <PropertyGroup>
