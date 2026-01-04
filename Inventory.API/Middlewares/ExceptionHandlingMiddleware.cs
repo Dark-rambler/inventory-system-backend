@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Middlewares
 {
@@ -20,6 +21,19 @@ namespace Inventory.API.Middlewares
 
                 switch (ex)
                 {
+                    case ValidationException validationException:
+                        problemDetails.Status = StatusCodes.Status400BadRequest;
+                        problemDetails.Title = "Validation Error";
+                        problemDetails.Detail = "One or more validation errors occurred.";
+                        problemDetails.Extensions["errors"] =
+                            validationException.Errors.Select(e => new
+                            {
+                                field = e.PropertyName,
+                                error = e.ErrorMessage
+                            });
+
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        break;
                     case KeyNotFoundException:
                         problemDetails.Status = StatusCodes.Status404NotFound;
                         problemDetails.Title = "Resource Not Found";

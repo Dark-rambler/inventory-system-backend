@@ -1,4 +1,7 @@
-﻿using Inventory.Application.Profiles;
+﻿using FluentValidation;
+using Inventory.Application.Common.Validations;
+using Inventory.Application.DataTransferObjects.CategoryDto;
+using Inventory.Application.Profiles;
 using Inventory.Application.Services.CategoryService;
 using Inventory.Application.Services.ProductService;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +13,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddAutoMapper(cfg => { }, typeof(ProductProfile), typeof(CategoryProfile));
+        services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
         return services;
