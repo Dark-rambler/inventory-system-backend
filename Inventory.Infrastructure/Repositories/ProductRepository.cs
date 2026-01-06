@@ -26,16 +26,26 @@ namespace Inventory.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Task<Product> CreateProductAsync(Product product)
+        public async Task<Product> CreateProductAsync(Product product)
         {
             context.Products.Add(product);
-            return context.SaveChangesAsync().ContinueWith(_ => product);
+            await context.SaveChangesAsync();
+            return await context.Products
+                .Include(p => p.Category)
+                .FirstAsync(p => p.Id == product.Id);
         }
 
-        public Task UpdateProductAsync(Product product)
+
+        public async Task UpdateProductAsync(Product product)
         {
             context.Products.Update(product);
-            return context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteProductAsync(Product product)
+        {
+            product.IsDeleted = true;
+            await context.SaveChangesAsync();
         }
     }
 }

@@ -9,9 +9,9 @@ namespace Inventory.API.Controllers
     public class CategoryController(ICategoryService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetCategoriesAsync([FromQuery] string? name, [FromQuery] int page = 1, int pageSize = 10)
+        public async Task<IActionResult> GetCategoriesAsync([FromQuery] CategorySearchParams searchParams)
         {
-            return Ok(await service.GetCategoriesAsync(name, page, pageSize));
+            return Ok(await service.GetCategoriesAsync(searchParams));
         }
 
         [HttpGet("{id}")]
@@ -30,6 +30,13 @@ namespace Inventory.API.Controllers
         public async Task<IActionResult> UpdateCategoryAsync(Guid id, [FromBody] CategoryRequest request)
         {
             await service.UpdateCategoryAsync(id, request);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategoryAsync(Guid id)
+        {
+            await service.DeleteCategoryAsync(id);
             return NoContent();
         }
     }

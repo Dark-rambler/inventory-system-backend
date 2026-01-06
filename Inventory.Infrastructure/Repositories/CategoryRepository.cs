@@ -21,22 +21,28 @@ namespace Inventory.Infrastructure.Repositories
 
         public Task<Category?> GetCategoryByIdAsync(Guid id)
         {
-
             return context.Categories
-                .Include(c => c.Products)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public Task<Category> CreateCategoryAsync(Category category)
+        public async Task<Category> CreateCategoryAsync(Category category)
         {
             context.Categories.Add(category);
-            return context.SaveChangesAsync().ContinueWith(_ => category);
+            await context.SaveChangesAsync();
+            return await context.Categories
+                .FirstAsync(c => c.Id == category.Id);
         }
 
-        public Task UpdateCategoryAsync(Category category)
+        public async Task UpdateCategoryAsync(Category category)
         {
             context.Categories.Update(category);
-            return context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteCategoryAsync(Category category)
+        {
+            category.IsDeleted = true;
+            await context.SaveChangesAsync();
         }
     }
 }

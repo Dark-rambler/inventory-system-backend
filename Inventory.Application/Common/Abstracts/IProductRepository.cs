@@ -9,5 +9,6 @@ namespace Inventory.Application.Common.Abstracts
         Task<Product?> GetProductByIdAsync(Guid id);
         Task<Product> CreateProductAsync(Product product);
         Task UpdateProductAsync(Product product);
+        Task DeleteProductAsync(Product product);
     }
 }

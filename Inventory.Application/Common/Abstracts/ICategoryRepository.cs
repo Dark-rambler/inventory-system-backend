@@ -9,5 +9,6 @@ namespace Inventory.Application.Common.Abstracts
         Task<Category?> GetCategoryByIdAsync(Guid id);
         Task<Category> CreateCategoryAsync(Category category);
         Task UpdateCategoryAsync(Category category);
+        Task DeleteCategoryAsync(Category category);
     }
 }

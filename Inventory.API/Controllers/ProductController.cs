@@ -9,9 +9,9 @@ namespace Inventory.API.Controllers
     public class ProductController(IProductService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetProductsAsync([FromQuery] string? name, [FromQuery] int page = 1, int pageSize = 10)
+        public async Task<IActionResult> GetProductsAsync([FromQuery] ProductSearchParams searchParams)
         {
-            return Ok(await service.GetProductsAsync(name, page, pageSize));
+            return Ok(await service.GetProductsAsync(searchParams));
         }
 
         [HttpGet("{id}")]
@@ -30,6 +30,13 @@ namespace Inventory.API.Controllers
         public async Task<IActionResult> UpdateProductAsync(Guid id, [FromBody] ProductRequest request)
         {
             await service.UpdateProductAsync(id, request);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProductAsync(Guid id)
+        {
+            await service.DeleteProductAsync(id);
             return NoContent();
         }
     }

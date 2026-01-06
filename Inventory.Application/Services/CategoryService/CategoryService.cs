@@ -9,9 +9,9 @@ namespace Inventory.Application.Services.CategoryService
 {
     public class CategoryService(ICategoryRepository repository, IMapper mapper, IValidator<CategoryRequest> validator) : ICategoryService
     {
-        public async Task<PaginatedList<CategoryResponse>> GetCategoriesAsync(string? name, int page, int pageSize)
+        public async Task<PaginatedList<CategoryResponse>> GetCategoriesAsync(CategorySearchParams searchParams)
         {
-            var categories = await repository.GetCategoriesAsync(name, page, pageSize);
+            var categories = await repository.GetCategoriesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<CategoryResponse>(
                 mapper.Map<List<CategoryResponse>>(categories.Items),
                 categories.TotalCount,
@@ -42,6 +42,11 @@ namespace Inventory.Application.Services.CategoryService
         private async Task<Category> FindCategoryById(Guid id)
         {
             return await repository.GetCategoryByIdAsync(id) ?? throw new KeyNotFoundException($"Category with id {id} doesn't exist");
+        }
+
+        public async Task DeleteCategoryAsync(Guid id)
+        {
+            await repository.DeleteCategoryAsync(await FindCategoryById(id));
         }
     }
 }

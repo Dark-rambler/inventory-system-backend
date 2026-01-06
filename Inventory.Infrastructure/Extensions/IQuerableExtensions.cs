@@ -26,7 +26,11 @@ namespace Inventory.Infrastructure.Extensions
             {
                 if (!string.IsNullOrEmpty(name))
                 {
-                    source = source.Where(c => c.Name.Contains(name));
+                    source = source.Where(
+                        c => c.Name.ToLower().Contains(name.ToLower())
+                        || c.Category!.Name.ToLower().Contains(name.ToLower())
+                        || c.Code.ToLower().Contains(name.ToLower())
+                    );
                 }
                 return source;
             }
@@ -38,7 +42,7 @@ namespace Inventory.Infrastructure.Extensions
             {
                 if (!string.IsNullOrEmpty(name))
                 {
-                    source = source.Where(c => c.Name.Contains(name));
+                    source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
                 }
                 return source;
             }
