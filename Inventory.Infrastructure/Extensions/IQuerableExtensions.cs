@@ -47,5 +47,29 @@ namespace Inventory.Infrastructure.Extensions
                 return source;
             }
         }
+
+        extension(IQueryable<Branch> source)
+        {
+            public IQueryable<Branch> FiltersBranch(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
+
+        extension(IQueryable<Warehouse> source)
+        {
+            public IQueryable<Warehouse> FiltersWarehouse(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
     }
 }

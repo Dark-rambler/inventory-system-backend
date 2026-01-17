@@ -1,0 +1,47 @@
+﻿using AutoMapper;
+using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Pagination;
+using Inventory.Application.DataTransferObjects.WarehouseDto;
+using Inventory.Domain.Entities;
+
+namespace Inventory.Application.Services.WarehouseService
+{
+    public class WarehouseService(IWarehouseRepository repository, IMapper mapper) : IWarehouseService
+    {
+        public async Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request)
+        {
+            return mapper.Map<WarehouseResponse>(await repository.CreateWarehouseAsync(mapper.Map<Warehouse>(request)));
+        }
+
+        public async Task DeleteWarehouseAsync(Guid id)
+        {
+            await repository.DeleteWarehouseAsync(await FindWarehouseById(id));
+        }
+
+        public async Task<WarehouseResponse> GetWarehouseByIdAsync(Guid id)
+        {
+            return mapper.Map<WarehouseResponse>(await FindWarehouseById(id));
+        }
+
+        public async Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams)
+        {
+            var warehouses = await repository.GetWarehousesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            return new PaginatedList<WarehouseResponse>(
+                mapper.Map<List<WarehouseResponse>>(warehouses.Items),
+                warehouses.PageIndex,
+                warehouses.PageSize,
+                warehouses.TotalCount
+            );
+        }
+
+        public async Task UpdateWarehouseAsync(Guid id, WarehouseRequest request)
+        {
+            await repository.UpdateWarehouseAsync(mapper.Map(request, await FindWarehouseById(id)));
+        }
+
+        private async Task<Warehouse> FindWarehouseById(Guid id)
+        {
+            return await repository.GetWarehouseByIdAsync(id) ?? throw new KeyNotFoundException($"Warehouse with id {id} doesn't exist");
+        }
+    }
+}

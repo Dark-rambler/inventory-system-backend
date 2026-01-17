@@ -1,0 +1,43 @@
+﻿using Inventory.Application.DataTransferObjects.WarehouseDto;
+using Inventory.Application.Services.WarehouseService;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Inventory.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class WarehouseController(WarehouseService service) : ControllerBase
+    {
+        [HttpGet]
+        public async Task<IActionResult> GetWarehousesAsync([FromQuery] WarehouseSearchParams searchParams)
+        {
+            return Ok(await service.GetWarehousesAsync(searchParams));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetWarehouseByIdAsync(Guid id)
+        {
+            return Ok(await service.GetWarehouseByIdAsync(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateWarehouseAsync([FromBody] WarehouseRequest request)
+        {
+            return Ok(await service.CreateWarehouseAsync(request));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateWarehouseAsync(Guid id, [FromBody] WarehouseRequest request)
+        {
+            await service.UpdateWarehouseAsync(id, request);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWarehouseAsync(Guid id)
+        {
+            await service.DeleteWarehouseAsync(id);
+            return NoContent();
+        }
+    }
+}
