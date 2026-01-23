@@ -1,0 +1,43 @@
+﻿using Inventory.Application.DataTransferObjects.BranchDto;
+using Inventory.Application.Services.BranchService;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Inventory.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BranchController(IBranchService service) : ControllerBase
+    {
+        [HttpGet]
+        public async Task<IActionResult> GetBranchesAsync([FromQuery] BranchSearchParams searchParams)
+        {
+            return Ok(await service.GetBranchesAsync(searchParams));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBranchByIdAsync(Guid id)
+        {
+            return Ok(await service.GetBranchByIdAsync(id));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBranchAsync([FromBody] BranchRequest request)
+        {
+            return Ok(await service.CreateBranchAsync(request));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBranchAsync(Guid id, [FromBody] BranchRequest request)
+        {
+            await service.UpdateBranchAsync(id, request);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBranchAsync(Guid id)
+        {
+            await service.DeleteBranchAsync(id);
+            return NoContent();
+        }
+    }
+}

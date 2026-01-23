@@ -1,12 +1,12 @@
 ﻿namespace Inventory.Domain.Entities
 {
-    public class Category
+    public class Warehouse
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid  Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public Guid BranchId { get; set; }
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; }
-        public ICollection<Product> Products { get; set; } = [];
+        public Branch Branch { get; set; } = default!;
     }
 }

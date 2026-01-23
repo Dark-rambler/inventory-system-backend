@@ -28,15 +28,13 @@ namespace Inventory.Application.Services.ProductService
         public async Task<ProductResponse> CreateProductAsync(ProductRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
-            var product = mapper.Map<Product>(request);
-            return mapper.Map<ProductResponse>(await repository.CreateProductAsync(product));
+            return mapper.Map<ProductResponse>(await repository.CreateProductAsync(mapper.Map<Product>(request)));
         }
 
         public async Task UpdateProductAsync(Guid id, ProductRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
-            var product = await FindProductById(id);
-            await repository.UpdateProductAsync(mapper.Map(request, product));
+            await repository.UpdateProductAsync(mapper.Map(request, await FindProductById(id)));
         }
 
         private async Task<Product> FindProductById(Guid id)

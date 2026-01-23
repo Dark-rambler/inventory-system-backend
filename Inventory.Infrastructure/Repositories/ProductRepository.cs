@@ -15,6 +15,7 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(c => c.Category)
                 .AsQueryable();
             return await query
+                .OrderByDescending(b => b.CreatedAt)
                 .FiltersProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
         }

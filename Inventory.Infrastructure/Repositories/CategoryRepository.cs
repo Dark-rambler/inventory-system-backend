@@ -12,9 +12,9 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<PaginatedList<Category>> GetCategoriesAsync(string? name, int page, int pageSize)
         {
             var query = context.Categories
-                .Include(c => c.Products)
                 .AsQueryable();
             return await query
+                .OrderByDescending(b => b.CreatedAt)
                 .FiltersCategory(name)
                 .ToPaginatedListAsync(page, pageSize);
         }

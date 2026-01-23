@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.DataTransferObjects.CategoryDto
+﻿using Inventory.Application.DataTransferObjects.ProductDto;
+
+namespace Inventory.Application.DataTransferObjects.CategoryDto
 {
     public class CategoryRequest
     {
