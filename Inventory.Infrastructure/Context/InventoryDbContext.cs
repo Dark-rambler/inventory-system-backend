@@ -9,6 +9,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -23,6 +24,9 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Warehouse>()
                 .Property(c => c.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<User>()
+                .Property(c => c.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Products)
@@ -33,6 +37,8 @@ namespace Inventory.Infrastructure.Context
                 .HasQueryFilter(p => !p.IsDeleted);
             modelBuilder.Entity<Category>()
                 .HasQueryFilter(c => !c.IsDeleted);
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => !u.IsDeleted);
             base.OnModelCreating(modelBuilder);
         }
     }

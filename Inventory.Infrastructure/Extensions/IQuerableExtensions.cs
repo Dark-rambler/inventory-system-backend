@@ -71,5 +71,17 @@ namespace Inventory.Infrastructure.Extensions
                 return source;
             }
         }
+
+        extension(IQueryable<User> source)
+        {
+            public IQueryable<User> FiltersUser(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
     }
 }

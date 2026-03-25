@@ -3,11 +3,13 @@ using Inventory.Application.Common.Validations;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
+using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Profiles;
 using Inventory.Application.Services.BranchService;
 using Inventory.Application.Services.CategoryService;
 using Inventory.Application.Services.ProductService;
+using Inventory.Application.Services.UserService;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,15 +23,18 @@ public static class DependencyInjection
             typeof(ProductProfile),
             typeof(CategoryProfile),
             typeof(BranchProfile),
-            typeof(WarehouseProfile));
+            typeof(WarehouseProfile),
+            typeof(UserProfile));
         services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<IValidator<ProductRequest>, ProductRequestValidation>();
         services.AddScoped<IValidator<BranchRequest>, BranchRequestValidation>();
         services.AddScoped<IValidator<WarehouseRequest>, WarehouseRequestValidation>();
+        services.AddScoped<IValidator<UserRequest>, UserRequestValidation>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IBranchService, BranchService>();
         services.AddScoped<IWarehouseService, WarehouseService>();
+        services.AddScoped<IUserService, UserService>();
         return services;
     }
 }
