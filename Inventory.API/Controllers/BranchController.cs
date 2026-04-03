@@ -1,4 +1,5 @@
 ﻿using Inventory.Application.DataTransferObjects.BranchDto;
+using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace Inventory.API.Controllers
     [Route("api/[controller]")]
     public class BranchController(IBranchService service) : ControllerBase
     {
+
         [HttpGet]
         public async Task<IActionResult> GetBranchesAsync([FromQuery] BranchSearchParams searchParams)
         {
@@ -38,6 +40,13 @@ namespace Inventory.API.Controllers
         {
             await service.DeleteBranchAsync(id);
             return NoContent();
+        }
+
+
+        [HttpGet("{id}/products")]
+        public async Task<IActionResult> GetProductsByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
+        {
+            return Ok(await service.GetProductsByBranchAsync(id, searchParams));
         }
     }
 }

@@ -5,10 +5,11 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface IBranchRepository
     {
-        Task<Branch> CreateBranchAsync(Branch branch);
-        Task<Branch?> GetBranchByIdAsync(Guid id);
         Task<PaginatedList<Branch>> GetBranchesAsync(string? name, int page, int pageSize);
+        Task<Branch?> GetBranchByIdAsync(Guid id);
+        Task<Branch> CreateBranchAsync(Branch branch);
         Task UpdateBranchAsync(Branch branch);
         Task DeleteBranchAsync(Branch branch);
+        Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize);
     }
 }

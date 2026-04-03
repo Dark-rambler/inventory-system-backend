@@ -10,7 +10,6 @@ namespace Inventory.Application.Profiles
         {
             CreateMap<ProductRequest, Product>();
             CreateMap<Product, ProductResponse>();
-            // Define your AutoMapper configurations here
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.DataTransferObjects.BranchDto
+﻿using Inventory.Application.DataTransferObjects.Location;
+
+namespace Inventory.Application.DataTransferObjects.BranchDto
 {
     public class BranchResponse
     {
@@ -6,5 +8,8 @@
         public string Name { get; set; } = string.Empty;
         public string Telephone { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public LocationResponse Location { get; set; } = default!;
     }
 }

@@ -1,233 +1,211 @@
-# AGENTS.md - Inventory Management System
+# AGENTS.md - Developer Guidelines
 
 ## Project Overview
 
-This is a .NET 10.0 inventory management API built with Clean Architecture. The solution contains four projects:
+This is a .NET 10 inventory management system following clean architecture with 4 projects:
+- **Inventory.Domain**: Entities and domain models
+- **Inventory.Application**: Services, DTOs, validators, interfaces
+- **Inventory.Infrastructure**: EF Core, repositories, database context
+- **Inventory.API**: Controllers, middleware, entry point
 
-- **Inventory.API** - ASP.NET Core Web API
-- **Inventory.Application** - Application services, DTOs, validations, and interfaces
-- **Inventory.Domain** - Domain entities
-- **Inventory.Infrastructure** - Repositories, DbContext, and EF Core configuration
+## Build & Development Commands
 
-## Build & Run Commands
-
+### Build Solution
 ```bash
-# Build entire solution
 dotnet build
+```
 
-# Build specific project
+### Build Specific Project
+```bash
 dotnet build Inventory.API/Inventory.API.csproj
-
-# Run API (from Inventory.API folder)
-cd Inventory.API && dotnet run
-
-# Run with development profile
-dotnet run --launch-profile Development
 ```
 
-## Database Commands
-
+### Run Application
 ```bash
-# Add migration
-dotnet ef migrations add <MigrationName>
-
-# Update database
-dotnet ef database update
-
-# Remove last migration
-dotnet ef migrations remove
+dotnet run --project Inventory.API/Inventory.API.csproj
 ```
 
-Note: Run these from Infrastructure folder with `dotnet ef` installed globally or use `dotnet tool install --global dotnet-ef`.
-
-## Test Commands
-
+### Run in Development (with Swagger)
 ```bash
+dotnet run --project Inventory.API/Inventory.API.csproj --configuration Debug
+```
+
+### Linting
+This project uses built-in .NET analyzers. To check for issues:
+```bash
+dotnet build --no-incremental
+```
+
+### Testing
+Currently no test project exists. To add tests:
+```bash
+# Create test project
+dotnet new xunit -n Inventory.Tests
+
 # Run all tests
 dotnet test
 
-# Run tests with verbose output
-dotnet test -v n
-
-# Run a single test
-dotnet test --filter "FullyQualifiedName~TestNamespace.TestClassName.TestMethodName"
-
-# Run tests in specific project
-dotnet test Inventory.Tests/Inventory.Tests.csproj
+# Run single test (use --filter)
+dotnet test --filter "FullyQualifiedName~TestMethodName"
 ```
 
 ## Code Style Guidelines
 
-### General Conventions
+### General Architecture
+- Follow **Clean Architecture** principles: Domain -> Application -> Infrastructure -> API
+- Use **Repository Pattern**: interfaces in `Inventory.Application/Common/Abstracts/`, implementations in `Inventory.Infrastructure/Repositories/`
+- Use **CQRS-lite**: Separate request/response DTOs, services return DTOs, not entities
 
-- **Target Framework**: .NET 10.0
-- **Language Version**: Latest (C# 12+)
-- **Nullable**: Enabled
-- **Implicit Usings**: Enabled
-- **Indentation**: 2 spaces
+### Project Structure
+```
+Inventory.Application/
+├── Common/
+│   ├── Abstracts/       # Repository interfaces
+│   ├── Validations/     # FluentValidation validators
+│   ├── Pagination/     # PaginatedList<T>
+│   └── Extensions/    # Extension methods
+├── DataTransferObjects/
+│   └── [Entity]Dto/    # Request, Response, SearchParams
+├── Services/
+│   └── [Entity]Service/
+│       ├── I[Entity]Service.cs
+│       └── [Entity]Service.cs
+└── Profiles/           # AutoMapper profiles
 
-### Namespace & File Organization
-
-```csharp
-// File-scoped namespace matching folder structure
-namespace Inventory.Application.Services.ProductService
+Inventory.Infrastructure/
+├── Context/            # EF Core DbContext
+├── Repositories/       # Repository implementations
+├── Extensions/         # Query extensions
+└── Migrations/        # EF Core migrations
 ```
 
 ### Naming Conventions
 
-- **Classes/Interfaces**: PascalCase (e.g., `ProductService`, `IProductRepository`)
-- **Methods**: PascalCase (e.g., `GetProductsAsync`)
-- **Properties**: PascalCase (e.g., `ProductName`)
-- **Private fields**: camelCase (if used)
-- **DTOs**: Follow pattern `{EntityName}Request`, `{EntityName}Response`, `{EntityName}SearchParams`
+| Element | Convention | Example |
+|---------|------------|---------|
+| Files | PascalCase | `ProductService.cs` |
+| Classes/Interfaces | PascalCase | `IProductRepository` |
+| Methods | PascalCase | `GetProductsAsync` |
+| Properties | PascalCase | `PageIndex` |
+| Private fields | camelCase | `_repository` |
+| Parameters | camelCase | `searchParams` |
+| DTOs | Entity + Request/Response | `ProductRequest`, `ProductResponse` |
+| Controllers | Entity + Controller | `ProductsController` |
 
-### Project Structure Patterns
+### C# Patterns
 
-```
-Inventory.Application/
-├── Common/
-│   ├── Abstracts/        # Repository interfaces
-│   ├── Validations/      # FluentValidation validators
-│   ├── Pagination/       # Pagination utilities
-│   └── Extensions/       # Extension methods
-├── DataTransferObjects/
-│   └── {EntityName}Dto/  # Request, Response, SearchParams
-├── Services/
-│   └── {EntityName}Service/  # Service + interface
-├── Profiles/             # AutoMapper profiles
-└── DependencyInjection.cs
-```
-
-### Code Patterns
-
-#### Primary Constructors (C# 12+)
+#### Dependency Injection
+Use primary constructor syntax (C# 12+):
 ```csharp
-public class ProductController(IProductService service) : ControllerBase
-{
-    // Controller implementation
-}
-
 public class ProductService(
-    IProductRepository repository, 
-    IMapper mapper, 
-    IValidator<ProductRequest> validator) : IProductService
-{
-    // Service implementation
-}
+    IProductRepository repository,
+    IMapper mapper,
+    IValidator<ProductRequest> validator
+) : IProductService
 ```
 
-#### Repository Pattern
-- Interfaces defined in `Inventory.Application/Common/Abstracts/`
-- Implementations in `Inventory.Infrastructure/Repositories/`
-- Use soft deletes (set `IsDeleted = true` instead of removing records)
-
-#### Service Layer
-- Async methods with `Task<T>` return types
-- Use `ValidateAndThrowAsync` from FluentValidation
-- Throw `KeyNotFoundException` for missing entities
-
+#### Use Records for DTOs
 ```csharp
-public async Task<ProductResponse> CreateProductAsync(ProductRequest request)
-{
-    await validator.ValidateAndThrowAsync(request);
-    return mapper.Map<ProductResponse>(await repository.CreateProductAsync(mapper.Map<Product>(request)));
-}
+public record ProductResponse(Guid Id, string Name, string Code);
 ```
 
-### Error Handling
-
-- Use `ExceptionHandlingMiddleware` for centralized error handling
-- Throw specific exceptions: `KeyNotFoundException`, `ArgumentException`, `ValidationException`
-- Return appropriate HTTP status codes (400, 401, 404, 500)
-
-### Validation
-
-Use FluentValidation with clear, descriptive messages:
-
-```csharp
-RuleFor(p => p.Name)
-    .NotEmpty().WithMessage("Product name is required.")
-    .MaximumLength(100).WithMessage("Product name must not exceed 100 characters.");
-```
-
-### AutoMapper
-
-Define profiles in `Inventory.Application/Profiles/`:
-
-```csharp
-public class ProductProfile : Profile
-{
-    public ProductProfile()
-    {
-        CreateMap<ProductRequest, Product>();
-        CreateMap<Product, ProductResponse>();
-    }
-}
-```
-
-### Dependency Injection
-
-- Register services in respective `DependencyInjection.cs` files
-- Application layer: `services.AddScoped<IProductService, ProductService>()` in `Inventory.Application/DependencyInjection.cs`
-- Infrastructure layer: `services.AddDbContext<InventoryDbContext>()` in `Inventory.Infrastructure/DependencyInjection.cs`
-
-### API Controllers
-
-- Use `[ApiController]` attribute
-- Route: `[Route("api/[controller]")]`
-- Use constructor injection
-- Return appropriate IActionResult types
-
-```csharp
-[ApiController]
-[Route("api/[controller]")]
-public class ProductController(IProductService service) : ControllerBase
-{
-    [HttpGet]
-    public async Task<IActionResult> GetProductsAsync([FromQuery] ProductSearchParams searchParams)
-    {
-        return Ok(await service.GetProductsAsync(searchParams));
-    }
-}
-```
-
-### DTO Guidelines
-
-- **Request DTOs**: Input validation with FluentValidation
-- **Response DTOs**: Read-only style, use `default!` for navigation properties
-- **SearchParams**: Query string parameters with sensible defaults (Page = 1, PageSize = 10)
-
-### Entity Guidelines
-
-- Use `Guid` for IDs: `public Guid Id { get; set; } = Guid.NewGuid();`
-- Include soft delete: `public bool IsDeleted { get; set; } = false;`
-- Include audit fields: `CreatedAt`, `UpdatedAt` when needed
-- Navigation properties: `public Category Category { get; set; } = default!;`
+#### Null Handling
+- Project has `<Nullable>enable</Nullable>`
+- Use null-coalescing and null-conditional operators
+- Initialize collections with empty collections: `ICollection<T> { get; set; } = [];`
 
 ### Imports
 
 Organize imports in this order:
-1. System namespaces
-2. Third-party libraries (AutoMapper, FluentValidation)
-3. Project namespaces (Application, Domain, Infrastructure)
+1. System namespaces (`System`, `System.Collections.Generic`)
+2. External packages (`AutoMapper`, `FluentValidation`)
+3. Project namespaces (alphabetically)
+   - `Inventory.Application.*`
+   - `Inventory.Domain.*`
+   - `Inventory.Infrastructure.*`
 
-## Database Configuration
+```csharp
+using System;
+using AutoMapper;
+using FluentValidation;
+using Inventory.Application.Common.Abstracts;
+using Inventory.Application.DataTransferObjects.ProductDto;
+using Inventory.Domain.Entities;
+```
 
-- **Provider**: PostgreSQL (Npgsql)
-- **ORM**: Entity Framework Core 10.0.1
-- **Connection**: Configured in `appsettings.json` under `ConnectionStrings.DefaultConnection`
-- **Migrations**: Located in `Inventory.Infrastructure/Migrations/`
+### Entity Guidelines
 
-## Testing
+- Use `Guid` for all primary keys
+- Include soft delete: `bool IsDeleted { get; set; } = false;`
+- Use `DateTime` for timestamps with `CreatedAt`, `UpdatedAt`
+- Default property values in property initializer:
+```csharp
+public Guid Id { get; set; } = Guid.NewGuid();
+public string Name { get; set; } = string.Empty;
+```
 
-When adding tests:
-- Follow naming: `{ClassName}Tests`
-- Use ` Xunit` or `NUnit` (check existing test project)
-- Test service logic, validation, and mapping
-- Use in-memory database for repository tests
+### Error Handling
 
-## Common Issues
+- Use `KeyNotFoundException` for not found errors:
+```csharp
+return await repository.GetByIdAsync(id) ?? throw new KeyNotFoundException($"Entity with id {id} not found");
+```
 
-- **Migration conflicts**: Ensure you're in the correct project folder when running EF commands
-- **Circular dependencies**: Domain should have no dependencies; Application depends on Domain; Infrastructure depends on Application and Domain; API depends on Application and Infrastructure
-- **Null reference warnings**: Use `= default!;` for navigation properties that are set by EF Core
+- Use FluentValidation for request validation:
+```csharp
+await validator.ValidateAndThrowAsync(request);
+```
+
+- Custom middleware for global exception handling exists at `Inventory.API/Middlewares/ExceptionHandlingMiddleware.cs`
+
+### API Controllers
+
+- Use attribute routing with `[ApiController]`
+- Add Swagger annotations: `[HttpGet]`, `[Route("api/[controller]")]`, `[ProducesResponseType]`
+- Async methods return `Task<T>`:
+```csharp
+[HttpGet]
+[ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+public async Task<ActionResult<ProductResponse>> GetProduct(Guid id)
+```
+
+### Database
+
+- Entity Framework Core with Code-First migrations
+- Connection string in `appsettings.json`
+- Use migrations folder for tracking changes
+- Run migrations:
+```bash
+dotnet ef migrations add [MigrationName] --project Inventory.Infrastructure --startup-project Inventory.API
+dotnet ef database update --project Inventory.Infrastructure --startup-project Inventory.API
+```
+
+### Packages Used
+- **AutoMapper** (v16.1.1): Object-to-object mapping
+- **FluentValidation** (v12.1.1): Request validation
+- **Swashbuckle.AspNetCore** (v10.1.7): Swagger/OpenAPI
+
+## Common Tasks
+
+### Adding New Entity
+1. Create entity in `Inventory.Domain/Entities/`
+2. Add DTOs in `Inventory.Application/DataTransferObjects/[Entity]Dto/`
+3. Create repository interface in `Inventory.Application/Common/Abstracts/`
+4. Implement repository in `Inventory.Infrastructure/Repositories/`
+5. Create service interface and implementation in `Inventory.Application/Services/`
+6. Create validator in `Inventory.Application/Common/Validations/`
+7. Add AutoMapper profile in `Inventory.Application/Profiles/`
+8. Create controller in `Inventory.API/Controllers/`
+9. Add DI registration in `Inventory.Application/DependencyInjection.cs`
+
+### Adding a Migration
+```bash
+dotnet ef migrations add [MigrationName] --project Inventory.Infrastructure --startup-project Inventory.API
+```
+
+### Database Reset
+```bash
+dotnet ef database drop --project Inventory.Infrastructure --startup-project Inventory.API
+dotnet ef migrations add InitialCreate --project Inventory.Infrastructure --startup-project Inventory.API
+dotnet ef database update --project Inventory.Infrastructure --startup-project Inventory.API
+```

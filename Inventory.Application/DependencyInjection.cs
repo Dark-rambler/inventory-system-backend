@@ -24,7 +24,8 @@ public static class DependencyInjection
             typeof(CategoryProfile),
             typeof(BranchProfile),
             typeof(WarehouseProfile),
-            typeof(UserProfile));
+            typeof(UserProfile),
+            typeof(BranchProductProfile));
         services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<IValidator<ProductRequest>, ProductRequestValidation>();
         services.AddScoped<IValidator<BranchRequest>, BranchRequestValidation>();

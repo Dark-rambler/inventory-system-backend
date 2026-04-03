@@ -1,4 +1,5 @@
-﻿using Inventory.Application.DataTransferObjects.WarehouseDto;
+﻿using Inventory.Application.DataTransferObjects.ProductDto;
+using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WarehouseController(WarehouseService service) : ControllerBase
+    public class WarehouseController(IWarehouseService service) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetWarehousesAsync([FromQuery] WarehouseSearchParams searchParams)
@@ -38,6 +39,12 @@ namespace Inventory.API.Controllers
         {
             await service.DeleteWarehouseAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("{id}/products")]
+        public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
+        {
+            return Ok(await service.GetProductsByWarehousesAsync(id, searchParams));
         }
     }
 }

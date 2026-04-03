@@ -1,8 +1,10 @@
-﻿namespace Inventory.Application.DataTransferObjects.WarehouseDto
+﻿using Inventory.Application.DataTransferObjects.Location;
+
+namespace Inventory.Application.DataTransferObjects.WarehouseDto
 {
     public class WarehouseRequest
     {
         public string Name { get; set; } = string.Empty;
-        public Guid BranchId { get; set; }
+        public LocationRequest Location { get; set; } = default!;
     }
 }

@@ -9,5 +9,7 @@ namespace Inventory.Application.DataTransferObjects.ProductDto
         public string Code { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public CategoryResponse Category { get; set; } = default!;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

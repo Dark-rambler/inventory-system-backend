@@ -9,20 +9,6 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class UserRepository(InventoryDbContext context) : IUserRepository
     {
-        public async Task<User> CreateUserAsync(User user)
-        {
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-            return await context.Users
-                .FirstAsync(u => u.Id == user.Id);
-        }
-
-        public async Task DeleteUserAsync(User user)
-        {
-            user.IsDeleted = true;
-            await context.SaveChangesAsync();
-        }
-
         public async Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize)
         {
             var query = context.Users
@@ -39,9 +25,24 @@ namespace Inventory.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<User> CreateUserAsync(User user)
+        {
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+            return await context.Users
+                .FirstAsync(u => u.Id == user.Id);
+        }
+
         public async Task UpdateUserAsync(User user)
         {
+            user.UpdatedAt = DateTime.UtcNow;
             context.Users.Update(user);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserAsync(User user)
+        {
+            user.IsDeleted = true;
             await context.SaveChangesAsync();
         }
     }

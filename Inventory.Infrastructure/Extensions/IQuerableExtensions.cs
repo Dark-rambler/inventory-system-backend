@@ -62,8 +62,16 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<Warehouse> source)
         {
-            public IQueryable<Warehouse> FiltersWarehouse(string? name)
+            public IQueryable<Warehouse> FiltersWarehouse(string? name, Guid? productId = null, int? stock = null)
             {
+                if (productId.HasValue)
+                {
+                    source = source.Where(c => c.WarehouseProducts.Any(wp => wp.ProductId == productId));
+                }
+                if (productId.HasValue)
+                {
+                    source = source.Where(c => c.WarehouseProducts.Any(wp => wp.Stock >= stock));
+                }
                 if (!string.IsNullOrEmpty(name))
                 {
                     source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
@@ -79,6 +87,30 @@ namespace Inventory.Infrastructure.Extensions
                 if (!string.IsNullOrEmpty(name))
                 {
                     source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
+
+        extension(IQueryable<BranchProduct> source)
+        {
+            public IQueryable<BranchProduct> FiltersBranchProduct(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Product.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
+
+        extension(IQueryable<WarehouseProduct> source)
+        {
+            public IQueryable<WarehouseProduct> FiltersWarehouseProduct(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Product.Name.ToLower().Contains(name.ToLower()));
                 }
                 return source;
             }

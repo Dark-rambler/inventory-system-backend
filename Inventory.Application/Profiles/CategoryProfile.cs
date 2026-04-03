@@ -10,7 +10,6 @@ namespace Inventory.Application.Profiles
         {
             CreateMap<CategoryRequest, Category>();
             CreateMap<Category, CategoryResponse>();
-            // Define your AutoMapper configurations here
         }
     }
 }

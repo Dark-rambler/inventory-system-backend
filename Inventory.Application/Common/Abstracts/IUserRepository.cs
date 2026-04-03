@@ -5,9 +5,9 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface IUserRepository
     {
-        Task<User> CreateUserAsync(User user);
-        Task<User?> GetUserByIdAsync(Guid id);
         Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize);
+        Task<User?> GetUserByIdAsync(Guid id);
+        Task<User> CreateUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(User user);
     }

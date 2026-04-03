@@ -9,12 +9,38 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class WarehouseRepository(InventoryDbContext context) : IWarehouseRepository
     {
+        public async Task<PaginatedList<Warehouse>> GetWarehousesAsync(string? name, int page, int pageSize)
+        {
+            var query = context.Warehouses
+                .AsQueryable();
+            return await query
+                .Include(w => w.Location)
+                .OrderByDescending(w => w.CreatedAt)
+                .FiltersWarehouse(name)
+                .ToPaginatedListAsync(page, pageSize);
+        }
+
+        public async Task<Warehouse?> GetWarehouseByIdAsync(Guid id)
+        {
+            return await context.Warehouses
+                .Include(w => w.Location)
+                .FirstOrDefaultAsync(w => w.Id == id);
+        }
+
         public async Task<Warehouse> CreateWarehouseAsync(Warehouse warehouse)
         {
             context.Warehouses.Add(warehouse);
             await context.SaveChangesAsync();
             return await context.Warehouses
+                .Include(w => w.Location)
                 .FirstAsync(w => w.Id == warehouse.Id);
+        }
+
+        public async Task UpdateWarehouseAsync(Warehouse warehouse)
+        {
+            warehouse.UpdatedAt = DateTime.UtcNow;
+            context.Warehouses.Update(warehouse);
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteWarehouseAsync(Warehouse warehouse)
@@ -23,26 +49,17 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<Warehouse?> GetWarehouseByIdAsync(Guid id)
+        public async Task<PaginatedList<WarehouseProduct>> GetProductsByWarehousesAsync(Guid id, string? name, int page, int pageSize)
         {
-            return await context.Warehouses
-                .FirstOrDefaultAsync(w => w.Id == id);
-        }
-
-        public async Task<PaginatedList<Warehouse>> GetWarehousesAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Warehouses
+            var query = context.WarehouseProducts
                 .AsQueryable();
             return await query
-                .OrderByDescending(w => w.CreatedAt)
-                .FiltersWarehouse(name)
+                .Where(wp => wp.WarehouseId == id)
+                .Include(wp => wp.Product)
+                .ThenInclude(wp => wp.Category)
+                .OrderByDescending(wp => wp.Product.CreatedAt)
+                .FiltersWarehouseProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
-
-        public async Task UpdateWarehouseAsync(Warehouse warehouse)
-        {
-            context.Warehouses.Update(warehouse);
-            await context.SaveChangesAsync();
         }
     }
 }
