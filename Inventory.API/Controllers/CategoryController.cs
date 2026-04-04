@@ -7,7 +7,7 @@ namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class CategoryController(ICategoryService service) : ControllerBase
     {
         [HttpGet]

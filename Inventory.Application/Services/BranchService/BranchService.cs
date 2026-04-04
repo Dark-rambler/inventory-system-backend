@@ -16,9 +16,9 @@ namespace Inventory.Application.Services.BranchService
             var paginatedBranches = await repository.GetBranchesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<BranchResponse>(
                 mapper.Map<List<BranchResponse>>(paginatedBranches.Items),
+                paginatedBranches.TotalCount,
                 paginatedBranches.PageIndex,
-                paginatedBranches.PageSize,
-                paginatedBranches.TotalCount
+                paginatedBranches.PageSize
             );
         }
 
@@ -54,9 +54,9 @@ namespace Inventory.Application.Services.BranchService
             var paginatedBranchProducts = await repository.GetProductsByBranchAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<BranchProductResponse>(
                 mapper.Map<List<BranchProductResponse>>(paginatedBranchProducts.Items),
+                paginatedBranchProducts.TotalCount,
                 paginatedBranchProducts.PageIndex,
-                paginatedBranchProducts.PageSize,
-                paginatedBranchProducts.TotalCount
+                paginatedBranchProducts.PageSize
             );
         }
     }

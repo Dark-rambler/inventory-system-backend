@@ -8,7 +8,7 @@ namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class BranchController(IBranchService service) : ControllerBase
     {
 

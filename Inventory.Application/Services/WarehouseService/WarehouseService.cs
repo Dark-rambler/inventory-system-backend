@@ -14,9 +14,9 @@ namespace Inventory.Application.Services.WarehouseService
             var warehouses = await repository.GetWarehousesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<WarehouseResponse>(
                 mapper.Map<List<WarehouseResponse>>(warehouses.Items),
+                warehouses.TotalCount,
                 warehouses.PageIndex,
-                warehouses.PageSize,
-                warehouses.TotalCount
+                warehouses.PageSize
             );
         }
 
@@ -47,12 +47,12 @@ namespace Inventory.Application.Services.WarehouseService
 
         public async Task<PaginatedList<WarehouseResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams)
         {
-            var warehouses = await repository.GetProductsByWarehousesAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var warehouseProducts = await repository.GetProductsByWarehousesAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<WarehouseResponse>(
-                mapper.Map<List<WarehouseResponse>>(warehouses.Items),
-                warehouses.PageIndex,
-                warehouses.PageSize,
-                warehouses.TotalCount
+                mapper.Map<List<WarehouseResponse>>(warehouseProducts.Items),
+                warehouseProducts.TotalCount,
+                warehouseProducts.PageIndex,
+                warehouseProducts.PageSize
             );
         }
     }
