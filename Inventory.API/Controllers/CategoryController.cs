@@ -1,11 +1,13 @@
 ﻿using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.Services.CategoryService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CategoryController(ICategoryService service) : ControllerBase
     {
         [HttpGet]

@@ -25,6 +25,12 @@ namespace Inventory.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
+        public async Task<User?> GetUserByUserNameAsync(string userName)
+        {
+            return await context.Users
+                .FirstOrDefaultAsync(u => u.UserName == userName && !u.IsDeleted);
+        }
+
         public async Task<User> CreateUserAsync(User user)
         {
             context.Users.Add(user);

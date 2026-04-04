@@ -88,8 +88,8 @@ public static class DatabaseSeeder
 
         var users = new List<User>
         {
-            new() { UserName = "admin", Email = "admin@inventory.com", Password = "hashed_password_here", Name = "Administrator", Role = "Admin" },
-            new() { UserName = "manager", Email = "manager@inventory.com", Password = "hashed_password_here", Name = "Manager", Role = "Manager" }
+            new() { UserName = "admin", Email = "admin@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("admin123"), Name = "Administrator", Role = "Admin" },
+            new() { UserName = "manager", Email = "manager@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("manager123"), Name = "Manager", Role = "Manager" }
         };
         context.Users.AddRange(users);
 

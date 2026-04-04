@@ -1,12 +1,14 @@
 ﻿using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BranchController(IBranchService service) : ControllerBase
     {
 

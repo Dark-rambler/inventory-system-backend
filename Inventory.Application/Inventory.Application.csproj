@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+	<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
   </ItemGroup>
@@ -10,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\Configurations\" />
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Utils\" />
   </ItemGroup>

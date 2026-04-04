@@ -6,6 +6,7 @@ using Inventory.Infrastructure.Context;
 var builder = WebApplication.CreateBuilder(args);
 var CustomCors = "MyCustomCors";
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -40,6 +41,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors(CustomCors);
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

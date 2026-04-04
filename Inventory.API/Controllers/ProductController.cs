@@ -1,11 +1,13 @@
 ﻿using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.ProductService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ProductController(IProductService service) : ControllerBase
     {
         [HttpGet]

@@ -29,7 +29,9 @@ namespace Inventory.Application.Services.UserService
         public async Task<UserResponse> CreateUserAsync(UserRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
-            return mapper.Map<UserResponse>(await repository.CreateUserAsync(mapper.Map<User>(request)));
+            var user = mapper.Map<User>(request);
+            user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            return mapper.Map<UserResponse>(await repository.CreateUserAsync(user));
         }
 
         public async Task UpdateUserAsync(Guid id, UserRequest request)

@@ -7,6 +7,7 @@ namespace Inventory.Application.Common.Abstracts
     {
         Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize);
         Task<User?> GetUserByIdAsync(Guid id);
+        Task<User?> GetUserByUserNameAsync(string userName);
         Task<User> CreateUserAsync(User user);
         Task UpdateUserAsync(User user);
         Task DeleteUserAsync(User user);

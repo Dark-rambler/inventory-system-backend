@@ -1,12 +1,14 @@
 ﻿using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Services.WarehouseService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class WarehouseController(IWarehouseService service) : ControllerBase
     {
         [HttpGet]

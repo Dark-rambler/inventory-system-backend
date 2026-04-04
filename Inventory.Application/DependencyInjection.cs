@@ -6,6 +6,7 @@ using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Profiles;
+using Inventory.Application.Services.AuthService;
 using Inventory.Application.Services.BranchService;
 using Inventory.Application.Services.CategoryService;
 using Inventory.Application.Services.ProductService;
@@ -36,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped<IBranchService, BranchService>();
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }
