@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Configurations\" />
     <Folder Include="Common\Extensions\" />
     <Folder Include="Common\Utils\" />
   </ItemGroup>

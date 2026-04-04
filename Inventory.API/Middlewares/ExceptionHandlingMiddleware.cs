@@ -15,7 +15,7 @@ namespace Inventory.API.Middlewares
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Exception occurred: {Message}", ex.Message);
+                logger.LogError("Exception occurred: {Message}", ex.Message);
 
                 var problemDetails = new ProblemDetails();
 

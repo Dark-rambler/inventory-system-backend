@@ -61,5 +61,28 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersBranchProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
         }
+
+        public async Task AddStockAsync(Guid branchId, Guid productId, int stock)
+        {
+            var branchProduct = await context.BranchProducts
+                .FirstOrDefaultAsync(bp => bp.BranchId == branchId && bp.ProductId == productId);
+
+            if (branchProduct == null)
+            {
+                branchProduct = new BranchProduct
+                {
+                    BranchId = branchId,
+                    ProductId = productId,
+                    Stock = stock
+                };
+                context.BranchProducts.Add(branchProduct);
+            }
+            else
+            {
+                branchProduct.Stock += stock;
+            }
+
+            await context.SaveChangesAsync();
+        }
     }
 }

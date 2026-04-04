@@ -1,4 +1,5 @@
-﻿using Inventory.Application.DataTransferObjects.BranchDto;
+﻿using Inventory.Application.DataTransferObjects;
+using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,13 @@ namespace Inventory.API.Controllers
         public async Task<IActionResult> GetProductsByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
             return Ok(await service.GetProductsByBranchAsync(id, searchParams));
+        }
+
+        [HttpPut("{id}/products/add-stock")]
+        public async Task<IActionResult> AddStockAsync(Guid id, [FromBody] AddStockRequest request)
+        {
+            await service.AddStockAsync(id, request);
+            return NoContent();
         }
     }
 }

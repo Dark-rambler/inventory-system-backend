@@ -2,6 +2,7 @@
 using FluentValidation;
 using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
+using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
@@ -58,6 +59,12 @@ namespace Inventory.Application.Services.BranchService
                 paginatedBranchProducts.PageIndex,
                 paginatedBranchProducts.PageSize
             );
+        }
+
+        public async Task AddStockAsync(Guid id, AddStockRequest request)
+        {
+            await FindBranchById(id);
+            await repository.AddStockAsync(id, request.ProductId, request.Stock);
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
+using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
+using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Services.WarehouseService
@@ -45,15 +47,21 @@ namespace Inventory.Application.Services.WarehouseService
             return await repository.GetWarehouseByIdAsync(id) ?? throw new KeyNotFoundException($"Warehouse with id {id} doesn't exist");
         }
 
-        public async Task<PaginatedList<WarehouseResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams)
+        public async Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams)
         {
             var warehouseProducts = await repository.GetProductsByWarehousesAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
-            return new PaginatedList<WarehouseResponse>(
-                mapper.Map<List<WarehouseResponse>>(warehouseProducts.Items),
+            return new PaginatedList<WarehouseProductResponse>(
+                mapper.Map<List<WarehouseProductResponse>>(warehouseProducts.Items),
                 warehouseProducts.TotalCount,
                 warehouseProducts.PageIndex,
                 warehouseProducts.PageSize
             );
+        }
+
+        public async Task AddStockAsync(Guid id, AddStockRequest request)
+        {
+            await FindWarehouseById(id);
+            await repository.AddStockAsync(id, request.ProductId, request.Stock);
         }
     }
 }

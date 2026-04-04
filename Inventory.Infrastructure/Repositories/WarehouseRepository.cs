@@ -61,5 +61,28 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersWarehouseProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
         }
+
+        public async Task AddStockAsync(Guid warehouseId, Guid productId, int stock)
+        {
+            var warehouseProduct = await context.WarehouseProducts
+                .FirstOrDefaultAsync(wp => wp.WarehouseId == warehouseId && wp.ProductId == productId);
+
+            if (warehouseProduct == null)
+            {
+                warehouseProduct = new WarehouseProduct
+                {
+                    WarehouseId = warehouseId,
+                    ProductId = productId,
+                    Stock = stock
+                };
+                context.WarehouseProducts.Add(warehouseProduct);
+            }
+            else
+            {
+                warehouseProduct.Stock += stock;
+            }
+
+            await context.SaveChangesAsync();
+        }
     }
 }
