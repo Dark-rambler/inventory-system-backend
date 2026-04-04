@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Inventory.Application.DataTransferObjects.Location;
+using Inventory.Application.DataTransferObjects.LocationDto;
 using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Profiles

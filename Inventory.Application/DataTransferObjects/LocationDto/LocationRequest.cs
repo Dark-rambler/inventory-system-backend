@@ -1,4 +1,4 @@
-﻿namespace Inventory.Application.DataTransferObjects.Location
+﻿namespace Inventory.Application.DataTransferObjects.LocationDto
 {
     public class LocationRequest
     {

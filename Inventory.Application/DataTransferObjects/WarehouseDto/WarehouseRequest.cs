@@ -1,4 +1,4 @@
-﻿using Inventory.Application.DataTransferObjects.Location;
+﻿using Inventory.Application.DataTransferObjects.LocationDto;
 
 namespace Inventory.Application.DataTransferObjects.WarehouseDto
 {

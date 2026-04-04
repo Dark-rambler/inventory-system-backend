@@ -1,4 +1,4 @@
-﻿using Inventory.Application.DataTransferObjects.Location;
+﻿using Inventory.Application.DataTransferObjects.LocationDto;
 
 namespace Inventory.Application.DataTransferObjects.BranchDto
 {
@@ -6,7 +6,6 @@ namespace Inventory.Application.DataTransferObjects.BranchDto
     {
         public string Name { get; set; } = string.Empty;
         public string Telephone { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
         public LocationRequest Location { get; set; } = default!;
     }
 }

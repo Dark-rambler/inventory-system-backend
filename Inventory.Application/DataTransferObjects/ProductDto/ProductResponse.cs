@@ -1,6 +1,4 @@
-﻿using Inventory.Application.DataTransferObjects.CategoryDto;
-
-namespace Inventory.Application.DataTransferObjects.ProductDto
+﻿namespace Inventory.Application.DataTransferObjects.ProductDto
 {
     public class ProductResponse
     {
@@ -8,7 +6,8 @@ namespace Inventory.Application.DataTransferObjects.ProductDto
         public string Name { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public CategoryResponse Category { get; set; } = default!;
+        public string CategoryName { get; set; } = string.Empty;
+        public string CategoryDescription { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

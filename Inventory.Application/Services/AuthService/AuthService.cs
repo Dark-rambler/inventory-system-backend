@@ -20,7 +20,7 @@ namespace Inventory.Application.Services.AuthService
             }
 
             var token = jwtService.GenerateJwtToken(user);
-            return new LoginResponse(token, user.Id, user.UserName, user.Role, user.Email);
+            return new LoginResponse(token);
         }
     }
 }

@@ -9,7 +9,9 @@ namespace Inventory.Application.Profiles
         public ProductProfile()
         {
             CreateMap<ProductRequest, Product>();
-            CreateMap<Product, ProductResponse>();
+            CreateMap<Product, ProductResponse>()
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
+            .ForMember(dest => dest.CategoryDescription, opt => opt.MapFrom(src => src.Category.Description));
         }
     }
 }
