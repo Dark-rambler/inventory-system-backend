@@ -1,32 +1,41 @@
 using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController(IUserService service) : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUsersAsync([FromQuery] UserSearchParams searchParams)
         {
             return Ok(await service.GetUsersAsync(searchParams));
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserByIdAsync(Guid id)
         {
             return Ok(await service.GetUserByIdAsync(id));
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateUserAsync([FromBody] UserRequest request)
         {
-            return Ok(await service.CreateUserAsync(request));
+            var result = await service.CreateUserAsync(request);
+            return CreatedAtAction(nameof(GetUserByIdAsync), new { id = result.Id }, result);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserRequest request)
         {
             await service.UpdateUserAsync(id, request);
@@ -34,6 +43,8 @@ namespace Inventory.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteUserAsync(Guid id)
         {
             await service.DeleteUserAsync(id);

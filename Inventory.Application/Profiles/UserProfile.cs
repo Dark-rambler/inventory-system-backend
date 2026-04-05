@@ -9,7 +9,8 @@ namespace Inventory.Application.Profiles
         public UserProfile()
         {
             CreateMap<UserRequest, User>();
-            CreateMap<User, UserResponse>();
+            CreateMap<User, UserResponse>()
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.Name));
         }
     }
 }

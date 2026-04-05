@@ -13,6 +13,7 @@ namespace Inventory.Infrastructure.Repositories
         {
             var query = context.Products
                 .Include(c => c.Category)
+                .Include(c => c.Measure)
                 .AsQueryable();
             return await query
                 .OrderByDescending(b => b.CreatedAt)
@@ -24,6 +25,7 @@ namespace Inventory.Infrastructure.Repositories
         {
             return await context.Products
                 .Include(p => p.Category)
+                .Include(c => c.Measure)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -33,6 +35,7 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
             return await context.Products
                 .Include(p => p.Category)
+                .Include(c => c.Measure)
                 .FirstAsync(p => p.Id == product.Id);
         }
 

@@ -13,6 +13,8 @@ namespace Inventory.Infrastructure.Context
         public DbSet<BranchProduct> BranchProducts { get; set; }
         public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Measure> Measures { get; set; }
+        public DbSet<Role> Roles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -30,6 +32,11 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<User>()
                 .Property(c => c.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Role>()
+                .HasMany(r => r.Users)
+                .WithOne(u => u.Role)
+                .HasForeignKey(u => u.RoleId)
+                .IsRequired();
             modelBuilder.Entity<BranchProduct>()
                 .HasKey(bp => new { bp.BranchId, bp.ProductId });
             modelBuilder.Entity<WarehouseProduct>()
@@ -40,6 +47,10 @@ namespace Inventory.Infrastructure.Context
                 .HasForeignKey(p => p.CategoryId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Measure)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.MeasureId);
             modelBuilder.Entity<BranchProduct>()
                 .HasOne(bp => bp.Branch)
                 .WithMany(b => b.BranchProducts)

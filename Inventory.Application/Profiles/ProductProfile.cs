@@ -10,8 +10,8 @@ namespace Inventory.Application.Profiles
         {
             CreateMap<ProductRequest, Product>();
             CreateMap<Product, ProductResponse>()
-            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-            .ForMember(dest => dest.CategoryDescription, opt => opt.MapFrom(src => src.Category.Description));
+            .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name))
+            .ForMember(dest => dest.Measure, opt => opt.MapFrom(src => src.Measure.Name));
         }
     }
 }

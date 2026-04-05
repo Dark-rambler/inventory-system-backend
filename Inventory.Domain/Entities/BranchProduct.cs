@@ -6,6 +6,7 @@
         public Branch Branch { get; set; } = default!;
         public Guid ProductId { get; set; }
         public Product Product { get; set; } = default!;
+        public double Price { get; set; }
         public int Stock { get; set; }
     }
 }

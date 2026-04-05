@@ -12,6 +12,7 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize)
         {
             var query = context.Users
+                .Include(u => u.Role)
                 .AsQueryable();
             return await query
                 .OrderByDescending(u => u.CreatedAt)
@@ -22,12 +23,14 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return await context.Users
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<User?> GetUserByUserNameAsync(string userName)
         {
             return await context.Users
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserName == userName && !u.IsDeleted);
         }
 
@@ -36,6 +39,7 @@ namespace Inventory.Infrastructure.Repositories
             context.Users.Add(user);
             await context.SaveChangesAsync();
             return await context.Users
+                .Include(u => u.Role)
                 .FirstAsync(u => u.Id == user.Id);
         }
 

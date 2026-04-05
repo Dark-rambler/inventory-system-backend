@@ -18,6 +18,24 @@ public static class DatabaseSeeder
         };
         context.Locations.AddRange(locations);
 
+        var roles = new List<Role>
+        {
+            new() { Id = 1, Name = "Admin", Description = "Administrator with full access" },
+            new() { Id = 2, Name = "Seller", Description = "Seller with read-only access" }
+        };
+        context.Roles.AddRange(roles);
+
+        var measures = new List<Measure>
+        {
+            new() { Id = 1, Name = "Unit" },
+            new() { Id = 2, Name = "Kilogram" },
+            new() { Id = 3, Name = "Liter" },
+            new() { Id = 4, Name = "Meter" },
+            new() { Id = 5, Name = "Box" },
+            new() { Id = 6, Name = "Pack" }
+        };
+        context.Measures.AddRange(measures);
+
         var categories = new List<Category>
         {
             new() { Name = "Electronics", Description = "Electronic devices and accessories" },
@@ -30,12 +48,12 @@ public static class DatabaseSeeder
 
         var products = new List<Product>
         {
-            new() { Name = "Laptop Pro", Description = "High-performance laptop", Code = "LAP-001", CategoryId = categories[0].Id },
-            new() { Name = "Wireless Mouse", Description = "Ergonomic wireless mouse", Code = "MOU-001", CategoryId = categories[0].Id },
-            new() { Name = "Cotton T-Shirt", Description = "Comfortable cotton t-shirt", Code = "TSH-001", CategoryId = categories[1].Id },
-            new() { Name = "Denim Jeans", Description = "Classic denim jeans", Code = "JNS-001", CategoryId = categories[1].Id },
-            new() { Name = "Garden Tools Set", Description = "Complete garden tool set", Code = "GAR-001", CategoryId = categories[2].Id },
-            new() { Name = "Yoga Mat", Description = "Non-slip yoga mat", Code = "YOG-001", CategoryId = categories[3].Id }
+            new() { Name = "Laptop Pro", Description = "High-performance laptop", Code = "LAP-001", CategoryId = categories[0].Id, MeasureId = measures[0].Id },
+            new() { Name = "Wireless Mouse", Description = "Ergonomic wireless mouse", Code = "MOU-001", CategoryId = categories[0].Id, MeasureId = measures[0].Id },
+            new() { Name = "Cotton T-Shirt", Description = "Comfortable cotton t-shirt", Code = "TSH-001", CategoryId = categories[1].Id, MeasureId = measures[0].Id },
+            new() { Name = "Denim Jeans", Description = "Classic denim jeans", Code = "JNS-001", CategoryId = categories[1].Id, MeasureId = measures[0].Id },
+            new() { Name = "Garden Tools Set", Description = "Complete garden tool set", Code = "GAR-001", CategoryId = categories[2].Id, MeasureId = measures[0].Id },
+            new() { Name = "Yoga Mat", Description = "Non-slip yoga mat", Code = "YOG-001", CategoryId = categories[3].Id, MeasureId = measures[0].Id }
         };
         context.Products.AddRange(products);
         await context.SaveChangesAsync();
@@ -88,8 +106,8 @@ public static class DatabaseSeeder
 
         var users = new List<User>
         {
-            new() { UserName = "admin", Email = "admin@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("admin123"), Name = "Administrator", Role = "Admin" },
-            new() { UserName = "manager", Email = "manager@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("manager123"), Name = "Manager", Role = "Manager" }
+            new() { UserName = "admin", Email = "admin@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("admin123"), Name = "Administrator", RoleId = 1 },
+            new() { UserName = "manager", Email = "manager@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("manager123"), Name = "Manager", RoleId = 2 }
         };
         context.Users.AddRange(users);
 

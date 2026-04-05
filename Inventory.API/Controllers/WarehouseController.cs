@@ -1,4 +1,4 @@
-﻿using Inventory.Application.DataTransferObjects;
+using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Services.WarehouseService;
@@ -9,28 +9,35 @@ namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class WarehouseController(IWarehouseService service) : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(typeof(WarehouseResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehousesAsync([FromQuery] WarehouseSearchParams searchParams)
         {
             return Ok(await service.GetWarehousesAsync(searchParams));
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(WarehouseResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehouseByIdAsync(Guid id)
         {
             return Ok(await service.GetWarehouseByIdAsync(id));
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(WarehouseResponse), StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateWarehouseAsync([FromBody] WarehouseRequest request)
         {
-            return Ok(await service.CreateWarehouseAsync(request));
+            var result = await service.CreateWarehouseAsync(request);
+            return CreatedAtAction(nameof(GetWarehouseByIdAsync), new { id = result.Id }, result);
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateWarehouseAsync(Guid id, [FromBody] WarehouseRequest request)
         {
             await service.UpdateWarehouseAsync(id, request);
@@ -38,6 +45,8 @@ namespace Inventory.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteWarehouseAsync(Guid id)
         {
             await service.DeleteWarehouseAsync(id);
@@ -45,12 +54,15 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
             return Ok(await service.GetProductsByWarehousesAsync(id, searchParams));
         }
 
         [HttpPut("{id}/products/add-stock")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> AddStockAsync(Guid id, [FromBody] AddStockRequest request)
         {
             await service.AddStockAsync(id, request);
