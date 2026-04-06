@@ -1,5 +1,4 @@
 ﻿using Inventory.Application.Common.Pagination;
-using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
@@ -14,6 +13,6 @@ namespace Inventory.Application.Services.BranchService
         Task UpdateBranchAsync(Guid id, BranchRequest request);
         Task DeleteBranchAsync(Guid id);
         Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams);
-        Task AddStockAsync(Guid id, AddStockRequest request);
+        Task AddStockAsync(Guid id, AddStockToBranchRequest request);
     }
 }

@@ -1,5 +1,5 @@
-using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.BranchDto;
+using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
 using Microsoft.AspNetCore.Authorization;
@@ -63,7 +63,7 @@ namespace Inventory.API.Controllers
         [HttpPut("{id}/products/add-stock")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> AddStockAsync(Guid id, [FromBody] AddStockRequest request)
+        public async Task<IActionResult> AddStockAsync(Guid id, [FromBody] AddStockToBranchRequest request)
         {
             await service.AddStockAsync(id, request);
             return NoContent();

@@ -12,5 +12,6 @@ namespace Inventory.Application.Common.Abstracts
         Task DeleteWarehouseAsync(Warehouse branch);
         Task<PaginatedList<WarehouseProduct>> GetProductsByWarehousesAsync(Guid id, string? name, int page, int pageSize);
         Task AddStockAsync(Guid warehouseId, Guid productId, int stock);
+        Task ReduceStockAsync(Guid warehouseId, Guid productId, int stock);
     }
 }

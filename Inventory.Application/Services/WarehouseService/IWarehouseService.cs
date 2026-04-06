@@ -1,5 +1,4 @@
 ﻿using Inventory.Application.Common.Pagination;
-using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.DataTransferObjects.WarehouseProductDto;

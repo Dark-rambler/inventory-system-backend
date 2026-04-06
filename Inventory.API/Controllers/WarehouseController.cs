@@ -1,6 +1,6 @@
-using Inventory.Application.DataTransferObjects;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
+using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
