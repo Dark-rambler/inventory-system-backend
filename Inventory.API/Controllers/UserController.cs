@@ -26,11 +26,10 @@ namespace Inventory.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateUserAsync([FromBody] UserRequest request)
         {
-            var result = await service.CreateUserAsync(request);
-            return CreatedAtAction(nameof(GetUserByIdAsync), new { id = result.Id }, result);
+            return Ok(await service.CreateUserAsync(request));
         }
 
         [HttpPut("{id}")]

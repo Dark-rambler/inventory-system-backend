@@ -29,11 +29,10 @@ namespace Inventory.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(BranchResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(BranchResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateBranchAsync([FromBody] BranchRequest request)
         {
-            var result = await service.CreateBranchAsync(request);
-            return CreatedAtAction(nameof(GetBranchByIdAsync), new { id = result.Id }, result);
+            return Ok(await service.CreateBranchAsync(request));
         }
 
         [HttpPut("{id}")]
