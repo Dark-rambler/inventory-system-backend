@@ -3,13 +3,14 @@ using Inventory.Application.Common.Validations;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
-using Inventory.Application.DataTransferObjects.RoleDto;
 using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
+using Inventory.Application.Patterns.Strategies.InventoryMovementStrategy;
 using Inventory.Application.Profiles;
 using Inventory.Application.Services.AuthService;
 using Inventory.Application.Services.BranchService;
 using Inventory.Application.Services.CategoryService;
+using Inventory.Application.Services.InventoryMovementService;
 using Inventory.Application.Services.MeasureService;
 using Inventory.Application.Services.ProductService;
 using Inventory.Application.Services.RoleService;
@@ -44,7 +45,12 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IMeasureService, MeasureService>();
+        services.AddScoped<IInventoryMovementService, InventoryMovementService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IInventoryMovementStrategy, EntryMovementStrategy>();
+        services.AddScoped<IInventoryMovementStrategy, ExitMovementStrategy>();
+        services.AddScoped<IInventoryMovementStrategy, TransferMovementStrategy>();
+        services.AddScoped<MovementStrategyResolver>();
         return services;
     }
 }

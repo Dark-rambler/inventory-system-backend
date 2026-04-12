@@ -106,6 +106,56 @@ namespace Inventory.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Entities.InventoryMovement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("FromBranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("FromWarehouseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ToBranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ToWarehouseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromBranchId");
+
+                    b.HasIndex("FromWarehouseId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ToBranchId");
+
+                    b.HasIndex("ToWarehouseId");
+
+                    b.ToTable("InventoryMovements");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Entities.Location", b =>
                 {
                     b.Property<int>("Id")
@@ -215,6 +265,63 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Sale", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double>("Total")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("Sales");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.SaleDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SaleId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SaleId");
+
+                    b.ToTable("SaleDetails");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.User", b =>
@@ -337,12 +444,48 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Entities.InventoryMovement", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Branch", "FromBranch")
+                        .WithMany()
+                        .HasForeignKey("FromBranchId");
+
+                    b.HasOne("Inventory.Domain.Entities.Warehouse", "FromWarehouse")
+                        .WithMany()
+                        .HasForeignKey("FromWarehouseId");
+
+                    b.HasOne("Inventory.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Entities.Branch", "ToBranch")
+                        .WithMany()
+                        .HasForeignKey("ToBranchId");
+
+                    b.HasOne("Inventory.Domain.Entities.Warehouse", "ToWarehouse")
+                        .WithMany()
+                        .HasForeignKey("ToWarehouseId");
+
+                    b.Navigation("FromBranch");
+
+                    b.Navigation("FromWarehouse");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ToBranch");
+
+                    b.Navigation("ToWarehouse");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Entities.Product", b =>
                 {
                     b.HasOne("Inventory.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Inventory.Domain.Entities.Measure", "Measure")
                         .WithMany("Products")
@@ -353,6 +496,44 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Measure");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Sale", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Entities.User", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.SaleDetail", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Entities.Sale", "Sale")
+                        .WithMany("SaleDetails")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.User", b =>
@@ -421,6 +602,11 @@ namespace Inventory.Infrastructure.Migrations
             modelBuilder.Entity("Inventory.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Sale", b =>
+                {
+                    b.Navigation("SaleDetails");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Warehouse", b =>

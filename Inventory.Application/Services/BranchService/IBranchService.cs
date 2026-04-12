@@ -13,6 +13,6 @@ namespace Inventory.Application.Services.BranchService
         Task UpdateBranchAsync(Guid id, BranchRequest request);
         Task DeleteBranchAsync(Guid id);
         Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams);
-        Task AddStockAsync(Guid id, AddStockToBranchRequest request);
+        Task CreateSaleAsync(Guid id, SaleRequest request, Guid user);
     }
 }

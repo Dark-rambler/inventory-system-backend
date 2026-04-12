@@ -55,6 +55,13 @@ namespace Inventory.API.Middlewares
                         context.Response.StatusCode = StatusCodes.Status400BadRequest;
                         break;
 
+                    case InvalidOperationException:
+                        problemDetails.Status = StatusCodes.Status400BadRequest;
+                        problemDetails.Title = "Bad Request";
+                        problemDetails.Detail = ex.Message;
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        break;
+
                     default:
                         problemDetails.Status = StatusCodes.Status500InternalServerError;
                         problemDetails.Title = "Server Error";

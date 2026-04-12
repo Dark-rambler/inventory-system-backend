@@ -1,6 +1,5 @@
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
-using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,15 +57,6 @@ namespace Inventory.API.Controllers
         public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
             return Ok(await service.GetProductsByWarehousesAsync(id, searchParams));
-        }
-
-        [HttpPut("{id}/products/add-stock")]
-        [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> AddStockAsync(Guid id, [FromBody] AddStockRequest request)
-        {
-            await service.AddStockAsync(id, request);
-            return NoContent();
         }
     }
 }

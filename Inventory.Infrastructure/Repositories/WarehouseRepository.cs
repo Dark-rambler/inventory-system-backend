@@ -61,41 +61,5 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersWarehouseProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
         }
-
-        public async Task AddStockAsync(Guid warehouseId, Guid productId, int stock)
-        {
-            var warehouseProduct = await context.WarehouseProducts
-                .FirstOrDefaultAsync(wp => wp.WarehouseId == warehouseId && wp.ProductId == productId);
-
-            if (warehouseProduct == null)
-            {
-                warehouseProduct = new WarehouseProduct
-                {
-                    WarehouseId = warehouseId,
-                    ProductId = productId,
-                    Stock = stock
-                };
-                context.WarehouseProducts.Add(warehouseProduct);
-            }
-            else
-            {
-                warehouseProduct.Stock += stock;
-            }
-
-            await context.SaveChangesAsync();
-        }
-
-        public async Task ReduceStockAsync(Guid warehouseId, Guid productId, int stock)
-        {
-            var warehouseProduct = await context.WarehouseProducts
-                .FirstOrDefaultAsync(wp => wp.WarehouseId == warehouseId && wp.ProductId == productId) ?? throw new KeyNotFoundException($"Product with id {productId} not found in warehouse {warehouseId}");
-            if (warehouseProduct.Stock < stock)
-            {
-                throw new InvalidOperationException($"Insufficient stock in warehouse. Available: {warehouseProduct.Stock}, requested: {stock}");
-            }
-
-            warehouseProduct.Stock -= stock;
-            await context.SaveChangesAsync();
-        }
     }
 }

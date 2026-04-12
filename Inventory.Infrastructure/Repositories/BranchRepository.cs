@@ -62,26 +62,19 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public async Task AddStockAsync(Guid branchId, Guid productId, int stock)
+        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<Guid> productIds)
         {
-            var branchProduct = await context.BranchProducts
-                .FirstOrDefaultAsync(bp => bp.BranchId == branchId && bp.ProductId == productId);
+            return await context.BranchProducts
+                .Include(bp => bp.Product)
+                .Where(bp => bp.BranchId == branchId && productIds.Contains(bp.ProductId))
+                .ToListAsync();
+        }
 
-            if (branchProduct == null)
-            {
-                branchProduct = new BranchProduct
-                {
-                    BranchId = branchId,
-                    ProductId = productId,
-                    Stock = stock
-                };
-                context.BranchProducts.Add(branchProduct);
-            }
-            else
-            {
-                branchProduct.Stock += stock;
-            }
-
+        public async Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated)
+        {
+            context.Sales.Add(sale);
+            context.InventoryMovements.AddRange(intentoryMovements);
+            context.BranchProducts.UpdateRange(productsUpdated);
             await context.SaveChangesAsync();
         }
     }

@@ -4,12 +4,13 @@ using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class BranchController(IBranchService service) : ControllerBase
     {
         [HttpGet]
@@ -60,12 +61,11 @@ namespace Inventory.API.Controllers
             return Ok(await service.GetProductsByBranchAsync(id, searchParams));
         }
 
-        [HttpPut("{id}/products/add-stock")]
-        [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> AddStockAsync(Guid id, [FromBody] AddStockToBranchRequest request)
+        [HttpPost("{id}/sales")]
+        public async Task<IActionResult> CreateSaleAsync(Guid id, [FromBody] SaleRequest request)
         {
-            await service.AddStockAsync(id, request);
+            Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); //temporal
+            await service.CreateSaleAsync(id, request, user);
             return NoContent();
         }
     }

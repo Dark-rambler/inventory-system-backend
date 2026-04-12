@@ -56,11 +56,5 @@ namespace Inventory.Application.Services.WarehouseService
                 warehouseProducts.PageSize
             );
         }
-
-        public async Task AddStockAsync(Guid id, AddStockRequest request)
-        {
-            await FindWarehouseById(id);
-            await repository.AddStockAsync(id, request.ProductId, request.Stock);
-        }
     }
 }
