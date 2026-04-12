@@ -115,5 +115,29 @@ namespace Inventory.Infrastructure.Extensions
                 return source;
             }
         }
+
+        extension(IQueryable<Sale> source)
+        {
+            public IQueryable<Sale> FiltersSales(string? branch, string? seller, DateTime? fromDate, DateTime? toDate)
+            {
+                if(!string.IsNullOrEmpty(branch))
+                {
+                    source = source.Where(s => s.Branch.Name.ToLower().Contains(branch.ToLower()));
+                }
+                if(!string.IsNullOrEmpty(seller))
+                {
+                    source = source.Where(s => s.Seller.Name.ToLower().Contains(seller.ToLower()));
+                }
+                if(fromDate.HasValue)
+                {
+                    source = source.Where(s => s.Date >= fromDate.Value);
+                }
+                if(toDate.HasValue)
+                {
+                    source = source.Where(s => s.Date <= toDate.Value);
+                }
+                return source;
+            }
+        }
     }
 }

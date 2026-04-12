@@ -2,104 +2,54 @@
 
 ## Project Overview
 
-.NET 10 inventory management system using Clean Architecture with 4 projects:
-- **Inventory.Domain**: Entities and domain models
+.NET 10 inventory management system with Clean Architecture (4 projects):
+- **Inventory.Domain**: Entities
 - **Inventory.Application**: Services, DTOs, validators, interfaces
-- **Inventory.Infrastructure**: EF Core, repositories, PostgreSQL database context
-- **Inventory.API**: Controllers, middleware, entry point (port 5000)
+- **Inventory.Infrastructure**: EF Core, repositories, PostgreSQL
+- **Inventory.API**: Controllers, entry point (port 5000)
 
-## Build & Development Commands
+## Commands
 
 ```bash
 dotnet build
 dotnet run --project Inventory.API/Inventory.API.csproj
-```
-
-## Architecture
-
-- **Clean Architecture**: Domain -> Application -> Infrastructure -> API
-- **Repository Pattern**: interfaces in `Inventory.Application/Common/Abstracts/`, implementations in `Inventory.Infrastructure/Repositories/`
-- **CQRS-lite**: Services return DTOs (not entities)
-
-### Project Structure
-```
-Inventory.Application/
-├── Common/Abstracts/       # I[Entity]Repository interfaces
-├── Common/Validations/     # FluentValidation validators
-├── DataTransferObjects/[Entity]Dto/  # Request, Response, SearchParams
-├── Services/[Entity]Service/         # IEntityService, EntityService
-├── Profiles/               # AutoMapper profiles
-└── DependencyInjection.cs  # DI registration
-
-Inventory.Infrastructure/
-├── Context/       # InventoryDbContext (EF Core)
-├── Repositories/  # Repository implementations
-└── Migrations/    # EF Core migrations
-```
-
-## Code Style
-
-### Entity Guidelines
-- Primary keys: `Guid` (use `Guid.NewGuid()` as default)
-- Include soft delete: `bool IsDeleted { get; set; } = false;`
-- Timestamps: `CreatedAt`, `UpdatedAt` as `DateTime`
-
-### C# Patterns
-- **Primary constructors** (C# 12+): `public class ProductService(IProductRepository repo) : IProductService { }`
-- **Records for DTOs**: `public record ProductResponse(Guid Id, string Name);`
-
-### Error Handling
-- Not found: `throw new KeyNotFoundException($"Entity with id {id} not found")`
-- Validation: `await validator.ValidateAndThrowAsync(request);`
-- Global handling: `Inventory.API/Middlewares/ExceptionHandlingMiddleware.cs`
-
-## Database
-
-PostgreSQL is used. Connection string in `appsettings.json`:
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Host=localhost;Port=5432;Database=inventory;Username=postgres;Password=mysecretpassword"
-}
-```
-
-### Migrations
-```bash
 dotnet ef migrations add [Name] --project Inventory.Infrastructure --startup-project Inventory.API
 dotnet ef database update --project Inventory.Infrastructure --startup-project Inventory.API
 ```
 
-### Reset Database
-```bash
-dotnet ef database drop --project Inventory.Infrastructure --startup-project Inventory.API
-dotnet ef migrations add InitialCreate --project Inventory.Infrastructure --startup-project Inventory.API
-dotnet ef database update --project Inventory.Infrastructure --startup-project Inventory.API
-```
+## Architecture
 
-## Important Runtime Behavior
+- **CQRS-lite**: Services return DTOs, not entities
+- **Repository Pattern**: interfaces in `Inventory.Application/Common/Abstracts/`, impl in `Inventory.Infrastructure/Repositories/`
+- **Error handling**: Use `KeyNotFoundException` for not found; `await validator.ValidateAndThrowAsync(request)` for validation
+- **Soft delete**: Entities include `bool IsDeleted { get; set; } = false`
 
-- **Seeding**: Database is seeded on startup via `DatabaseSeeder.SeedAsync()` in `Program.cs`
-- **JWT Auth**: Configured in `appsettings.json` (`JwtSettings`), requires `Authentication` middleware
-- **CORS**: Enabled with `"MyCustomCors"` policy (allows all origins/headers/methods)
+## Code Patterns
 
-## Key Packages
+- **Entities**: Primary key `Guid` (default `Guid.NewGuid()`), timestamps `CreatedAt`, `UpdatedAt`
+- **DTOs**: Records
+- **Services**: Primary constructors (C# 12): `public class ProductService(IProductRepository repo) : IProductService { }`
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| AutoMapper | 16.1.1 | DTO mapping |
-| FluentValidation | 12.1.1 | Request validation |
-| Swashbuckle.AspNetCore | 10.1.7 | Swagger/OpenAPI |
-| BCrypt.Net-Next | 4.1.0 | Password hashing |
-| Npgsql.EntityFrameworkCore.PostgreSQL | 10.0.1 | PostgreSQL EF provider |
-| Microsoft.AspNetCore.Authentication.JwtBearer | 10.0.5 | JWT auth |
+## Database
 
-## Adding New Entity
+- PostgreSQL on localhost:5432, database `inventory`
+- Connection: `appsettings.json` -> `ConnectionStrings.DefaultConnection`
+- Reset: `dotnet ef database drop` then migrations
 
-1. Create entity in `Inventory.Domain/Entities/`
-2. Add DTOs in `Inventory.Application/DataTransferObjects/[Entity]Dto/`
-3. Create repository interface in `Inventory.Application/Common/Abstracts/`
-4. Implement repository in `Inventory.Infrastructure/Repositories/`
-5. Create service interface + implementation in `Inventory.Application/Services/`
-6. Create validator in `Inventory.Application/Common/Validations/`
-7. Add AutoMapper profile in `Inventory.Application/Profiles/`
-8. Create controller in `Inventory.API/Controllers/`
-9. Register DI in `Inventory.Application/DependencyInjection.cs`
+## Runtime
+
+- **Seeding**: `DatabaseSeeder.SeedAsync()` runs on startup in `Program.cs`
+- **JWT**: Configured in `appsettings.json` (`JwtSettings`)
+- **CORS**: Policy named `"MyCustomCors"` (allows all)
+
+## Adding Entity
+
+1. `Inventory.Domain/Entities/[Entity].cs`
+2. DTOs: `Inventory.Application/DataTransferObjects/[Entity]Dto/`
+3. Interface: `Inventory.Application/Common/Abstracts/I[Entity]Repository.cs`
+4. Repository impl: `Inventory.Infrastructure/Repositories/[Entity]Repository.cs`
+5. Service: `Inventory.Application/Services/[Entity]Service/`
+6. Validator: `Inventory.Application/Common/Validations/[Entity]Validator.cs`
+7. Mapper: `Inventory.Application/Profiles/[Entity]Profile.cs`
+8. Controller: `Inventory.API/Controllers/[Entity]Controller.cs`
+9. DI: `Inventory.Application/DependencyInjection.cs`

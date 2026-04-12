@@ -14,5 +14,6 @@ namespace Inventory.Application.Services.BranchService
         Task DeleteBranchAsync(Guid id);
         Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams);
         Task CreateSaleAsync(Guid id, SaleRequest request, Guid user);
+        Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams);
     }
 }

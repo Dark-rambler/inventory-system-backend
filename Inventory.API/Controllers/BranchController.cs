@@ -10,7 +10,7 @@ namespace Inventory.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class BranchController(IBranchService service) : ControllerBase
     {
         [HttpGet]
@@ -66,6 +66,12 @@ namespace Inventory.API.Controllers
             Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); //temporal
             await service.CreateSaleAsync(id, request, user);
             return NoContent();
+        }
+
+        [HttpGet("{id}/sales")]
+        public async Task<IActionResult> GetSalesByBranchAsync(Guid id, [FromQuery] SaleSearchParams searchParams)
+        {
+            return Ok(await service.GetSalesByBranchAsync(id, searchParams));
         }
     }
 }

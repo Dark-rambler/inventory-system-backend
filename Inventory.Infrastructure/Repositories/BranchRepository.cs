@@ -4,6 +4,7 @@ using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace Inventory.Infrastructure.Repositories
 {
@@ -76,6 +77,20 @@ namespace Inventory.Infrastructure.Repositories
             context.InventoryMovements.AddRange(intentoryMovements);
             context.BranchProducts.UpdateRange(productsUpdated);
             await context.SaveChangesAsync();
+        }
+
+        public async Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid id, string? branch, string? seller, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
+        {
+            var query = context.Sales
+                .AsQueryable();
+            return await query
+                .Include(s => s.Branch)
+                .Include(s => s.Seller)
+                .Include(s => s.SaleDetails)
+                    .ThenInclude(sd => sd.Product)
+                .FiltersSales(branch, seller, fromDate, toDate)
+                .OrderByDescending(b => b.Date)
+                .ToPaginatedListAsync(page, pageSize);
         }
     }
 }

@@ -101,5 +101,16 @@ namespace Inventory.Application.Services.BranchService
             }).ToList();
             await repository.CreateSaleAsync(sale, intentoryMovements, productsUpdated);
         }
+
+        public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams)
+        {
+            var paginatedSales = await repository.GetSalesByBranchAsync(id, searchParams.Branch, searchParams.Seller, searchParams.FromDate, searchParams.ToDate, searchParams.Page, searchParams.PageSize);
+            return new PaginatedList<SaleResponse>(
+                mapper.Map<List<SaleResponse>>(paginatedSales.Items),
+                paginatedSales.TotalCount,
+                paginatedSales.PageIndex,
+                paginatedSales.PageSize
+            );
+        }
     }
 }
