@@ -1,6 +1,6 @@
 ﻿using Inventory.Domain.Enum;
 
-namespace Inventory.Application.Patterns.Strategies.InventoryMovementStrategy
+namespace Inventory.Application.Services.InventoryMovementService.InventoryMovementStrategy
 {
     public class MovementStrategyResolver(IEnumerable<IInventoryMovementStrategy> strategies)
     {

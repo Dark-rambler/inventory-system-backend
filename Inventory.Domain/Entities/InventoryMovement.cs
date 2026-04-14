@@ -18,6 +18,8 @@ namespace Inventory.Domain.Entities
         public Warehouse? ToWarehouse { get; set; }
         public Guid? ToBranchId { get; set; }
         public Branch? ToBranch { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public Guid UserId { get; set; }
+        public User User { get; set; } = default!;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

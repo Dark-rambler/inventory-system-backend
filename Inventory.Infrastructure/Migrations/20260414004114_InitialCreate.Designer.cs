@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260409015107_InitialCreate")]
+    [Migration("20260414004114_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -144,6 +144,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FromBranchId");
@@ -155,6 +158,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasIndex("ToBranchId");
 
                     b.HasIndex("ToWarehouseId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("InventoryMovements");
                 });
@@ -471,6 +476,12 @@ namespace Inventory.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ToWarehouseId");
 
+                    b.HasOne("Inventory.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("FromBranch");
 
                     b.Navigation("FromWarehouse");
@@ -480,6 +491,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("ToBranch");
 
                     b.Navigation("ToWarehouse");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Product", b =>

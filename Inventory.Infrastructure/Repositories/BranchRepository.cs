@@ -4,7 +4,6 @@ using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 
 namespace Inventory.Infrastructure.Repositories
 {
@@ -79,7 +78,7 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid id, string? branch, string? seller, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
+        public async Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
             var query = context.Sales
                 .AsQueryable();
@@ -88,9 +87,15 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(s => s.Seller)
                 .Include(s => s.SaleDetails)
                     .ThenInclude(sd => sd.Product)
-                .FiltersSales(branch, seller, fromDate, toDate)
+                .FiltersSales(fromDate, toDate)
                 .OrderByDescending(b => b.Date)
                 .ToPaginatedListAsync(page, pageSize);
+        }
+
+        public async Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, Guid productId)
+        {
+            return await context.BranchProducts
+                .FirstOrDefaultAsync(bp => branchId.HasValue && bp.BranchId == branchId && bp.ProductId == productId);
         }
     }
 }

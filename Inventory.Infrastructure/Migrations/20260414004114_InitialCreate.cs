@@ -203,52 +203,6 @@ namespace Inventory.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InventoryMovements",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    FromWarehouseId = table.Column<Guid>(type: "uuid", nullable: true),
-                    FromBranchId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ToWarehouseId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ToBranchId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InventoryMovements", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_InventoryMovements_Branches_FromBranchId",
-                        column: x => x.FromBranchId,
-                        principalTable: "Branches",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_InventoryMovements_Branches_ToBranchId",
-                        column: x => x.ToBranchId,
-                        principalTable: "Branches",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_InventoryMovements_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_InventoryMovements_Warehouses_FromWarehouseId",
-                        column: x => x.FromWarehouseId,
-                        principalTable: "Warehouses",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_InventoryMovements_Warehouses_ToWarehouseId",
-                        column: x => x.ToWarehouseId,
-                        principalTable: "Warehouses",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "WarehouseProducts",
                 columns: table => new
                 {
@@ -271,6 +225,59 @@ namespace Inventory.Infrastructure.Migrations
                         principalTable: "Warehouses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InventoryMovements",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuid_generate_v4()"),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    FromWarehouseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    FromBranchId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ToWarehouseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ToBranchId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryMovements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Branches_FromBranchId",
+                        column: x => x.FromBranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Branches_ToBranchId",
+                        column: x => x.ToBranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Warehouses_FromWarehouseId",
+                        column: x => x.FromWarehouseId,
+                        principalTable: "Warehouses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Warehouses_ToWarehouseId",
+                        column: x => x.ToWarehouseId,
+                        principalTable: "Warehouses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -362,6 +369,11 @@ namespace Inventory.Infrastructure.Migrations
                 name: "IX_InventoryMovements_ToWarehouseId",
                 table: "InventoryMovements",
                 column: "ToWarehouseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryMovements_UserId",
+                table: "InventoryMovements",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",

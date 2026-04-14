@@ -61,5 +61,10 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersWarehouseProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
         }
+        public async Task<WarehouseProduct?> GetWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, Guid productId)
+        {
+            return await context.WarehouseProducts
+                .FirstOrDefaultAsync(bp => warehouseId.HasValue && bp.WarehouseId == warehouseId.Value && bp.ProductId == productId);
+        }
     }
 }
