@@ -6,7 +6,7 @@
 - **Inventory.Domain**: Entities
 - **Inventory.Application**: Services, DTOs, validators, interfaces
 - **Inventory.Infrastructure**: EF Core, repositories, PostgreSQL
-- **Inventory.API**: Controllers, entry point (port 5000)
+- **Inventory.API**: Controllers, entry point
 
 ## Commands
 
@@ -15,6 +15,7 @@ dotnet build
 dotnet run --project Inventory.API/Inventory.API.csproj
 dotnet ef migrations add [Name] --project Inventory.Infrastructure --startup-project Inventory.API
 dotnet ef database update --project Inventory.Infrastructure --startup-project Inventory.API
+dotnet ef database drop --project Inventory.Infrastructure --startup-project Inventory.API
 ```
 
 ## Architecture
@@ -23,6 +24,7 @@ dotnet ef database update --project Inventory.Infrastructure --startup-project I
 - **Repository Pattern**: interfaces in `Inventory.Application/Common/Abstracts/`, impl in `Inventory.Infrastructure/Repositories/`
 - **Error handling**: Use `KeyNotFoundException` for not found; `await validator.ValidateAndThrowAsync(request)` for validation
 - **Soft delete**: Entities include `bool IsDeleted { get; set; } = false`
+- **Middleware**: Custom `ExceptionHandlingMiddleware` catches all exceptions and returns ProblemDetails JSON
 
 ## Code Patterns
 
@@ -34,13 +36,14 @@ dotnet ef database update --project Inventory.Infrastructure --startup-project I
 
 - PostgreSQL on localhost:5432, database `inventory`
 - Connection: `appsettings.json` -> `ConnectionStrings.DefaultConnection`
-- Reset: `dotnet ef database drop` then migrations
+- Reset: `dotnet ef database drop` then `dotnet ef database update`
 
 ## Runtime
 
-- **Seeding**: `DatabaseSeeder.SeedAsync()` runs on startup in `Program.cs`
-- **JWT**: Configured in `appsettings.json` (`JwtSettings`)
-- **CORS**: Policy named `"MyCustomCors"` (allows all)
+- **Seeding**: `DatabaseSeeder.SeedAsync()` runs on startup in `Program.cs` (automatic on app start)
+- **JWT**: Configured in `appsettings.json` (`JwtSettings`) - secret is hardcoded, change in production
+- **CORS**: Policy named `"MyCustomCors"` (allows all origins/headers/methods)
+- **Swagger**: Available at `/swagger` in development
 
 ## Adding Entity
 
@@ -52,4 +55,4 @@ dotnet ef database update --project Inventory.Infrastructure --startup-project I
 6. Validator: `Inventory.Application/Common/Validations/[Entity]Validator.cs`
 7. Mapper: `Inventory.Application/Profiles/[Entity]Profile.cs`
 8. Controller: `Inventory.API/Controllers/[Entity]Controller.cs`
-9. DI: `Inventory.Application/DependencyInjection.cs`
+9. DI: `Inventory.Application/DependencyInjection.cs` (register service and validator)
