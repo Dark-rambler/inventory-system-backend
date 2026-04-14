@@ -4,9 +4,9 @@ using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Profiles
 {
-    public class InvetoryMovementProfile : Profile
+    public class InventoryMovementProfile : Profile
     {
-        public InvetoryMovementProfile()
+        public InventoryMovementProfile()
         {
             CreateMap<InventoryMovement, InventoryMovementResponse>()
                 .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product.Name))

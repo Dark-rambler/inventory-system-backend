@@ -4,9 +4,9 @@ using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Profiles
 {
-    public class ProductWarehouseProfile: Profile
+    public class WarehouseProductProfile: Profile
     {
-        public ProductWarehouseProfile()
+        public WarehouseProductProfile()
         {
             CreateMap<WarehouseProduct, WarehouseProductResponse>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Product.Id))
