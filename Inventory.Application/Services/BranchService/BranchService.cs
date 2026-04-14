@@ -97,7 +97,8 @@ namespace Inventory.Application.Services.BranchService
                 ProductId = sd.ProductId,
                 Quantity = sd.Quantity,
                 CreatedAt = createdAt,
-                Type = MovementType.Sale
+                Type = MovementType.Sale,
+                UserId = user,
             }).ToList();
             await repository.CreateSaleAsync(sale, intentoryMovements, productsUpdated);
         }
