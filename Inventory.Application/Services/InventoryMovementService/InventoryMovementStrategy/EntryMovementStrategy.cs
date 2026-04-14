@@ -10,13 +10,14 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
     {
         public MovementType Type => MovementType.Entry;
 
-        public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper)
+        public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper, Guid user)
         {
             var toWarehouse = request.ToWarehouseId.HasValue ? await FindWarehouseProductByWarehouseIdAndProductIdAsync(request.ToWarehouseId, request.ProductId) : null;
             var toBranch = request.ToBranchId.HasValue ? await FindBranchProductByBranchIdAndProductIdAsync(request.ToBranchId, request.ProductId) : null;
             toWarehouse?.Stock += request.Quantity;
             toBranch?.Stock += request.Quantity;
             var inventoryMovement = mapper.Map<InventoryMovement>(request);
+            inventoryMovement.UserId = user;
             return await repository.CreateInventoryMovementAsync(inventoryMovement, toWarehouse, toBranch);
         }
 

@@ -2,6 +2,7 @@
 using Inventory.Application.Services.InventoryMovementService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Inventory.API.Controllers
 {
@@ -19,7 +20,8 @@ namespace Inventory.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateInventoryMovementAsync(InventoryMovementRequest request)
         {
-            return Ok(await service.CreateInventoryMovementAsync(request));
+            Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(await service.CreateInventoryMovementAsync(request, user));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
     {
         public MovementType Type => MovementType.Transfer;
 
-        public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper)
+        public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper, Guid user)
         {
             var toWarehouse = request.ToWarehouseId.HasValue ? await FindWarehouseProductByWarehouseIdAndProductIdAsync(request.ToWarehouseId, request.ProductId) : null;
             var toBranch = request.ToBranchId.HasValue ? await FindBranchProductByBranchIdAndProductIdAsync(request.ToBranchId, request.ProductId) : null;
@@ -33,6 +33,7 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
                     throw new InvalidOperationException("Insufficient stock for the exit movement.");
             }
             var inventoryMovement = mapper.Map<InventoryMovement>(request);
+            inventoryMovement.UserId = user;
             return await repository.CreateInventoryMovementAsync(inventoryMovement, fromWarehouse ?? toWarehouse, fromBranch ?? toBranch);
         }
 

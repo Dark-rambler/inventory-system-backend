@@ -9,6 +9,6 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
     public interface IInventoryMovementStrategy
     {
         MovementType Type { get; }
-        Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper);
+        Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper, Guid user);
     }
 }

@@ -8,10 +8,10 @@ namespace Inventory.Application.Services.InventoryMovementService
 {
     public class InventoryMovementService(IInventoryMovementRepository repository, MovementStrategyResolver resolver, IMapper mapper) : IInventoryMovementService
     {
-        public async Task<InventoryMovementResponse> CreateInventoryMovementAsync(InventoryMovementRequest request)
+        public async Task<InventoryMovementResponse> CreateInventoryMovementAsync(InventoryMovementRequest request, Guid user)
         {
             var strategy = resolver.Resolve(request.Type);
-            return mapper.Map<InventoryMovementResponse>(await strategy.ExecuteAsync(request, repository, mapper));
+            return mapper.Map<InventoryMovementResponse>(await strategy.ExecuteAsync(request, repository, mapper, user));
         }
 
         public async Task<PaginatedList<InventoryMovementResponse>> GetInventoryMovementsAsync(InventoryMovementSearchParams searchParams)
