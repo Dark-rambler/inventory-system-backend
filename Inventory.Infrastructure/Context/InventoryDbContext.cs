@@ -18,6 +18,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Location> Locations { get; set; }
         public DbSet<Measure> Measures { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<AuditHistory> AuditHistories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -41,6 +42,8 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Sale>()
                 .Property(c => c.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<AuditHistory>()
+                .Ignore(a => a.User);
             modelBuilder.Entity<BranchProduct>()
                 .HasKey(bp => new { bp.BranchId, bp.ProductId });
             modelBuilder.Entity<WarehouseProduct>()

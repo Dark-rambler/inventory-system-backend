@@ -1,5 +1,6 @@
 ﻿using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
+using Inventory.Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Extensions
@@ -127,6 +128,34 @@ namespace Inventory.Infrastructure.Extensions
                 if(toDate.HasValue)
                 {
                     source = source.Where(s => s.Date <= toDate.Value);
+                }
+                return source;
+            }
+        }
+
+        extension(IQueryable<AuditHistory> source)
+        {
+            public IQueryable<AuditHistory> FiltersAuditHistory(Guid? userId, EnumAction? action, EnumEntity? entity, DateTime? fromDate, DateTime? toDate)
+            {
+                if (userId.HasValue)
+                {
+                    source = source.Where(s => s.UserId == userId);
+                }
+                if (action.HasValue)
+                {
+                    source = source.Where(s => s.Action == action.Value);
+                }
+                if (entity.HasValue)
+                {
+                    source = source.Where(s => s.Entity == entity.Value);
+                }
+                if (fromDate.HasValue)
+                {
+                    source = source.Where(s => s.CreatedAt >= fromDate.Value);
+                }
+                if (toDate.HasValue)
+                {
+                    source = source.Where(s => s.CreatedAt <= toDate.Value);
                 }
                 return source;
             }

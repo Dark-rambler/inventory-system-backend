@@ -5,7 +5,7 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface IInventoryMovementRepository
     {
-        Task<InventoryMovement> CreateInventoryMovementAsync(InventoryMovement inventoryMovement, WarehouseProduct? warehouseProduct, BranchProduct? branch);
+        Task<InventoryMovement> CreateInventoryMovementAsync(InventoryMovement inventoryMovement, WarehouseProduct? warehouseProduct, BranchProduct? branch, AuditHistory auditHistory);
         Task<PaginatedList<InventoryMovement>> GetInventoryMovementsAsync(int page, int pageSize);
     }
 }

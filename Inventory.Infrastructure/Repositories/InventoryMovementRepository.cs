@@ -10,7 +10,7 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class InventoryMovementRepository(InventoryDbContext context) : IInventoryMovementRepository
     {
-        public async Task<InventoryMovement> CreateInventoryMovementAsync(InventoryMovement inventoryMovement, WarehouseProduct? warehouseProduct, BranchProduct? branch)
+        public async Task<InventoryMovement> CreateInventoryMovementAsync(InventoryMovement inventoryMovement, WarehouseProduct? warehouseProduct, BranchProduct? branch, AuditHistory auditHistory)
         {
             if (warehouseProduct != null)
             {
@@ -20,6 +20,7 @@ namespace Inventory.Infrastructure.Repositories
             {
                 context.BranchProducts.Update(branch);
             }
+            context.AuditHistories.Add(auditHistory);
             context.InventoryMovements.Add(inventoryMovement);
             await context.SaveChangesAsync();
             return await context.InventoryMovements

@@ -8,7 +8,7 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
 {
     public class EntryMovementStrategy(IBranchRepository branchRepository, IWarehouseRepository warehouseRepository) : IInventoryMovementStrategy
     {
-        public MovementType Type => MovementType.Entry;
+        public EnumMovementType Type => EnumMovementType.Entry;
 
         public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper, Guid user)
         {
@@ -18,7 +18,14 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
             toBranch?.Stock += request.Quantity;
             var inventoryMovement = mapper.Map<InventoryMovement>(request);
             inventoryMovement.UserId = user;
-            return await repository.CreateInventoryMovementAsync(inventoryMovement, toWarehouse, toBranch);
+            var auditHistory = new AuditHistoryBuilder()
+                .WithUserId(user)
+                .WithAction(EnumAction.Create)
+                .WithEntity(EnumEntity.InventoryMovement)
+                .WithCreatedAt(DateTime.UtcNow)
+                .WithDescription($"Created entry movement for product {toBranch?.Product.Name ?? toWarehouse?.Product.Name} with quantity {request.Quantity}.")
+                .Build();
+            return await repository.CreateInventoryMovementAsync(inventoryMovement, toWarehouse, toBranch, auditHistory);
         }
 
         private async Task<WarehouseProduct> FindWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, Guid productId)

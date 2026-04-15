@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Utils;
 using Inventory.Application.DataTransferObjects.InventoryMovementDto;
 using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
@@ -8,7 +9,7 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
 {
     public class TransferMovementStrategy(IBranchRepository branchRepository, IWarehouseRepository warehouseRepository) : IInventoryMovementStrategy
     {
-        public MovementType Type => MovementType.Transfer;
+        public EnumMovementType Type => EnumMovementType.Transfer;
 
         public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, IInventoryMovementRepository repository, IMapper mapper, Guid user)
         {
@@ -19,22 +20,19 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
             toWarehouse?.Stock += request.Quantity;
             toBranch?.Stock += request.Quantity;
             if (fromWarehouse != null)
-            {
-                if (fromWarehouse.Stock > request.Quantity)
-                    fromWarehouse.Stock -= request.Quantity;
-                else
-                    throw new InvalidOperationException("Insufficient stock for the exit movement.");
-            }
+                StockUtil.ReduceStock(fromWarehouse, request.Quantity);
             if (fromBranch != null)
-            {
-                if (fromBranch.Stock > request.Quantity)
-                    fromBranch.Stock -= request.Quantity;
-                else
-                    throw new InvalidOperationException("Insufficient stock for the exit movement.");
-            }
+                StockUtil.ReduceStock(fromBranch, request.Quantity);
             var inventoryMovement = mapper.Map<InventoryMovement>(request);
             inventoryMovement.UserId = user;
-            return await repository.CreateInventoryMovementAsync(inventoryMovement, fromWarehouse ?? toWarehouse, fromBranch ?? toBranch);
+            var auditHistory = new AuditHistoryBuilder()
+                .WithUserId(user)
+                .WithAction(EnumAction.Create)
+                .WithEntity(EnumEntity.InventoryMovement)
+                .WithCreatedAt(DateTime.UtcNow)
+                .WithDescription($"Created transfer movement for product {(fromWarehouse?.Product.Name ?? fromBranch?.Product.Name)} with quantity {request.Quantity}.")
+                .Build();
+            return await repository.CreateInventoryMovementAsync(inventoryMovement, fromWarehouse ?? toWarehouse, fromBranch ?? toBranch, auditHistory);
         }
 
         private async Task<WarehouseProduct> FindWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, Guid productId)

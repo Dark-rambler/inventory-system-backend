@@ -1,6 +1,6 @@
 ﻿namespace Inventory.Domain.Enum
 {
-    public enum MovementType
+    public enum EnumMovementType
     {
         Entry,
         Exit,

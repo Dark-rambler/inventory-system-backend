@@ -64,6 +64,7 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<WarehouseProduct?> GetWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, Guid productId)
         {
             return await context.WarehouseProducts
+                .Include(wp => wp.Product)
                 .FirstOrDefaultAsync(bp => warehouseId.HasValue && bp.WarehouseId == warehouseId.Value && bp.ProductId == productId);
         }
     }

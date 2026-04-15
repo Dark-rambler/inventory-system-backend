@@ -2,8 +2,8 @@
 
 ## Project Overview
 
-.NET 10 inventory management system with Clean Architecture (4 projects):
-- **Inventory.Domain**: Entities
+ASP.NET Core 10.0 inventory management system with Clean Architecture (4 projects):
+- **Inventory.Domain**: Entities (15 entities)
 - **Inventory.Application**: Services, DTOs, validators, interfaces
 - **Inventory.Infrastructure**: EF Core, repositories, PostgreSQL
 - **Inventory.API**: Controllers, entry point
@@ -22,15 +22,16 @@ dotnet ef database drop --project Inventory.Infrastructure --startup-project Inv
 
 - **CQRS-lite**: Services return DTOs, not entities
 - **Repository Pattern**: interfaces in `Inventory.Application/Common/Abstracts/`, impl in `Inventory.Infrastructure/Repositories/`
-- **Error handling**: Use `KeyNotFoundException` for not found; `await validator.ValidateAndThrowAsync(request)` for validation
+- **Error handling**: Use `KeyNotFoundException` for not found; use FluentValidation: `await validator.ValidateAndThrowAsync(request)`
 - **Soft delete**: Entities include `bool IsDeleted { get; set; } = false`
-- **Middleware**: Custom `ExceptionHandlingMiddleware` catches all exceptions and returns ProblemDetails JSON
+- **Middleware**: Custom `ExceptionHandlingMiddleware` at end of pipeline returns ProblemDetails JSON
 
 ## Code Patterns
 
 - **Entities**: Primary key `Guid` (default `Guid.NewGuid()`), timestamps `CreatedAt`, `UpdatedAt`
 - **DTOs**: Records
 - **Services**: Primary constructors (C# 12): `public class ProductService(IProductRepository repo) : IProductService { }`
+- **Controllers**: Route `api/[controller]`, use `[Authorize]` with optional `Roles = "Admin"`
 
 ## Database
 
@@ -40,10 +41,16 @@ dotnet ef database drop --project Inventory.Infrastructure --startup-project Inv
 
 ## Runtime
 
-- **Seeding**: `DatabaseSeeder.SeedAsync()` runs on startup in `Program.cs` (automatic on app start)
+- **Seeding**: `DatabaseSeeder.SeedAsync()` runs on startup via `Program.cs`
 - **JWT**: Configured in `appsettings.json` (`JwtSettings`) - secret is hardcoded, change in production
-- **CORS**: Policy named `"MyCustomCors"` (allows all origins/headers/methods)
+- **CORS**: Policy name `"MyCustomCors"` (allows all origins/headers/methods)
 - **Swagger**: Available at `/swagger` in development
+
+## Dependency Injection
+
+All validators, services, and AutoMapper profiles registered in `Inventory.Application/DependencyInjection.cs`:
+- FluentValidation validators via `services.AddScoped<IValidator<T>, TValidation>()`
+- AutoMapper via `services.AddAutoMapper()` with profile types
 
 ## Adding Entity
 

@@ -9,7 +9,7 @@ namespace Inventory.Domain.Entities
         public Guid ProductId { get; set; }
         public Product Product { get; set; } = default!;
         public int Quantity { get; set; }
-        public MovementType Type { get; set; }
+        public EnumMovementType Type { get; set; }
         public Guid? FromWarehouseId { get; set; }
         public Warehouse? FromWarehouse { get; set; }
         public Guid? FromBranchId { get; set; }

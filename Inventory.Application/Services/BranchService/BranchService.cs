@@ -2,6 +2,7 @@
 using FluentValidation;
 using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
+using Inventory.Application.Common.Utils;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
@@ -69,38 +70,44 @@ namespace Inventory.Application.Services.BranchService
             var productIds = request.SaleDetails.Select(sd => sd.ProductId).ToList();
             var products = await repository.GetBranchProductsByProductIdsAsync(id, productIds);
             var createdAt = DateTime.UtcNow;
+
             var productsUpdated = request.SaleDetails.Select(sd =>
             {
                 var product = products.First(p => p.BranchId == id && p.ProductId == sd.ProductId);
-                if (product.Stock < sd.Quantity)
-                    throw new InvalidOperationException($"Not enough stock for product {product.Product.Name}");
-                product.Stock -= sd.Quantity;
+                StockUtil.ReduceStock(product, sd.Quantity);
                 return product;
             }).ToList();
+            
+            var sale = new SaleBuilder()
+                .WithBranchId(id)
+                .WithSellerId(user)
+                .WithDate(createdAt)
+                .WithTotal(request.SaleDetails.Sum(sd => sd.Quantity * products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price))
+                .WithSaleDetails(request.SaleDetails.Select(sd => new SaleDetailBuilder()
+                    .WithProductId(sd.ProductId)
+                    .WithQuantity(sd.Quantity)
+                    .WithPrice(products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price)
+                    .Build()).ToList())
+                .Build();
 
-            var sale = new Sale()
-            {
-                BranchId = id,
-                Total = request.SaleDetails.Sum(sd => sd.Quantity * products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price),
-                Date = createdAt,
-                SellerId = user,
-                SaleDetails = [.. request.SaleDetails.Select(sd => new SaleDetail()
-                {
-                    ProductId = sd.ProductId,
-                    Quantity = sd.Quantity,
-                    Price = products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price
-                })]
-            };
-            var intentoryMovements = request.SaleDetails.Select(sd => new InventoryMovement()
-            {
-                FromBranchId = id,
-                ProductId = sd.ProductId,
-                Quantity = sd.Quantity,
-                CreatedAt = createdAt,
-                Type = MovementType.Sale,
-                UserId = user,
-            }).ToList();
-            await repository.CreateSaleAsync(sale, intentoryMovements, productsUpdated);
+            var intentoryMovements = request.SaleDetails.Select(sd => new InventoryMovementBuilder()
+                .WithProductId(sd.ProductId)
+                .WithQuantity(sd.Quantity)
+                .WithType(EnumMovementType.Sale)
+                .WithFromBranchId(id)
+                .WithUserId(user)
+                .WithCreatedAt(createdAt)
+                .Build()
+            ).ToList();
+
+            var auditHistory = new AuditHistoryBuilder()
+                .WithAction(EnumAction.Create)
+                .WithEntity(EnumEntity.Sale)
+                .WithUserId(user)
+                .WithCreatedAt(createdAt)
+                .WithDescription($"Sale created with total {sale.Total}")
+                .Build();
+            await repository.CreateSaleAsync(sale, intentoryMovements, productsUpdated, auditHistory);
         }
 
         public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams)

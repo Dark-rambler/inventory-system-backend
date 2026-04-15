@@ -4,7 +4,7 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
 {
     public class MovementStrategyResolver(IEnumerable<IInventoryMovementStrategy> strategies)
     {
-        public IInventoryMovementStrategy Resolve(MovementType type)
+        public IInventoryMovementStrategy Resolve(EnumMovementType type)
         {
             return strategies.FirstOrDefault(s => s.Type == type) 
                 ?? throw new InvalidOperationException($"No strategy found for movement type: {type}");

@@ -70,11 +70,12 @@ namespace Inventory.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated)
+        public async Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory)
         {
             context.Sales.Add(sale);
             context.InventoryMovements.AddRange(intentoryMovements);
             context.BranchProducts.UpdateRange(productsUpdated);
+            context.AuditHistories.Add(auditHistory);
             await context.SaveChangesAsync();
         }
 
@@ -95,6 +96,7 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, Guid productId)
         {
             return await context.BranchProducts
+                .Include(bp => bp.Product)
                 .FirstOrDefaultAsync(bp => branchId.HasValue && bp.BranchId == branchId && bp.ProductId == productId);
         }
     }

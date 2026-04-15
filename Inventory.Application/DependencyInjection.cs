@@ -7,6 +7,7 @@ using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Profiles;
 using Inventory.Application.Services.AuthService;
+using Inventory.Application.Services.AuditHistoryService;
 using Inventory.Application.Services.BranchService;
 using Inventory.Application.Services.CategoryService;
 using Inventory.Application.Services.InventoryMovementService;
@@ -16,6 +17,7 @@ using Inventory.Application.Services.ProductService;
 using Inventory.Application.Services.RoleService;
 using Inventory.Application.Services.UserService;
 using Inventory.Application.Services.WarehouseService;
+using Inventory.Application.Common.Abstracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Inventory.Application;
@@ -35,7 +37,8 @@ public static class DependencyInjection
             typeof(MeasureProfile),
             typeof(InventoryMovementProfile),
             typeof(MeasureProfile),
-            typeof(WarehouseProductProfile));
+            typeof(WarehouseProductProfile),
+            typeof(AuditHistoryProfile));
         services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<IValidator<ProductRequest>, ProductRequestValidation>();
         services.AddScoped<IValidator<BranchRequest>, BranchRequestValidation>();
@@ -50,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<IMeasureService, MeasureService>();
         services.AddScoped<IInventoryMovementService, InventoryMovementService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAuditHistoryService, AuditHistoryService>();
         services.AddScoped<IInventoryMovementStrategy, EntryMovementStrategy>();
         services.AddScoped<IInventoryMovementStrategy, ExitMovementStrategy>();
         services.AddScoped<IInventoryMovementStrategy, TransferMovementStrategy>();

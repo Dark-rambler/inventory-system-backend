@@ -11,7 +11,7 @@ namespace Inventory.Application.DataTransferObjects.InventoryMovementDto
         public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public MovementType Type { get; set; }
+        public EnumMovementType Type { get; set; }
         public string FromWarehouse { get; set; } = string.Empty;
         public string FromBranch { get; set; } = string.Empty;
         public string ToWarehouse { get; set; } = string.Empty;
