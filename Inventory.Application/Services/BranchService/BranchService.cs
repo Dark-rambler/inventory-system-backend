@@ -83,11 +83,11 @@ namespace Inventory.Application.Services.BranchService
                 .WithSellerId(user)
                 .WithDate(createdAt)
                 .WithTotal(request.SaleDetails.Sum(sd => sd.Quantity * products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price))
-                .WithSaleDetails(request.SaleDetails.Select(sd => new SaleDetailBuilder()
+                .WithSaleDetails([.. request.SaleDetails.Select(sd => new SaleDetailBuilder()
                     .WithProductId(sd.ProductId)
                     .WithQuantity(sd.Quantity)
                     .WithPrice(products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price)
-                    .Build()).ToList())
+                    .Build())])
                 .Build();
 
             var intentoryMovements = request.SaleDetails.Select(sd => new InventoryMovementBuilder()
