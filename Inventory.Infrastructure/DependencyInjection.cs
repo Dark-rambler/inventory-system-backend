@@ -5,6 +5,8 @@ using Inventory.Infrastructure.Configurations;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +41,40 @@ public static class DependencyInjection
                 ValidIssuer = jwtSettings.Issuer,
                 ValidAudience = jwtSettings.Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+            };
+            options.Events = new JwtBearerEvents
+            {
+                OnChallenge = async context =>
+                {
+                    context.HandleResponse();
+
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    var response = new ProblemDetails
+                    {
+                        Status = 401,
+                        Title = "Unauthorized",
+                        Detail = "Token inválido o no proporcionado"
+                    };
+
+                    await context.Response.WriteAsJsonAsync(response);
+                },
+
+                OnForbidden = async context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.ContentType = "application/json";
+
+                    var response = new ProblemDetails
+                    {
+                        Status = 403,
+                        Title = "Forbidden",
+                        Detail = "No tienes permisos para acceder a este recurso"
+                    };
+
+                    await context.Response.WriteAsJsonAsync(response);
+                }
             };
         });
         services.AddScoped<ICategoryRepository, CategoryRepository>();

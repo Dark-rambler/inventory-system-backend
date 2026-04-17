@@ -11,7 +11,12 @@ namespace Inventory.API.Controllers
     public class CategoryController(ICategoryService service) : ControllerBase
     {
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] CategorySearchParams searchParams)
         {
             return Ok(await service.GetCategoriesAsync(searchParams));
