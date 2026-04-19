@@ -11,7 +11,8 @@ namespace Inventory.Application.Profiles
             CreateMap<ProductRequest, Product>();
             CreateMap<Product, ProductResponse>()
             .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name))
-            .ForMember(dest => dest.Measure, opt => opt.MapFrom(src => src.Measure.Name));
+            .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.Category.Id))
+            .ForMember(dest => dest.Measure, opt => opt.MapFrom(src => src.Measure != null ? src.Measure.Name : null));
         }
     }
 }
