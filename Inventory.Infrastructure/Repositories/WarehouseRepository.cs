@@ -29,6 +29,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task<Warehouse> CreateWarehouseAsync(Warehouse warehouse)
         {
+            context.Locations.Add(warehouse.Location);
             context.Warehouses.Add(warehouse);
             await context.SaveChangesAsync();
             return await context.Warehouses

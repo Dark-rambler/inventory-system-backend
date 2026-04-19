@@ -1,7 +1,8 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Inventory.Application.Common.Validations;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.CategoryDto;
+using Inventory.Application.DataTransferObjects.CustomerDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
@@ -10,6 +11,7 @@ using Inventory.Application.Services.AuthService;
 using Inventory.Application.Services.AuditHistoryService;
 using Inventory.Application.Services.BranchService;
 using Inventory.Application.Services.CategoryService;
+using Inventory.Application.Services.CustomerService;
 using Inventory.Application.Services.InventoryMovementService;
 using Inventory.Application.Services.InventoryMovementService.InventoryMovementStrategy;
 using Inventory.Application.Services.MeasureService;
@@ -38,13 +40,16 @@ public static class DependencyInjection
             typeof(InventoryMovementProfile),
             typeof(MeasureProfile),
             typeof(WarehouseProductProfile),
-            typeof(AuditHistoryProfile));
+            typeof(AuditHistoryProfile),
+            typeof(CustomerProfile));
         services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<IValidator<ProductRequest>, ProductRequestValidation>();
         services.AddScoped<IValidator<BranchRequest>, BranchRequestValidation>();
         services.AddScoped<IValidator<WarehouseRequest>, WarehouseRequestValidation>();
         services.AddScoped<IValidator<UserRequest>, UserRequestValidation>();
+        services.AddScoped<IValidator<CustomerRequest>, CustomerRequestValidation>();
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IBranchService, BranchService>();
         services.AddScoped<IWarehouseService, WarehouseService>();

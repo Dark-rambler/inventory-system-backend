@@ -1,4 +1,4 @@
-﻿using Inventory.Domain.Entities;
+using Inventory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Context
@@ -19,6 +19,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Measure> Measures { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<AuditHistory> AuditHistories { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -60,6 +61,11 @@ namespace Inventory.Infrastructure.Context
                 .HasQueryFilter(u => !u.IsDeleted);
             modelBuilder.Entity<Location>()
                 .HasQueryFilter(l => !l.IsDeleted);
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Customer>()
+                .HasQueryFilter(c => !c.IsDeleted);
             base.OnModelCreating(modelBuilder);
         }
     }

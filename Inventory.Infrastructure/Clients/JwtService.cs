@@ -24,6 +24,7 @@ namespace Inventory.Infrastructure.Clients
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
                 new Claim("roleId", user.RoleId.ToString()),
+                new Claim("role", user.Role.Name.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.Name),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

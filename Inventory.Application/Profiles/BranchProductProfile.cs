@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Domain.Entities;
 
@@ -23,6 +23,7 @@ namespace Inventory.Application.Profiles
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.Total))
                 .ForMember(dest => dest.Branch, opt => opt.MapFrom(src => src.Branch.Name))
                 .ForMember(dest => dest.Seller, opt => opt.MapFrom(src => src.Seller.Name))
+                .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null))
                 .ForMember(dest => dest.SaleDetails, opt => opt.MapFrom(src => src.SaleDetails));
              CreateMap<SaleDetail, SaleDetailResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

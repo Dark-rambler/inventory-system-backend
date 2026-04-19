@@ -46,6 +46,18 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public SaleBuilder WithCustomerId(Guid? customerId)
+        {
+            _sale.CustomerId = customerId;
+            return this;
+        }
+
+        public SaleBuilder WithCustomer(Customer customer)
+        {
+            _sale.Customer = customer;
+            return this;
+        }
+
         public SaleBuilder WithSaleDetails(ICollection<SaleDetail> saleDetails)
         {
             _sale.SaleDetails = saleDetails;

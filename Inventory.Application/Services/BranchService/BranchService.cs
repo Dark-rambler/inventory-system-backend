@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
@@ -81,6 +81,7 @@ namespace Inventory.Application.Services.BranchService
             var sale = new SaleBuilder()
                 .WithBranchId(id)
                 .WithSellerId(user)
+                .WithCustomerId(request.CustomerId)
                 .WithDate(createdAt)
                 .WithTotal(request.SaleDetails.Sum(sd => sd.Quantity * products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price))
                 .WithSaleDetails([.. request.SaleDetails.Select(sd => new SaleDetailBuilder()

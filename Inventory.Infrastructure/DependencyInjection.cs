@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Abstracts.Clients;
 using Inventory.Infrastructure.Clients;
 using Inventory.Infrastructure.Configurations;
@@ -78,6 +78,7 @@ public static class DependencyInjection
             };
         });
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IBranchRepository, BranchRepository>();
         services.AddScoped<IWarehouseRepository, WarehouseRepository>();

@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
@@ -29,6 +29,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task<Branch> CreateBranchAsync(Branch branch)
         {
+            context.Locations.Add(branch.Location);
             context.Branches.Add(branch);
             await context.SaveChangesAsync();
             return await context.Branches
@@ -86,8 +87,10 @@ namespace Inventory.Infrastructure.Repositories
             return await query
                 .Include(s => s.Branch)
                 .Include(s => s.Seller)
+                .Include(s => s.Customer)
                 .Include(s => s.SaleDetails)
                     .ThenInclude(sd => sd.Product)
+                .Where(s => s.BranchId == id)
                 .FiltersSales(fromDate, toDate)
                 .OrderByDescending(b => b.Date)
                 .ToPaginatedListAsync(page, pageSize);

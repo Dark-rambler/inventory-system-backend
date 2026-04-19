@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Common.Pagination;
+using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
 using Microsoft.EntityFrameworkCore;
@@ -128,6 +128,18 @@ namespace Inventory.Infrastructure.Extensions
                 if(toDate.HasValue)
                 {
                     source = source.Where(s => s.Date <= toDate.Value);
+                }
+                return source;
+            }
+        }
+
+        extension(IQueryable<Customer> source)
+        {
+            public IQueryable<Customer> FiltersCustomer(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
                 }
                 return source;
             }

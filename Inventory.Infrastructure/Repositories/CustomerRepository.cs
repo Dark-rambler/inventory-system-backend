@@ -1,0 +1,49 @@
+﻿using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Pagination;
+using Inventory.Domain.Entities;
+using Inventory.Infrastructure.Context;
+using Inventory.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
+
+namespace Inventory.Infrastructure.Repositories
+{
+    public class CustomerRepository(InventoryDbContext context) : ICustomerRepository
+    {
+        public async Task<PaginatedList<Customer>> GetCustomersAsync(string? name, int page, int pageSize)
+        {
+            var query = context.Customers
+                .AsQueryable();
+            return await query
+                .OrderByDescending(b => b.CreatedAt)
+                .FiltersCustomer(name)
+                .ToPaginatedListAsync(page, pageSize);
+        }
+
+        public Task<Customer?> GetCustomerByIdAsync(Guid id)
+        {
+            return context.Customers
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Customer> CreateCustomerAsync(Customer customer)
+        {
+            context.Customers.Add(customer);
+            await context.SaveChangesAsync();
+            return await context.Customers
+                .FirstAsync(c => c.Id == customer.Id);
+        }
+
+        public async Task UpdateCustomerAsync(Customer customer)
+        {
+            customer.UpdatedAt = DateTime.Now;
+            context.Customers.Update(customer);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteCustomerAsync(Customer customer)
+        {
+            customer.IsDeleted = true;
+            await context.SaveChangesAsync();
+        }
+    }
+}

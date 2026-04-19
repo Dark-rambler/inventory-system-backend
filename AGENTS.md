@@ -1,65 +1,36 @@
-# AGENTS.md - Developer Guidelines
-
-## Project Overview
-
-ASP.NET Core 10.0 inventory management system with Clean Architecture (4 projects):
-- **Inventory.Domain**: Entities (15 entities)
-- **Inventory.Application**: Services, DTOs, validators, interfaces
-- **Inventory.Infrastructure**: EF Core, repositories, PostgreSQL
-- **Inventory.API**: Controllers, entry point
-
-## Commands
-
-```bash
-dotnet build
-dotnet run --project Inventory.API/Inventory.API.csproj
-dotnet ef migrations add [Name] --project Inventory.Infrastructure --startup-project Inventory.API
-dotnet ef database update --project Inventory.Infrastructure --startup-project Inventory.API
-dotnet ef database drop --project Inventory.Infrastructure --startup-project Inventory.API
-```
+# AGENTS.md - Inventory System Backend
 
 ## Architecture
 
-- **CQRS-lite**: Services return DTOs, not entities
-- **Repository Pattern**: interfaces in `Inventory.Application/Common/Abstracts/`, impl in `Inventory.Infrastructure/Repositories/`
-- **Error handling**: Use `KeyNotFoundException` for not found; use FluentValidation: `await validator.ValidateAndThrowAsync(request)`
-- **Soft delete**: Entities include `bool IsDeleted { get; set; } = false`
-- **Middleware**: Custom `ExceptionHandlingMiddleware` at end of pipeline returns ProblemDetails JSON
+Clean Architecture with 4 projects:
+- `Inventory.Domain` - Entities, enums, builders (no external deps)
+- `Inventory.Application` - Services, DTOs, validators, interfaces
+- `Inventory.Infrastructure` - EF Core, repositories, JWT service
+- `Inventory.API` - Controllers, middleware, entry point
 
-## Code Patterns
+Entry point: `Inventory.API/Program.cs`
 
-- **Entities**: Primary key `Guid` (default `Guid.NewGuid()`), timestamps `CreatedAt`, `UpdatedAt`
-- **DTOs**: Records
-- **Services**: Primary constructors (C# 12): `public class ProductService(IProductRepository repo) : IProductService { }`
-- **Controllers**: Route `api/[controller]`, use `[Authorize]` with optional `Roles = "Admin"`
+## Build & Run
 
-## Database
+```bash
+dotnet build
+dotnet run --project Inventory.API
+```
 
-- PostgreSQL on localhost:5432, database `inventory`
-- Connection: `appsettings.json` -> `ConnectionStrings.DefaultConnection`
-- Reset: `dotnet ef database drop` then `dotnet ef database update`
+Database is seeded automatically on startup via `DatabaseSeeder.SeedAsync()`. Requires PostgreSQL at `localhost:5432`.
 
-## Runtime
+## Dependencies
 
-- **Seeding**: `DatabaseSeeder.SeedAsync()` runs on startup via `Program.cs`
-- **JWT**: Configured in `appsettings.json` (`JwtSettings`) - secret is hardcoded, change in production
-- **CORS**: Policy name `"MyCustomCors"` (allows all origins/headers/methods)
-- **Swagger**: Available at `/swagger` in development
+- .NET 10.0 (preview)
+- EF Core 10.0.5 + Npgsql
+- JWT Bearer authentication
+- AutoMapper, FluentValidation
+- Swashbuckle (Swagger)
 
-## Dependency Injection
+## API Access
 
-All validators, services, and AutoMapper profiles registered in `Inventory.Application/DependencyInjection.cs`:
-- FluentValidation validators via `services.AddScoped<IValidator<T>, TValidation>()`
-- AutoMapper via `services.AddAutoMapper()` with profile types
+Swagger UI at `/swagger` in Development mode. Uses Bearer token auth.
 
-## Adding Entity
+## Testing
 
-1. `Inventory.Domain/Entities/[Entity].cs`
-2. DTOs: `Inventory.Application/DataTransferObjects/[Entity]Dto/`
-3. Interface: `Inventory.Application/Common/Abstracts/I[Entity]Repository.cs`
-4. Repository impl: `Inventory.Infrastructure/Repositories/[Entity]Repository.cs`
-5. Service: `Inventory.Application/Services/[Entity]Service/`
-6. Validator: `Inventory.Application/Common/Validations/[Entity]Validator.cs`
-7. Mapper: `Inventory.Application/Profiles/[Entity]Profile.cs`
-8. Controller: `Inventory.API/Controllers/[Entity]Controller.cs`
-9. DI: `Inventory.Application/DependencyInjection.cs` (register service and validator)
+No test project found in this repo.
