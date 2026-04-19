@@ -35,7 +35,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            category.UpdatedAt = DateTime.Now;
+            category.UpdatedAt = DateTime.UtcNow;
             context.Categories.Update(category);
             await context.SaveChangesAsync();
         }

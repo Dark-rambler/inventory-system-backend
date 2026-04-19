@@ -42,7 +42,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task UpdateProductAsync(Product product)
         {
-            product.UpdatedAt = DateTime.Now;
+            product.UpdatedAt = DateTime.UtcNow;
             context.Products.Update(product);
             await context.SaveChangesAsync();
         }
