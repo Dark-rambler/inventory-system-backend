@@ -43,6 +43,9 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Sale>()
                 .Property(c => c.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Customer>()
+                .Property(c => c.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
             modelBuilder.Entity<AuditHistory>()
                 .Ignore(a => a.User);
             modelBuilder.Entity<BranchProduct>()
@@ -62,10 +65,23 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Location>()
                 .HasQueryFilter(l => !l.IsDeleted);
             modelBuilder.Entity<Customer>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<Customer>()
                 .HasQueryFilter(c => !c.IsDeleted);
+            modelBuilder.Entity<Warehouse>()
+                .HasOne(w => w.Location)
+                .WithOne(l => l.Warehouse)
+                .HasForeignKey<Warehouse>(w => w.Id)
+                .IsRequired();
+            modelBuilder.Entity<Warehouse>()
+                .HasIndex(w => w.Id)
+                .IsUnique();
+            modelBuilder.Entity<Branch>()
+                .HasOne(b => b.Location)
+                .WithOne(l => l.Branch)
+                .HasForeignKey<Branch>(b => b.Id)
+                .IsRequired();
+            modelBuilder.Entity<Branch>()
+                .HasIndex(b => b.Id)
+                .IsUnique();
             base.OnModelCreating(modelBuilder);
         }
     }

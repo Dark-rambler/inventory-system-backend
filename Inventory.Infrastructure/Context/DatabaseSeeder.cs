@@ -12,9 +12,9 @@ public static class DatabaseSeeder
 
         var locations = new List<Location>
         {
-            new() { Id = 1, Address = "123 Main St", City = "New York", CoordinateX = 40.7128, CoordinateY = -74.0060 },
-            new() { Id = 2, Address = "456 Oak Ave", City = "Los Angeles", CoordinateX = 34.0522, CoordinateY = -118.2437 },
-            new() { Id = 3, Address = "789 Pine Rd", City = "Chicago", CoordinateX = 41.8781, CoordinateY = -87.6298 }
+            new() { Address = "123 Main St", City = "New York", CoordinateX = 40.7128, CoordinateY = -74.0060 },
+            new() { Address = "456 Oak Ave", City = "Los Angeles", CoordinateX = 34.0522, CoordinateY = -118.2437 },
+            new() { Address = "789 Pine Rd", City = "Chicago", CoordinateX = 41.8781, CoordinateY = -87.6298 }
         };
         context.Locations.AddRange(locations);
 
@@ -60,16 +60,16 @@ public static class DatabaseSeeder
 
         var warehouses = new List<Warehouse>
         {
-            new() { Name = "Main Warehouse", LocationId = locations[0].Id },
-            new() { Name = "West Coast Warehouse", LocationId = locations[1].Id }
+            new() { Name = "Main Warehouse", Location = locations[0] },
+            new() { Name = "West Coast Warehouse", Location = locations[1] }
         };
         context.Warehouses.AddRange(warehouses);
         await context.SaveChangesAsync();
 
         var branches = new List<Branch>
         {
-            new() { Name = "Downtown Store", LocationId = locations[0].Id },
-            new() { Name = "Uptown Store", LocationId = locations[2].Id }
+            new() { Name = "Downtown Store", Location = locations[0] },
+            new() { Name = "Uptown Store", Location = locations[2] }
         };
         context.Branches.AddRange(branches);
         await context.SaveChangesAsync();

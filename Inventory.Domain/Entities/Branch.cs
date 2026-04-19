@@ -5,7 +5,6 @@
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Telephone { get; set; } = string.Empty;
-        public int LocationId { get; set; }
         public Location Location { get; set; } = default!;
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

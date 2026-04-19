@@ -64,9 +64,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("LocationId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -80,7 +77,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("Branches");
                 });
@@ -225,11 +223,9 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.Location", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -451,9 +447,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("LocationId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -463,7 +456,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.ToTable("Warehouses");
                 });
@@ -489,8 +483,8 @@ namespace Inventory.Infrastructure.Migrations
             modelBuilder.Entity("Inventory.Domain.Entities.Branch", b =>
                 {
                     b.HasOne("Inventory.Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
+                        .WithOne("Branch")
+                        .HasForeignKey("Inventory.Domain.Entities.Branch", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -634,8 +628,8 @@ namespace Inventory.Infrastructure.Migrations
             modelBuilder.Entity("Inventory.Domain.Entities.Warehouse", b =>
                 {
                     b.HasOne("Inventory.Domain.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
+                        .WithOne("Warehouse")
+                        .HasForeignKey("Inventory.Domain.Entities.Warehouse", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -674,6 +668,15 @@ namespace Inventory.Infrastructure.Migrations
             modelBuilder.Entity("Inventory.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Sales");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Location", b =>
+                {
+                    b.Navigation("Branch")
+                        .IsRequired();
+
+                    b.Navigation("Warehouse")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Measure", b =>

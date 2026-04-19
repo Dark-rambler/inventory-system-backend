@@ -29,7 +29,6 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task<Branch> CreateBranchAsync(Branch branch)
         {
-            context.Locations.Add(branch.Location);
             context.Branches.Add(branch);
             await context.SaveChangesAsync();
             return await context.Branches
