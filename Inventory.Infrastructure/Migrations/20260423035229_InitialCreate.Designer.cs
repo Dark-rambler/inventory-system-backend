@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260419214533_InitialCreate")]
+    [Migration("20260423035229_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -188,6 +188,9 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.Property<Guid?>("FromWarehouseId")
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("IsSale")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");

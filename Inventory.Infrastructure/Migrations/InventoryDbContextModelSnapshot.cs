@@ -186,6 +186,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<Guid?>("FromWarehouseId")
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsSale")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 

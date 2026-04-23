@@ -42,6 +42,12 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public InventoryMovementBuilder WithIsSale(bool isSale)
+        {
+            _inventoryMovement.IsSale = isSale;
+            return this;
+        }
+
         public InventoryMovementBuilder WithFromWarehouseId(Guid? fromWarehouseId)
         {
             _inventoryMovement.FromWarehouseId = fromWarehouseId;

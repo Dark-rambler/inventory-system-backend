@@ -4,7 +4,6 @@
     {
         Entry,
         Exit,
-        Sale,
         Transfer
     }
 }

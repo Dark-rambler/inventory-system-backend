@@ -10,6 +10,7 @@ namespace Inventory.Domain.Entities
         public Product Product { get; set; } = default!;
         public int Quantity { get; set; }
         public EnumMovementType Type { get; set; }
+        public bool IsSale { get; set; } = false;
         public Guid? FromWarehouseId { get; set; }
         public Warehouse? FromWarehouse { get; set; }
         public Guid? FromBranchId { get; set; }

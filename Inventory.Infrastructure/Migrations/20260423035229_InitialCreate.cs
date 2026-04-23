@@ -266,6 +266,7 @@ namespace Inventory.Infrastructure.Migrations
                     ProductId = table.Column<Guid>(type: "uuid", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
+                    IsSale = table.Column<bool>(type: "boolean", nullable: false),
                     FromWarehouseId = table.Column<Guid>(type: "uuid", nullable: true),
                     FromBranchId = table.Column<Guid>(type: "uuid", nullable: true),
                     ToWarehouseId = table.Column<Guid>(type: "uuid", nullable: true),
