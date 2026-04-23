@@ -4,7 +4,6 @@ using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {

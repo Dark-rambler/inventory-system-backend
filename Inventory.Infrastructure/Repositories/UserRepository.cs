@@ -12,9 +12,9 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize)
         {
             var query = context.Users
-                .Include(u => u.Role)
                 .AsQueryable();
             return await query
+                .Include(u => u.Role)
                 .OrderByDescending(u => u.CreatedAt)
                 .FiltersUser(name)
                 .ToPaginatedListAsync(page, pageSize);

@@ -20,8 +20,8 @@ namespace Inventory.Infrastructure.Repositories
             {
                 context.BranchProducts.Update(branch);
             }
-            context.AuditHistories.Add(auditHistory);
             context.InventoryMovements.Add(inventoryMovement);
+            context.AuditHistories.Add(auditHistory);
             await context.SaveChangesAsync();
             return await context.InventoryMovements
                 .Include(im => im.Product)
