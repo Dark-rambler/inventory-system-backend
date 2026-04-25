@@ -145,6 +145,18 @@ namespace Inventory.Infrastructure.Extensions
             }
         }
 
+        extension(IQueryable<Provider> source)
+        {
+            public IQueryable<Provider> FiltersProvider(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
+
         extension(IQueryable<AuditHistory> source)
         {
             public IQueryable<AuditHistory> FiltersAuditHistory(Guid? userId, EnumAction? action, EnumEntity? entity, DateTime? fromDate, DateTime? toDate)

@@ -87,6 +87,7 @@ public static class DependencyInjection
         services.AddScoped<IMeasureRepository, MeasureRepository>();
         services.AddScoped<IInventoryMovementRepository, InventoryMovementRepository>();
         services.AddScoped<IAuditHistoryRepository, AuditHistoryRepository>();
+        services.AddScoped<IProviderRepository, ProviderRepository>();
         services.AddScoped<IJwtService, JwtService>();
         return services;
     }

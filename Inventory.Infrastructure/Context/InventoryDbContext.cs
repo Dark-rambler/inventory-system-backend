@@ -20,6 +20,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Role> Roles { get; set; }
         public DbSet<AuditHistory> AuditHistories { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Provider> Providers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -66,6 +67,11 @@ namespace Inventory.Infrastructure.Context
                 .HasQueryFilter(l => !l.IsDeleted);
             modelBuilder.Entity<Customer>()
                 .HasQueryFilter(c => !c.IsDeleted);
+            modelBuilder.Entity<Provider>()
+                .Property(p => p.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Provider>()
+                .HasQueryFilter(p => !p.IsDeleted);
             modelBuilder.Entity<Warehouse>()
                 .HasOne(w => w.Location)
                 .WithOne(l => l.Warehouse)

@@ -4,6 +4,7 @@ using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.DataTransferObjects.CustomerDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
+using Inventory.Application.DataTransferObjects.ProviderDto;
 using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.Profiles;
@@ -16,6 +17,7 @@ using Inventory.Application.Services.InventoryMovementService;
 using Inventory.Application.Services.InventoryMovementService.InventoryMovementStrategy;
 using Inventory.Application.Services.MeasureService;
 using Inventory.Application.Services.ProductService;
+using Inventory.Application.Services.ProviderService;
 using Inventory.Application.Services.RoleService;
 using Inventory.Application.Services.UserService;
 using Inventory.Application.Services.WarehouseService;
@@ -41,13 +43,15 @@ public static class DependencyInjection
             typeof(MeasureProfile),
             typeof(WarehouseProductProfile),
             typeof(AuditHistoryProfile),
-            typeof(CustomerProfile));
+            typeof(CustomerProfile),
+            typeof(ProviderProfile));
         services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<IValidator<ProductRequest>, ProductRequestValidation>();
         services.AddScoped<IValidator<BranchRequest>, BranchRequestValidation>();
         services.AddScoped<IValidator<WarehouseRequest>, WarehouseRequestValidation>();
         services.AddScoped<IValidator<UserRequest>, UserRequestValidation>();
         services.AddScoped<IValidator<CustomerRequest>, CustomerRequestValidation>();
+        services.AddScoped<IValidator<ProviderRequest>, ProviderRequestValidation>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IProductService, ProductService>();
@@ -59,6 +63,7 @@ public static class DependencyInjection
         services.AddScoped<IInventoryMovementService, InventoryMovementService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAuditHistoryService, AuditHistoryService>();
+        services.AddScoped<IProviderService, ProviderService>();
         services.AddScoped<IInventoryMovementStrategy, EntryMovementStrategy>();
         services.AddScoped<IInventoryMovementStrategy, ExitMovementStrategy>();
         services.AddScoped<IInventoryMovementStrategy, TransferMovementStrategy>();

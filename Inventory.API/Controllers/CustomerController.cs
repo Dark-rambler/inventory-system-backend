@@ -12,10 +12,6 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerSearchParams searchParams)
         {
             return Ok(await service.GetCustomersAsync(searchParams));
@@ -23,7 +19,6 @@ namespace Inventory.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerRequest request)
         {
             return Ok(await service.CreateCustomerAsync(request));
