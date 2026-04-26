@@ -13,5 +13,6 @@ namespace Inventory.Application.Services.WarehouseService
         Task UpdateWarehouseAsync(Guid id, WarehouseRequest request);
         Task DeleteWarehouseAsync(Guid id);
         Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams);
+        Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request);
     }
 }

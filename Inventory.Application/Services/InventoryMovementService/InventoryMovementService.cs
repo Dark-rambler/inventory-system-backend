@@ -16,7 +16,7 @@ namespace Inventory.Application.Services.InventoryMovementService
 
         public async Task<PaginatedList<InventoryMovementResponse>> GetInventoryMovementsAsync(InventoryMovementSearchParams searchParams)
         {
-            var paginatedInventoryMovements = await repository.GetInventoryMovementsAsync(searchParams.Page, searchParams.PageSize);
+            var paginatedInventoryMovements = await repository.GetInventoryMovementsAsync(searchParams.WarehouseId, searchParams.BranchId, searchParams.MovementType, searchParams.FromDate, searchParams.ToDate, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<InventoryMovementResponse>(mapper.Map<List<InventoryMovementResponse>>(paginatedInventoryMovements.Items),
                 paginatedInventoryMovements.TotalCount,
                 paginatedInventoryMovements.PageIndex,

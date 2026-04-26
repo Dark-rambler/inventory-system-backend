@@ -7,6 +7,7 @@ using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Domain.Entities;
+using Inventory.Domain.Entities.Builders;
 using Inventory.Domain.Enum;
 
 namespace Inventory.Application.Services.BranchService
@@ -121,6 +122,19 @@ namespace Inventory.Application.Services.BranchService
                 paginatedSales.PageIndex,
                 paginatedSales.PageSize
             );
+        }
+
+        public async Task AddProductsToBranchAsync(Guid id, IEnumerable<BranchProductRequest> request)
+        {
+            var branchProducts = request.Select(r => new BranchProductBuilder()
+                .WithBranchId(id)
+                .WithProductId(r.ProductId)
+                .WithPrice(r.Price)
+                .WithStock(r.Stock)
+                .WithLowStock(r.LowStock)
+                .Build()
+            ).ToList();
+            await repository.AddProductsToBranchAsync(branchProducts);
         }
     }
 }

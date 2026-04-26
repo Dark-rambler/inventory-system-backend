@@ -5,6 +5,7 @@ using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 using Inventory.Domain.Entities;
+using Inventory.Domain.Entities.Builders;
 
 namespace Inventory.Application.Services.WarehouseService
 {
@@ -55,6 +56,18 @@ namespace Inventory.Application.Services.WarehouseService
                 warehouseProducts.PageIndex,
                 warehouseProducts.PageSize
             );
+        }
+
+        public async Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request)
+        {
+            var warehouseProducts = request.Select(r => new WarehouseProductBuilder()
+                .WithWarehouseId(id)
+                .WithProductId(r.ProductId)
+                .WithStock(r.Stock)
+                .WithLowStock(r.LowStock)
+                .Build()
+            ).ToList();
+            await repository.AddProductsToWarehouseAsync(warehouseProducts);
         }
     }
 }

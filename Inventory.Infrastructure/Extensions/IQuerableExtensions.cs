@@ -63,16 +63,8 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<Warehouse> source)
         {
-            public IQueryable<Warehouse> FiltersWarehouse(string? name, Guid? productId = null, int? stock = null)
+            public IQueryable<Warehouse> FiltersWarehouse(string? name)
             {
-                if (productId.HasValue)
-                {
-                    source = source.Where(c => c.WarehouseProducts.Any(wp => wp.ProductId == productId));
-                }
-                if (productId.HasValue)
-                {
-                    source = source.Where(c => c.WarehouseProducts.Any(wp => wp.Stock >= stock));
-                }
                 if (!string.IsNullOrEmpty(name))
                 {
                     source = source.Where(c => c.Name.ToLower().Contains(name.ToLower()));
@@ -183,20 +175,8 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<AuditHistory> source)
         {
-            public IQueryable<AuditHistory> FiltersAuditHistory(Guid? userId, EnumAction? action, EnumEntity? entity, DateTime? fromDate, DateTime? toDate)
+            public IQueryable<AuditHistory> FiltersAuditHistory(DateTime? fromDate, DateTime? toDate)
             {
-                if (userId.HasValue)
-                {
-                    source = source.Where(s => s.UserId == userId);
-                }
-                if (action.HasValue)
-                {
-                    source = source.Where(s => s.Action == action.Value);
-                }
-                if (entity.HasValue)
-                {
-                    source = source.Where(s => s.Entity == entity.Value);
-                }
                 if (fromDate.HasValue)
                 {
                     source = source.Where(s => s.CreatedAt >= fromDate.Value);
@@ -204,6 +184,34 @@ namespace Inventory.Infrastructure.Extensions
                 if (toDate.HasValue)
                 {
                     source = source.Where(s => s.CreatedAt <= toDate.Value);
+                }
+                return source;
+            }
+        }
+
+        extension(IQueryable<InventoryMovement> source)
+        {
+            public IQueryable<InventoryMovement> FiltersInventoryMovement(Guid? warehouseId, Guid? branchId, EnumMovementType? movementType, DateTime? fromDate, DateTime? toDate)
+            {
+                if (fromDate.HasValue)
+                {
+                    source = source.Where(s => s.CreatedAt >= fromDate.Value);
+                }
+                if (toDate.HasValue)
+                {
+                    source = source.Where(s => s.CreatedAt <= toDate.Value);
+                }
+                if (warehouseId.HasValue)
+                {
+                    source = source.Where(s => s.FromWarehouseId == warehouseId.Value || s.ToWarehouseId == warehouseId.Value);
+                }
+                if (branchId.HasValue)
+                {
+                    source = source.Where(s => s.FromBranchId == branchId.Value || s.ToBranchId == branchId.Value);
+                }
+                if (movementType.HasValue)
+                {
+                    source = source.Where(s => s.Type == movementType.Value);
                 }
                 return source;
             }

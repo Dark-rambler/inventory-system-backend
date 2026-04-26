@@ -7,5 +7,6 @@
         public Guid ProductId { get; set; }
         public Product Product { get; set; } = default!;
         public int Stock { get; set; }
+        public int LowStock { get; set; }
     }
 }

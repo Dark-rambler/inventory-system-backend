@@ -101,5 +101,11 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(bp => bp.Product)
                 .FirstOrDefaultAsync(bp => branchId.HasValue && bp.BranchId == branchId && bp.ProductId == productId);
         }
+
+        public async Task AddProductsToBranchAsync(IEnumerable<BranchProduct> branchProducts)
+        {
+            context.BranchProducts.AddRange(branchProducts);
+            await context.SaveChangesAsync();
+        }
     }
 }

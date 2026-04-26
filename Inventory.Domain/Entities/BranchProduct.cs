@@ -8,5 +8,6 @@
         public Product Product { get; set; } = default!;
         public double Price { get; set; }
         public int Stock { get; set; }
+        public int LowStock { get; set; }
     }
 }

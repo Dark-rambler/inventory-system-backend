@@ -67,5 +67,11 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(wp => wp.Product)
                 .FirstOrDefaultAsync(bp => warehouseId.HasValue && bp.WarehouseId == warehouseId.Value && bp.ProductId == productId);
         }
+
+        public async Task AddProductsToWarehouseAsync(List<WarehouseProduct> warehouseProducts)
+        {
+            context.AddRange(warehouseProducts);
+            await context.SaveChangesAsync();
+        }
     }
 }

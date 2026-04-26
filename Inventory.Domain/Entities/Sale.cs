@@ -4,6 +4,7 @@ namespace Inventory.Domain.Entities
     {
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
+        public string Folio { get; set; } = string.Empty;
         public double Total { get; set; }
         public Guid BranchId { get; set; }
         public Branch Branch { get; set; } = default!;

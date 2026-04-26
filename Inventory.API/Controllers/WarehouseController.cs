@@ -1,5 +1,7 @@
+using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
+using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +58,14 @@ namespace Inventory.API.Controllers
         public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
             return Ok(await service.GetProductsByWarehousesAsync(id, searchParams));
+        }
+
+        [HttpPost("{id}/products")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> AddProductsToWarehouseAsync(Guid id, [FromBody] IEnumerable<WarehouseProductRequest> request)
+        {
+            await service.AddProductsToWarehouseAsync(id, request);
+            return NoContent();
         }
     }
 }

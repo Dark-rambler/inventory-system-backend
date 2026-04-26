@@ -9,12 +9,12 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class AuditHistoryRepository(InventoryDbContext context) : IAuditHistoryRepository
     {
-        public async Task<PaginatedList<AuditHistory>> GetAuditHistoriesAsync(Guid? user, EnumAction? action, EnumEntity? entity, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
+        public async Task<PaginatedList<AuditHistory>> GetAuditHistoriesAsync(DateTime? fromDate, DateTime? toDate, int page, int pageSize)
         {
             var query = context.AuditHistories.AsQueryable();
             return await query
                 .OrderByDescending(a => a.CreatedAt)
-                .FiltersAuditHistory(user, action, entity, fromDate, toDate)
+                .FiltersAuditHistory(fromDate, toDate)
                 .ToPaginatedListAsync(page, pageSize);
         }
     }

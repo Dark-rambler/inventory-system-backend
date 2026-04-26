@@ -60,6 +60,14 @@ namespace Inventory.API.Controllers
             return Ok(await service.GetProductsByBranchAsync(id, searchParams));
         }
 
+        [HttpPost("{id}/products")]
+        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> AddProductToBranchAsync(Guid id, [FromBody] IEnumerable<BranchProductRequest> request)
+        {
+            await service.AddProductsToBranchAsync(id, request);
+            return NoContent();
+        }
+
         [HttpPost("{id}/sales")]
         public async Task<IActionResult> CreateSaleAsync(Guid id, [FromBody] SaleRequest request)
         {

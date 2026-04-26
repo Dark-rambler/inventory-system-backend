@@ -91,6 +91,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("LowStock")
+                        .HasColumnType("integer");
+
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
@@ -455,6 +458,10 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Folio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("SellerId")
                         .HasColumnType("uuid");
 
@@ -578,6 +585,9 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("LowStock")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Stock")
                         .HasColumnType("integer");

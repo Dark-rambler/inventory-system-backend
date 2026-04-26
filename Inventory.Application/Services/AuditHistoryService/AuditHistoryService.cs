@@ -10,9 +10,6 @@ namespace Inventory.Application.Services.AuditHistoryService
         public async Task<PaginatedList<AuditHistoryResponse>> GetAuditHistoriesAsync(AuditHistorySearchParams searchParams)
         {
             var auditHistories = await repository.GetAuditHistoriesAsync(
-                searchParams.User,
-                searchParams.Action,
-                searchParams.Entity,
                 searchParams.FromDate,
                 searchParams.ToDate,
                 searchParams.Page,
