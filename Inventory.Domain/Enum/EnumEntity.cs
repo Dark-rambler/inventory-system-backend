@@ -3,6 +3,7 @@
     public enum EnumEntity
     {
         InventoryMovement,
-        Sale
+        Sale,
+        Purchase
     }
 }

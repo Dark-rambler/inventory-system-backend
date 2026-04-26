@@ -48,6 +48,12 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public InventoryMovementBuilder WithIsPurchase(bool isPurchase)
+        {
+            _inventoryMovement.IsPurchase = isPurchase;
+            return this;
+        }
+
         public InventoryMovementBuilder WithFromWarehouseId(Guid? fromWarehouseId)
         {
             _inventoryMovement.FromWarehouseId = fromWarehouseId;

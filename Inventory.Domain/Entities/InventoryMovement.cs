@@ -11,6 +11,7 @@ namespace Inventory.Domain.Entities
         public int Quantity { get; set; }
         public EnumMovementType Type { get; set; }
         public bool IsSale { get; set; } = false;
+        public bool IsPurchase { get; set; } = false;
         public Guid? FromWarehouseId { get; set; }
         public Warehouse? FromWarehouse { get; set; }
         public Guid? FromBranchId { get; set; }

@@ -88,6 +88,7 @@ public static class DependencyInjection
         services.AddScoped<IInventoryMovementRepository, InventoryMovementRepository>();
         services.AddScoped<IAuditHistoryRepository, AuditHistoryRepository>();
         services.AddScoped<IProviderRepository, ProviderRepository>();
+        services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IJwtService, JwtService>();
         return services;
     }

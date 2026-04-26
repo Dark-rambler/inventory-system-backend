@@ -133,6 +133,30 @@ namespace Inventory.Infrastructure.Extensions
             }
         }
 
+        extension(IQueryable<Purchase> source)
+        {
+            public IQueryable<Purchase> FiltersPurchases(DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId)
+            {
+                if(fromDate.HasValue)
+                {
+                    source = source.Where(s => s.Date >= fromDate.Value);
+                }
+                if(toDate.HasValue)
+                {
+                    source = source.Where(s => s.Date <= toDate.Value);
+                }
+                if(providerId.HasValue)
+                {
+                    source = source.Where(s => s.ProviderId == providerId.Value);
+                }
+                if(branchId.HasValue)
+                {
+                    source = source.Where(s => s.BranchId == branchId.Value);
+                }
+                return source;
+            }
+        }
+
         extension(IQueryable<Customer> source)
         {
             public IQueryable<Customer> FiltersCustomer(string? name)

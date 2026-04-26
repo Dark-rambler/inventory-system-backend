@@ -1,0 +1,29 @@
+using Inventory.Application.DataTransferObjects.PurchaseDto;
+using Inventory.Application.Services.PurchaseService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace Inventory.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class PurchaseController(IPurchaseService service) : ControllerBase
+    {
+        [HttpPost]
+        public async Task<IActionResult> CreatePurchaseAsync([FromBody] PurchaseRequest request)
+        {
+            Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            await service.CreatePurchaseAsync(request, user);
+            return NoContent();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(PurchaseResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetPurchasesAsync([FromQuery] PurchaseSearchParams searchParams)
+        {
+            return Ok(await service.GetPurchasesAsync(searchParams));
+        }
+    }
+}

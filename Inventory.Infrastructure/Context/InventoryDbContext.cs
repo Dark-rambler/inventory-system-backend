@@ -21,6 +21,8 @@ namespace Inventory.Infrastructure.Context
         public DbSet<AuditHistory> AuditHistories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Provider> Providers { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -47,6 +49,12 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Customer>()
                 .Property(c => c.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Purchase>()
+                .Property(p => p.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Provider>()
+                .Property(p => p.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
             modelBuilder.Entity<AuditHistory>()
                 .Ignore(a => a.User);
             modelBuilder.Entity<BranchProduct>()
@@ -67,9 +75,6 @@ namespace Inventory.Infrastructure.Context
                 .HasQueryFilter(l => !l.IsDeleted);
             modelBuilder.Entity<Customer>()
                 .HasQueryFilter(c => !c.IsDeleted);
-            modelBuilder.Entity<Provider>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
             modelBuilder.Entity<Provider>()
                 .HasQueryFilter(p => !p.IsDeleted);
             modelBuilder.Entity<Warehouse>()

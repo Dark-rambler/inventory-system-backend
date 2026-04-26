@@ -9,5 +9,10 @@
             else
                 throw new InvalidOperationException("Insufficient stock for the exit movement.");
         }
+
+        public static void AddStock(dynamic entity, int quantity)
+        {
+            entity.Stock += quantity;
+        }
     }
 }

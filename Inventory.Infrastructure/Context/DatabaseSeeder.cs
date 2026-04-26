@@ -98,7 +98,8 @@ public static class DatabaseSeeder
                 {
                     BranchId = branch.Id,
                     ProductId = product.Id,
-                    Stock = new Random().Next(5, 50)
+                    Stock = new Random().Next(5, 50),
+                    Price = Math.Round(new Random().NextDouble() * (100 - 10) + 10, 2)
                 });
             }
         }
