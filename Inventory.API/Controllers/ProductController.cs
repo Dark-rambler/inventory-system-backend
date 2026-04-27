@@ -20,7 +20,7 @@ namespace Inventory.API.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProductByIdAsync(Guid id)
+        public async Task<IActionResult> GetProductByIdAsync(int id)
         {
             return Ok(await service.GetProductByIdAsync(id));
         }
@@ -36,7 +36,7 @@ namespace Inventory.API.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateProductAsync(Guid id, [FromBody] ProductRequest request)
+        public async Task<IActionResult> UpdateProductAsync(int id, [FromBody] ProductRequest request)
         {
             await service.UpdateProductAsync(id, request);
             return NoContent();
@@ -45,7 +45,7 @@ namespace Inventory.API.Controllers
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteProductAsync(Guid id)
+        public async Task<IActionResult> DeleteProductAsync(int id)
         {
             await service.DeleteProductAsync(id);
             return NoContent();

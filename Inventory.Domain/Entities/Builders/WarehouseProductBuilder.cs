@@ -8,7 +8,7 @@
             _warehouseProduct.WarehouseId = warehouseId;
             return this;
         }
-        public WarehouseProductBuilder WithProductId(Guid productId)
+        public WarehouseProductBuilder WithProductId(int productId)
         {
             _warehouseProduct.ProductId = productId;
             return this;

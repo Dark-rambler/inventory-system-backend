@@ -11,10 +11,10 @@ namespace Inventory.Application.Common.Abstracts
         Task UpdateBranchAsync(Branch branch);
         Task DeleteBranchAsync(Branch branch);
         Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize);
-        Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<Guid> productIds);
+        Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds);
         Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory);
         Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize);
-        Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, Guid productId);
+        Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId);
         Task AddProductsToBranchAsync(IEnumerable<BranchProduct> branchProducts);
         Task<IEnumerable<Product>> GetProductsDoesntExistByBranchAsync(Guid id);
     }

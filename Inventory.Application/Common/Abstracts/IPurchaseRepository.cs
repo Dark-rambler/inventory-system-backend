@@ -7,6 +7,6 @@ namespace Inventory.Application.Common.Abstracts
     {
         Task CreatePurchaseAsync(Purchase purchase, List<InventoryMovement> inventoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory);
         Task<PaginatedList<Purchase>> GetPurchasesAsync(DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId, int page, int pageSize);
-        Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<Guid> productIds);
+        Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds);
     }
 }

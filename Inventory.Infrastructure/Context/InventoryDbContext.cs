@@ -27,10 +27,10 @@ namespace Inventory.Infrastructure.Context
         {
             modelBuilder.Entity<Product>()
                 .Property(p => p.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
+                .UseIdentityByDefaultColumn();
             modelBuilder.Entity<Category>()
                 .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
+                .UseIdentityByDefaultColumn();
             modelBuilder.Entity<Branch>()
                 .Property(c => c.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");

@@ -61,7 +61,7 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersWarehouseProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
         }
-        public async Task<WarehouseProduct?> GetWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, Guid productId)
+        public async Task<WarehouseProduct?> GetWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, int productId)
         {
             return await context.WarehouseProducts
                 .Include(wp => wp.Product)

@@ -4,7 +4,7 @@ namespace Inventory.Domain.Entities.Builders
     {
         private readonly Product _product = new();
 
-        public ProductBuilder WithId(Guid id)
+        public ProductBuilder WithId(int id)
         {
             _product.Id = id;
             return this;
@@ -28,7 +28,7 @@ namespace Inventory.Domain.Entities.Builders
             return this;
         }
 
-        public ProductBuilder WithCategoryId(Guid categoryId)
+        public ProductBuilder WithCategoryId(int categoryId)
         {
             _product.CategoryId = categoryId;
             return this;

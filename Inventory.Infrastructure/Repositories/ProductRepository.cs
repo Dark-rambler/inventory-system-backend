@@ -21,7 +21,7 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public async Task<Product?> GetProductByIdAsync(Guid id)
+        public async Task<Product?> GetProductByIdAsync(int id)
         {
             return await context.Products
                 .Include(p => p.Category)

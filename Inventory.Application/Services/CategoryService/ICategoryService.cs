@@ -6,9 +6,9 @@ namespace Inventory.Application.Services.CategoryService
     public interface ICategoryService
     {
         Task<PaginatedList<CategoryResponse>> GetCategoriesAsync(CategorySearchParams searchParams);
-        Task<CategoryResponse> GetCategoryByIdAsync(Guid id);
+        Task<CategoryResponse> GetCategoryByIdAsync(int id);
         Task<CategoryResponse> CreateCategoryAsync(CategoryRequest request);
-        Task UpdateCategoryAsync(Guid id, CategoryRequest request);
-        Task DeleteCategoryAsync(Guid id);
+        Task UpdateCategoryAsync(int id, CategoryRequest request);
+        Task DeleteCategoryAsync(int id);
     }
 }

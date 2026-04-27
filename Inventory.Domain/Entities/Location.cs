@@ -7,6 +7,7 @@
         public string City { get; set; } = string.Empty;
         public double CoordinateX { get; set; }
         public double CoordinateY { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public Warehouse Warehouse { get; set; } = default!;
         public Branch Branch { get; set; } = default!;
     }

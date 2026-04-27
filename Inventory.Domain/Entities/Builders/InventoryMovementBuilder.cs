@@ -18,7 +18,7 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
-        public InventoryMovementBuilder WithProductId(Guid productId)
+        public InventoryMovementBuilder WithProductId(int productId)
         {
             _inventoryMovement.ProductId = productId;
             return this;

@@ -34,7 +34,7 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
-        public SaleDetailBuilder WithProductId(Guid productId)
+        public SaleDetailBuilder WithProductId(int productId)
         {
             _saleDetail.ProductId = productId;
             return this;

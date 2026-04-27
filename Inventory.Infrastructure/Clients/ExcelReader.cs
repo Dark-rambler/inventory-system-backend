@@ -30,7 +30,7 @@ namespace Inventory.Infrastructure.Clients
                     .WithName(name)
                     .WithDescription(description)
                     .WithCode(code)
-                    .WithCategoryId(Guid.TryParse(categoryIdStr, out var catId) ? catId : Guid.Empty)
+                    .WithCategoryId(int.TryParse(categoryIdStr, out var catId) ? catId : 0)
                     .WithMeasureId(int.TryParse(measureIdStr, out var mId) ? mId : null)
                     .Build();
 

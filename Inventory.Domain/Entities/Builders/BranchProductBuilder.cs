@@ -8,7 +8,7 @@
             _branchProduct.BranchId = branchId;
             return this;
         }
-        public BranchProductBuilder WithProductId(Guid productId)
+        public BranchProductBuilder WithProductId(int productId)
         {
             _branchProduct.ProductId = productId;
             return this;

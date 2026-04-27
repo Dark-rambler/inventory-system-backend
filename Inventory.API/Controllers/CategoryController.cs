@@ -21,7 +21,7 @@ namespace Inventory.API.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCategoryByIdAsync(Guid id)
+        public async Task<IActionResult> GetCategoryByIdAsync(int id)
         {
             return Ok(await service.GetCategoryByIdAsync(id));
         }
@@ -37,7 +37,7 @@ namespace Inventory.API.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateCategoryAsync(Guid id, [FromBody] CategoryRequest request)
+        public async Task<IActionResult> UpdateCategoryAsync(int id, [FromBody] CategoryRequest request)
         {
             await service.UpdateCategoryAsync(id, request);
             return NoContent();
@@ -46,7 +46,7 @@ namespace Inventory.API.Controllers
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteCategoryAsync(Guid id)
+        public async Task<IActionResult> DeleteCategoryAsync(int id)
         {
             await service.DeleteCategoryAsync(id);
             return NoContent();

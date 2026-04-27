@@ -33,7 +33,7 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<Guid> productIds)
+        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds)
         {
             return await context.BranchProducts
                 .Include(bp => bp.Product)

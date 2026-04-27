@@ -62,7 +62,7 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<Guid> productIds)
+        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds)
         {
             return await context.BranchProducts
                 .Include(bp => bp.Product)
@@ -95,7 +95,7 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public async Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, Guid productId)
+        public async Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId)
         {
             return await context.BranchProducts
                 .Include(bp => bp.Product)

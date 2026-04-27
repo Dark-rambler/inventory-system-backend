@@ -21,7 +21,7 @@ namespace Inventory.Application.Services.ProductService
             );
         }
 
-        public async Task<ProductResponse> GetProductByIdAsync(Guid id)
+        public async Task<ProductResponse> GetProductByIdAsync(int id)
         {
             return mapper.Map<ProductResponse>(await FindProductById(id));
         }
@@ -32,18 +32,18 @@ namespace Inventory.Application.Services.ProductService
             return mapper.Map<ProductResponse>(await repository.CreateProductAsync(mapper.Map<Product>(request)));
         }
 
-        public async Task UpdateProductAsync(Guid id, ProductRequest request)
+        public async Task UpdateProductAsync(int id, ProductRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
             await repository.UpdateProductAsync(mapper.Map(request, await FindProductById(id)));
         }
 
-        private async Task<Product> FindProductById(Guid id)
+        private async Task<Product> FindProductById(int id)
         {
             return await repository.GetProductByIdAsync(id) ?? throw new KeyNotFoundException($"Product with id {id} doesn't exist");
         }
 
-        public async Task DeleteProductAsync(Guid id)
+        public async Task DeleteProductAsync(int id)
         {
             await repository.DeleteProductAsync(await FindProductById(id));
         }

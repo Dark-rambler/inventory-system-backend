@@ -19,7 +19,7 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public Task<Category?> GetCategoryByIdAsync(Guid id)
+        public Task<Category?> GetCategoryByIdAsync(int id)
         {
             return context.Categories
                 .FirstOrDefaultAsync(c => c.Id == id);

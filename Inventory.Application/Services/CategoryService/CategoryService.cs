@@ -20,7 +20,7 @@ namespace Inventory.Application.Services.CategoryService
             );
         }
 
-        public async Task<CategoryResponse> GetCategoryByIdAsync(Guid id)
+        public async Task<CategoryResponse> GetCategoryByIdAsync(int id)
         {
             return mapper.Map<CategoryResponse>(await FindCategoryById(id));
         }
@@ -31,18 +31,18 @@ namespace Inventory.Application.Services.CategoryService
             return mapper.Map<CategoryResponse>(await repository.CreateCategoryAsync(mapper.Map<Category>(request)));
         }
 
-        public async Task UpdateCategoryAsync(Guid id, CategoryRequest request)
+        public async Task UpdateCategoryAsync(int id, CategoryRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
             await repository.UpdateCategoryAsync(mapper.Map(request, await FindCategoryById(id)));
         }
 
-        public async Task DeleteCategoryAsync(Guid id)
+        public async Task DeleteCategoryAsync(int id)
         {
             await repository.DeleteCategoryAsync(await FindCategoryById(id));
         }
 
-        private async Task<Category> FindCategoryById(Guid id)
+        private async Task<Category> FindCategoryById(int id)
         {
             return await repository.GetCategoryByIdAsync(id) ?? throw new KeyNotFoundException($"Category with id {id} doesn't exist");
         }

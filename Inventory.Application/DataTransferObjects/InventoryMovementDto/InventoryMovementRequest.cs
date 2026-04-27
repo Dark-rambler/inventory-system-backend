@@ -4,7 +4,7 @@ namespace Inventory.Application.DataTransferObjects.InventoryMovementDto
 {
     public class InventoryMovementRequest
     {
-        public Guid ProductId { get; set; }
+        public int ProductId { get; set; }
         public int Quantity { get; set; }
         public EnumMovementType Type { get; set; }
         public Guid? FromWarehouseId { get; set; }

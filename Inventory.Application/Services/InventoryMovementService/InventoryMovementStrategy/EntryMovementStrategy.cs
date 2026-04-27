@@ -28,12 +28,12 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
             return await repository.CreateInventoryMovementAsync(inventoryMovement, toWarehouse, toBranch, auditHistory);
         }
 
-        private async Task<WarehouseProduct> FindWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, Guid productId)
+        private async Task<WarehouseProduct> FindWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, int productId)
         {
             return await warehouseRepository.GetWarehouseProductByWarehouseIdAndProductIdAsync(warehouseId, productId) ?? throw new InvalidOperationException("Warehouse product not found.");
         }
 
-        private async Task<BranchProduct> FindBranchProductByBranchIdAndProductIdAsync(Guid? branchId, Guid productId)
+        private async Task<BranchProduct> FindBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId)
         {
             return await branchRepository.GetBranchProductByBranchIdAndProductIdAsync(branchId, productId) ?? throw new InvalidOperationException("Branch product not found.");
         }

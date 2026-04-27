@@ -7,7 +7,7 @@
         public double Price { get; set; }
         public Guid SaleId { get; set; }
         public Sale Sale { get; set; } = default!;
-        public Guid ProductId { get; set; }
+        public int ProductId { get; set; }
         public Product Product { get; set; } = default!;
     }
 }
