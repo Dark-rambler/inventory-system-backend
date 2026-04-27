@@ -10,6 +10,6 @@ namespace Inventory.Domain.Entities
         public string City { get; set; } = string.Empty;
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; } = null;
     }
 }
