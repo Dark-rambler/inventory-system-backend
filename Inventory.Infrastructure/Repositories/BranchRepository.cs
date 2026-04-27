@@ -107,5 +107,14 @@ namespace Inventory.Infrastructure.Repositories
             context.BranchProducts.AddRange(branchProducts);
             await context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Product>> GetProductsDoesntExistByBranchAsync(Guid id)
+        {
+            return await context.Products
+                .Include(p => p.Measure)
+                .Include(p => p.Category)
+                .Where(p => !context.BranchProducts.Any(bp => bp.BranchId == id && bp.ProductId == p.Id))
+                .ToListAsync();
+        }
     }
 }

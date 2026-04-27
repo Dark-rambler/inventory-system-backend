@@ -69,5 +69,11 @@ namespace Inventory.Application.Services.WarehouseService
             ).ToList();
             await repository.AddProductsToWarehouseAsync(warehouseProducts);
         }
+
+        public async Task<IEnumerable<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id)
+        {
+            var products = await repository.GetProductsDoesntExistByWarehouseAsync(id);
+            return mapper.Map<IEnumerable<ProductResponse>>(products);
+        }
     }
 }

@@ -78,7 +78,7 @@ namespace Inventory.Application.Services.BranchService
                 StockUtil.ReduceStock(product, sd.Quantity);
                 return product;
             }).ToList();
-            
+
             var sale = new SaleBuilder()
                 .WithBranchId(id)
                 .WithSellerId(user)
@@ -135,6 +135,12 @@ namespace Inventory.Application.Services.BranchService
                 .Build()
             ).ToList();
             await repository.AddProductsToBranchAsync(branchProducts);
+        }
+
+        public async Task<IEnumerable<ProductResponse>> GetProductsDoesntExistByBranchAsync(Guid id)
+        {
+            var products = await repository.GetProductsDoesntExistByBranchAsync(id);
+            return mapper.Map<IEnumerable<ProductResponse>>(products);
         }
     }
 }

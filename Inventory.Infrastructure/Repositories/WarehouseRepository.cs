@@ -73,5 +73,14 @@ namespace Inventory.Infrastructure.Repositories
             context.AddRange(warehouseProducts);
             await context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Product>> GetProductsDoesntExistByWarehouseAsync(Guid id)
+        {
+            return await context.Products
+                .Where(p => !context.WarehouseProducts.Any(wp => wp.ProductId == p.Id && wp.WarehouseId == id))
+                .Include(p => p.Measure)
+                .Include(p => p.Category)
+                .ToListAsync();
+        }
     }
 }
