@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.AuditHistoryDto;
 using Inventory.Application.Services.AuditHistoryService;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Inventory.API.Controllers
     public class AuditHistoryController(IAuditHistoryService service) : ControllerBase
     {
         [HttpGet]
-        [ProducesResponseType(typeof(AuditHistoryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<AuditHistoryResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAuditHistoriesAsync([FromQuery] AuditHistorySearchParams searchParams)
         {
             return Ok(await service.GetAuditHistoriesAsync(searchParams));

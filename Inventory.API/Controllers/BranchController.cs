@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
@@ -14,7 +15,7 @@ namespace Inventory.API.Controllers
     public class BranchController(IBranchService service) : ControllerBase
     {
         [HttpGet]
-        [ProducesResponseType(typeof(BranchResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<BranchResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBranchesAsync([FromQuery] BranchSearchParams searchParams)
         {
             return Ok(await service.GetBranchesAsync(searchParams));
@@ -54,14 +55,14 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products")]
-        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<ProductResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductsByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
             return Ok(await service.GetProductsByBranchAsync(id, searchParams));
         }
 
         [HttpPost("{id}/products")]
-        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> AddProductToBranchAsync(Guid id, [FromBody] IEnumerable<BranchProductRequest> request)
         {
             await service.AddProductsToBranchAsync(id, request);
@@ -69,6 +70,7 @@ namespace Inventory.API.Controllers
         }
 
         [HttpPost("{id}/sales")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CreateSaleAsync(Guid id, [FromBody] SaleRequest request)
         {
             Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); //temporal
@@ -77,6 +79,7 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/sales")]
+        [ProducesResponseType(typeof(PaginatedList<SaleResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSalesByBranchAsync(Guid id, [FromQuery] SaleSearchParams searchParams)
         {
             return Ok(await service.GetSalesByBranchAsync(id, searchParams));

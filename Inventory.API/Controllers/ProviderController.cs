@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.ProviderDto;
 using Inventory.Application.Services.ProviderService;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(ProviderResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<ProviderResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProvidersAsync([FromQuery] ProviderSearchParams searchParams)
         {
             return Ok(await service.GetProvidersAsync(searchParams));

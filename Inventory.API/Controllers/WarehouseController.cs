@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
@@ -14,7 +15,7 @@ namespace Inventory.API.Controllers
     public class WarehouseController(IWarehouseService service) : ControllerBase
     {
         [HttpGet]
-        [ProducesResponseType(typeof(WarehouseResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<WarehouseResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehousesAsync([FromQuery] WarehouseSearchParams searchParams)
         {
             return Ok(await service.GetWarehousesAsync(searchParams));
@@ -54,7 +55,7 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products")]
-        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<ProductResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
             return Ok(await service.GetProductsByWarehousesAsync(id, searchParams));

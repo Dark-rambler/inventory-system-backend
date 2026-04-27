@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.Services.CategoryService;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +13,7 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<CategoryResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCategoriesAsync([FromQuery] CategorySearchParams searchParams)
         {
             return Ok(await service.GetCategoriesAsync(searchParams));

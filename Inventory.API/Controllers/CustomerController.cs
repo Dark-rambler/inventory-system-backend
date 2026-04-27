@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.CustomerDto;
 using Inventory.Application.Services.CustomerService;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Inventory.API.Controllers
     public class CustomerController(ICustomerService service) : ControllerBase
     {
         [HttpGet]
-        [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<CustomerResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerSearchParams searchParams)
         {
             return Ok(await service.GetCustomersAsync(searchParams));

@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.UserDto;
 using Inventory.Application.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Inventory.API.Controllers
     public class UserController(IUserService service) : ControllerBase
     {
         [HttpGet]
-        [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<UserResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUsersAsync([FromQuery] UserSearchParams searchParams)
         {
             return Ok(await service.GetUsersAsync(searchParams));

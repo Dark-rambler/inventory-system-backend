@@ -1,3 +1,4 @@
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.PurchaseDto;
 using Inventory.Application.Services.PurchaseService;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,7 @@ namespace Inventory.API.Controllers
     public class PurchaseController(IPurchaseService service) : ControllerBase
     {
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CreatePurchaseAsync([FromBody] PurchaseRequest request)
         {
             Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
@@ -20,7 +22,7 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PurchaseResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<PurchaseResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPurchasesAsync([FromQuery] PurchaseSearchParams searchParams)
         {
             return Ok(await service.GetPurchasesAsync(searchParams));
