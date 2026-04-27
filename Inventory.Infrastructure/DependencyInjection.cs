@@ -90,6 +90,7 @@ public static class DependencyInjection
         services.AddScoped<IProviderRepository, ProviderRepository>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IExcelReader, ExcelReader>();
         return services;
     }
 }

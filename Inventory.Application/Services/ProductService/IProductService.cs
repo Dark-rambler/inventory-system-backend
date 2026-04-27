@@ -10,5 +10,7 @@ namespace Inventory.Application.Services.ProductService
         Task<ProductResponse> CreateProductAsync(ProductRequest request);
         Task UpdateProductAsync(Guid id, ProductRequest request);
         Task DeleteProductAsync(Guid id);
+        Task BulkUploadProductsAsync(Stream fileStream);
+        Stream GetBulkUploadTemplate();
     }
 }

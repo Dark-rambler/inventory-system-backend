@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Abstracts.Clients;
 using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Services.ProductService
 {
-    public class ProductService(IProductRepository repository, IMapper mapper, IValidator<ProductRequest> validator) : IProductService
+    public class ProductService(IProductRepository repository, IExcelReader excelReader, IMapper mapper, IValidator<ProductRequest> validator) : IProductService
     {
         public async Task<PaginatedList<ProductResponse>> GetProductsAsync(ProductSearchParams searchParams)
         {
@@ -45,6 +46,17 @@ namespace Inventory.Application.Services.ProductService
         public async Task DeleteProductAsync(Guid id)
         {
             await repository.DeleteProductAsync(await FindProductById(id));
+        }
+
+        public async Task BulkUploadProductsAsync(Stream fileStream)
+        {
+            var products = await excelReader.ReadProductsAsync(fileStream);
+            await repository.BulkCreateAsync(products);
+        }
+
+        public Stream GetBulkUploadTemplate()
+        {
+            return excelReader.GenerateProductsTemplate();
         }
     }
 }

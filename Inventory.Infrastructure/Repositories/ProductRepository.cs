@@ -52,5 +52,12 @@ namespace Inventory.Infrastructure.Repositories
             product.IsDeleted = true;
             await context.SaveChangesAsync();
         }
+
+        public async Task<List<Product>> BulkCreateAsync(List<Product> products)
+        {
+            context.Products.AddRange(products);
+            await context.SaveChangesAsync();
+            return products;
+        }
     }
 }
