@@ -33,6 +33,18 @@ namespace Inventory.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Businesss",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Businesss", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -343,11 +355,18 @@ namespace Inventory.Infrastructure.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Total = table.Column<double>(type: "double precision", nullable: false),
                     ProviderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BuyerId = table.Column<Guid>(type: "uuid", nullable: false)
+                    BuyerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uuid", nullable: true),
+                    WarehouseId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Purchases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Purchases_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Purchases_Providers_ProviderId",
                         column: x => x.ProviderId,
@@ -360,6 +379,11 @@ namespace Inventory.Infrastructure.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Purchases_Warehouses_WarehouseId",
+                        column: x => x.WarehouseId,
+                        principalTable: "Warehouses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -514,6 +538,11 @@ namespace Inventory.Infrastructure.Migrations
                 column: "PurchaseId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Purchases_BranchId",
+                table: "Purchases",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Purchases_BuyerId",
                 table: "Purchases",
                 column: "BuyerId");
@@ -522,6 +551,11 @@ namespace Inventory.Infrastructure.Migrations
                 name: "IX_Purchases_ProviderId",
                 table: "Purchases",
                 column: "ProviderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Purchases_WarehouseId",
+                table: "Purchases",
+                column: "WarehouseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleDetails_ProductId",
@@ -575,6 +609,9 @@ namespace Inventory.Infrastructure.Migrations
                 name: "BranchProducts");
 
             migrationBuilder.DropTable(
+                name: "Businesss");
+
+            migrationBuilder.DropTable(
                 name: "InventoryMovements");
 
             migrationBuilder.DropTable(
@@ -596,10 +633,10 @@ namespace Inventory.Infrastructure.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Warehouses");
+                name: "Providers");
 
             migrationBuilder.DropTable(
-                name: "Providers");
+                name: "Warehouses");
 
             migrationBuilder.DropTable(
                 name: "Branches");

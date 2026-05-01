@@ -19,19 +19,39 @@ namespace Inventory.Application.Services.PurchaseService
             await validator.ValidateAndThrowAsync(request);
 
             var productIds = request.PurchaseDetails.Select(pd => pd.ProductId).ToList();
-            var products = await repository.GetBranchProductsByProductIdsAsync(request.BranchId, productIds);
-            var createdAt = DateTime.UtcNow;
-
-            var productsUpdated = request.PurchaseDetails.Select(pd =>
+            IEnumerable<BranchProduct>? productsByBranch = null;
+            List<BranchProduct>? productsByBranchUpdated = null;
+            if (request.BranchId.HasValue)
             {
-                var product = products.First(p => p.ProductId == pd.ProductId);
-                StockUtil.AddStock(product, pd.Quantity);
-                return product;
-            }).ToList();
+                productsByBranch = await repository.GetBranchProductsByProductIdsAsync(request.BranchId.Value, productIds);
+
+                productsByBranchUpdated = [.. request.PurchaseDetails.Select(pd =>
+                {
+                    var product = productsByBranch.First(p => p.ProductId == pd.ProductId);
+                    StockUtil.AddStock(product, pd.Quantity);
+                    return product;
+                })];
+            }
+            IEnumerable<WarehouseProduct>? productsByWarehouse = null;
+            List<WarehouseProduct>? productsByWarehouseUpdated = null;
+            if (request.WarehouseId.HasValue)
+            {
+                productsByWarehouse = await repository.GetWarehouseProductsByProductIdsAsync(request.WarehouseId.Value, productIds);
+
+                productsByWarehouseUpdated = [.. request.PurchaseDetails.Select(pd =>
+                {
+                    var product = productsByWarehouse.First(p => p.ProductId == pd.ProductId);
+                    StockUtil.AddStock(product, pd.Quantity);
+                    return product;
+                })];
+            }
+            var createdAt = DateTime.UtcNow;
 
             var purchase = new PurchaseBuilder()
                 .WithProviderId(request.ProviderId)
                 .WithBuyerId(user)
+                .WithBranchId(request.BranchId)
+                .WithWarehouseId(request.WarehouseId)
                 .WithDate(createdAt)
                 .WithTotal(request.PurchaseDetails.Sum(pd => pd.Quantity * pd.Price))
                 .WithPurchaseDetails([.. request.PurchaseDetails.Select(pd => new PurchaseDetailBuilder()
@@ -47,6 +67,7 @@ namespace Inventory.Application.Services.PurchaseService
                 .WithType(EnumMovementType.Entry)
                 .WithIsPurchase(true)
                 .WithToBranchId(request.BranchId)
+                .WithToWarehouseId(request.WarehouseId)
                 .WithUserId(user)
                 .WithCreatedAt(createdAt)
                 .Build()
@@ -60,7 +81,7 @@ namespace Inventory.Application.Services.PurchaseService
                 .WithDescription($"Purchase created with total {purchase.Total}")
                 .Build();
 
-            await repository.CreatePurchaseAsync(purchase, inventoryMovements, productsUpdated, auditHistory);
+            await repository.CreatePurchaseAsync(purchase, inventoryMovements, productsByBranchUpdated, productsByWarehouseUpdated, auditHistory);
         }
 
         public async Task<PaginatedList<PurchaseResponse>> GetPurchasesAsync(PurchaseSearchParams searchParams)

@@ -10,6 +10,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Business> Businesss { get; set; }
         public DbSet<BranchProduct> BranchProducts { get; set; }
         public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
         public DbSet<InventoryMovement> InventoryMovements { get; set; }

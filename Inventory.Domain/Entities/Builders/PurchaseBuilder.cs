@@ -46,6 +46,30 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public PurchaseBuilder WithBranchId(Guid? branchId)
+        {
+            _purchase.BranchId = branchId;
+            return this;
+        }
+
+        public PurchaseBuilder WithBranch(Branch? branch)
+        {
+            _purchase.Branch = branch;
+            return this;
+        }
+
+        public PurchaseBuilder WithWarehouseId(Guid? warehouseId)
+        {
+            _purchase.WarehouseId = warehouseId;
+            return this;
+        }
+
+        public PurchaseBuilder WithWarehouse(Warehouse? warehouse)
+        {
+            _purchase.Warehouse = warehouse;
+            return this;
+        }
+
         public PurchaseBuilder WithPurchaseDetails(ICollection<PurchaseDetail> purchaseDetails)
         {
             _purchase.PurchaseDetails = purchaseDetails;

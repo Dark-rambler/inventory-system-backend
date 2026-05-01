@@ -9,11 +9,18 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class PurchaseRepository(InventoryDbContext context) : IPurchaseRepository
     {
-        public async Task CreatePurchaseAsync(Purchase purchase, List<InventoryMovement> inventoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory)
+        public async Task CreatePurchaseAsync(Purchase purchase, List<InventoryMovement> inventoryMovements, List<BranchProduct>? productsByBranchUpdated, List<WarehouseProduct>? productsByWarehouseUpdated, AuditHistory auditHistory)
         {
             context.Purchases.Add(purchase);
             context.InventoryMovements.AddRange(inventoryMovements);
-            context.BranchProducts.UpdateRange(productsUpdated);
+            if (productsByBranchUpdated != null)
+            {
+                context.BranchProducts.UpdateRange(productsByBranchUpdated);
+            }
+            if (productsByWarehouseUpdated != null)
+            {
+                context.WarehouseProducts.UpdateRange(productsByWarehouseUpdated);
+            }
             context.AuditHistories.Add(auditHistory);
             await context.SaveChangesAsync();
         }
@@ -37,6 +44,14 @@ namespace Inventory.Infrastructure.Repositories
             return await context.BranchProducts
                 .Include(bp => bp.Product)
                 .Where(bp => bp.BranchId == branchId && productIds.Contains(bp.ProductId))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProductsByProductIdsAsync(Guid warehouseId, IEnumerable<int> productIds)
+        {
+            return await context.WarehouseProducts
+                .Include(wp => wp.Product)
+                .Where(wp => wp.WarehouseId == warehouseId && productIds.Contains(wp.ProductId))
                 .ToListAsync();
         }
     }
