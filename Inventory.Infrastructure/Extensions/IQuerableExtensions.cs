@@ -141,10 +141,6 @@ namespace Inventory.Infrastructure.Extensions
                 {
                     source = source.Where(s => s.ProviderId == providerId.Value);
                 }
-                if(branchId.HasValue)
-                {
-                    source = source.Where(s => s.BranchId == branchId.Value);
-                }
                 return source;
             }
         }

@@ -9,7 +9,7 @@ namespace Inventory.Application.Profiles
         public WarehouseProductProfile()
         {
             CreateMap<WarehouseProduct, WarehouseProductResponse>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Product.Id))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ProductId))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product.Name))
             .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Product.Code))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))

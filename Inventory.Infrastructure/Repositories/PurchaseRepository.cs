@@ -24,7 +24,6 @@ namespace Inventory.Infrastructure.Repositories
                 .AsQueryable();
             return await query
                 .Include(p => p.Provider)
-                .Include(p => p.Branch)
                 .Include(p => p.Buyer)
                 .Include(p => p.PurchaseDetails)
                     .ThenInclude(pd => pd.Product)

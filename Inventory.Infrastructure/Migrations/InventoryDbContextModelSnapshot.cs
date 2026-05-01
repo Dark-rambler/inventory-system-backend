@@ -368,9 +368,6 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("BuyerId")
                         .HasColumnType("uuid");
 
@@ -384,8 +381,6 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
 
                     b.HasIndex("BuyerId");
 
@@ -693,12 +688,6 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.Purchase", b =>
                 {
-                    b.HasOne("Inventory.Domain.Entities.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Inventory.Domain.Entities.User", "Buyer")
                         .WithMany()
                         .HasForeignKey("BuyerId")
@@ -710,8 +699,6 @@ namespace Inventory.Infrastructure.Migrations
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Branch");
 
                     b.Navigation("Buyer");
 

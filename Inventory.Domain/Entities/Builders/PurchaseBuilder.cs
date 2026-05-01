@@ -34,18 +34,6 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
-        public PurchaseBuilder WithBranchId(Guid branchId)
-        {
-            _purchase.BranchId = branchId;
-            return this;
-        }
-
-        public PurchaseBuilder WithBranch(Branch branch)
-        {
-            _purchase.Branch = branch;
-            return this;
-        }
-
         public PurchaseBuilder WithBuyerId(Guid buyerId)
         {
             _purchase.BuyerId = buyerId;

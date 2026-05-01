@@ -1,36 +1,29 @@
-# AGENTS.md - Inventory System Backend
-
-## Architecture
-
-Clean Architecture with 4 projects:
-- `Inventory.Domain` - Entities, enums, builders (no external deps)
-- `Inventory.Application` - Services, DTOs, validators, interfaces
-- `Inventory.Infrastructure` - EF Core, repositories, JWT service
-- `Inventory.API` - Controllers, middleware, entry point
-
-Entry point: `Inventory.API/Program.cs`
+# AGENTS.md
 
 ## Build & Run
+- Build: `dotnet build`
+- Run API: `dotnet run --project Inventory.API`
+- Run tests: `dotnet test`
 
-```bash
-dotnet build
-dotnet run --project Inventory.API
-```
+## Architecture
+- **Domain**: Entities and business rules
+- **Application**: Services, DTOs, validators (depends on Domain)
+- **Infrastructure**: EF Core, PostgreSQL, JWT auth (depends on Application + Domain)
+- **API**: Controllers, middleware (depends on Application + Infrastructure)
 
-Database is seeded automatically on startup via `DatabaseSeeder.SeedAsync()`. Requires PostgreSQL at `localhost:5432`.
+## Database
+- PostgreSQL at `localhost:5432` (configured in `appsettings.json`)
+- Credentials: `postgres` / `mysecretpassword`
+- Auto-seeded on startup via `DatabaseSeeder.SeedAsync`
 
-## Dependencies
-
-- .NET 10.0 (preview)
-- EF Core 10.0.5 + Npgsql
+## Tech Stack
+- .NET 10.0
+- Entity Framework Core 10.0.7 with Npgsql
+- xUnit + Moq for testing
 - JWT Bearer authentication
-- AutoMapper, FluentValidation
-- Swashbuckle (Swagger)
-
-## API Access
-
-Swagger UI at `/swagger` in Development mode. Uses Bearer token auth.
+- FluentValidation for validation
+- Swagger available at `/swagger` in development
 
 ## Testing
-
-No test project found in this repo.
+- Tests in `Inventory.Tests/` using xUnit
+- Run specific test: `dotnet test --filter "FullyQualifiedName~ProviderServiceTests"`

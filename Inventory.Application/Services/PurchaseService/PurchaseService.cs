@@ -30,7 +30,6 @@ namespace Inventory.Application.Services.PurchaseService
             }).ToList();
 
             var purchase = new PurchaseBuilder()
-                .WithBranchId(request.BranchId)
                 .WithProviderId(request.ProviderId)
                 .WithBuyerId(user)
                 .WithDate(createdAt)

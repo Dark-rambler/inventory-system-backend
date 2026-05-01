@@ -12,6 +12,9 @@ namespace Inventory.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(
+                @"CREATE EXTENSION IF NOT EXISTS ""uuid-ossp"";"
+            );
             migrationBuilder.CreateTable(
                 name: "AuditHistories",
                 columns: table => new
@@ -340,18 +343,11 @@ namespace Inventory.Infrastructure.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Total = table.Column<double>(type: "double precision", nullable: false),
                     ProviderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BranchId = table.Column<Guid>(type: "uuid", nullable: false),
                     BuyerId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Purchases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Purchases_Branches_BranchId",
-                        column: x => x.BranchId,
-                        principalTable: "Branches",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Purchases_Providers_ProviderId",
                         column: x => x.ProviderId,
@@ -516,11 +512,6 @@ namespace Inventory.Infrastructure.Migrations
                 name: "IX_PurchaseDetails_PurchaseId",
                 table: "PurchaseDetails",
                 column: "PurchaseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Purchases_BranchId",
-                table: "Purchases",
-                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Purchases_BuyerId",
