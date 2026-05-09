@@ -45,5 +45,13 @@ namespace Inventory.Infrastructure.Repositories
             customer.IsDeleted = true;
             await context.SaveChangesAsync();
         }
-    }
+
+        public async Task<Customer> UpdateCustomerAsync(Guid id, Customer customer)
+        {
+            customer.UpdatedAt = DateTime.UtcNow;
+            context.Customers.Update(customer);
+            await context.SaveChangesAsync();
+            return customer;
+        }
+    }    
 }
