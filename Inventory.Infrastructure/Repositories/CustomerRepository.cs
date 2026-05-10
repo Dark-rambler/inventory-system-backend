@@ -46,12 +46,11 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<Customer> UpdateCustomerAsync(Guid id, Customer customer)
+        public async Task UpdateCustomerAsync(Guid id, Customer customer)
         {
             customer.UpdatedAt = DateTime.UtcNow;
             context.Customers.Update(customer);
             await context.SaveChangesAsync();
-            return customer;
         }
     }    
 }
