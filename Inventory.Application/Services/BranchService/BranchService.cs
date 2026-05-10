@@ -57,6 +57,7 @@ namespace Inventory.Application.Services.BranchService
 
         public async Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams)
         {
+            await FindBranchById(id);
             var paginatedBranchProducts = await repository.GetProductsByBranchAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<BranchProductResponse>(
                 mapper.Map<List<BranchProductResponse>>(paginatedBranchProducts.Items),
@@ -68,6 +69,7 @@ namespace Inventory.Application.Services.BranchService
 
         public async Task CreateSaleAsync(Guid id, SaleRequest request, Guid user)
         {
+            await FindBranchById(id);
             var productIds = request.SaleDetails.Select(sd => sd.ProductId).ToList();
             var products = await repository.GetBranchProductsByProductIdsAsync(id, productIds);
             var createdAt = DateTime.UtcNow;
@@ -115,6 +117,7 @@ namespace Inventory.Application.Services.BranchService
 
         public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams)
         {
+            await FindBranchById(id);
             var paginatedSales = await repository.GetSalesByBranchAsync(id, searchParams.FromDate, searchParams.ToDate, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<SaleResponse>(
                 mapper.Map<List<SaleResponse>>(paginatedSales.Items),
@@ -126,6 +129,7 @@ namespace Inventory.Application.Services.BranchService
 
         public async Task AddProductsToBranchAsync(Guid id, IEnumerable<BranchProductRequest> request)
         {
+            await FindBranchById(id);
             var branchProducts = request.Select(r => new BranchProductBuilder()
                 .WithBranchId(id)
                 .WithProductId(r.ProductId)
@@ -137,10 +141,16 @@ namespace Inventory.Application.Services.BranchService
             await repository.AddProductsToBranchAsync(branchProducts);
         }
 
-        public async Task<IEnumerable<ProductResponse>> GetProductsDoesntExistByBranchAsync(Guid id)
+        public async Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByBranchAsync(Guid id, ProductSearchParams searchParams)
         {
-            var products = await repository.GetProductsDoesntExistByBranchAsync(id);
-            return mapper.Map<IEnumerable<ProductResponse>>(products);
+            await FindBranchById(id);
+            var products = await repository.GetProductsDoesntExistByBranchAsync(id, searchParams.Page, searchParams.PageSize);
+            return new PaginatedList<ProductResponse>(
+                mapper.Map<List<ProductResponse>>(products.Items),
+                products.TotalCount,
+                products.PageIndex,
+                products.PageSize
+            );
         }
     }
 }

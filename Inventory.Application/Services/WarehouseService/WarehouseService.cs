@@ -49,6 +49,7 @@ namespace Inventory.Application.Services.WarehouseService
 
         public async Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams)
         {
+            await FindWarehouseById(id);
             var warehouseProducts = await repository.GetProductsByWarehousesAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<WarehouseProductResponse>(
                 mapper.Map<List<WarehouseProductResponse>>(warehouseProducts.Items),
@@ -60,6 +61,7 @@ namespace Inventory.Application.Services.WarehouseService
 
         public async Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request)
         {
+            await FindWarehouseById(id);
             var warehouseProducts = request.Select(r => new WarehouseProductBuilder()
                 .WithWarehouseId(id)
                 .WithProductId(r.ProductId)
@@ -70,10 +72,11 @@ namespace Inventory.Application.Services.WarehouseService
             await repository.AddProductsToWarehouseAsync(warehouseProducts);
         }
 
-        public async Task<IEnumerable<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id)
+        public async Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams)
         {
-            var products = await repository.GetProductsDoesntExistByWarehouseAsync(id);
-            return mapper.Map<IEnumerable<ProductResponse>>(products);
+            await FindWarehouseById(id);
+            var products = await repository.GetProductsDoesntExistByWarehouseAsync(id, searchParams.Page, searchParams.PageSize);
+            return mapper.Map<PaginatedList<ProductResponse>>(products);
         }
     }
 }

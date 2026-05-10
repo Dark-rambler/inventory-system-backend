@@ -14,6 +14,6 @@ namespace Inventory.Application.Services.WarehouseService
         Task DeleteWarehouseAsync(Guid id);
         Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams);
         Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request);
-        Task<IEnumerable<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id);
+        Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams);
     }
 }

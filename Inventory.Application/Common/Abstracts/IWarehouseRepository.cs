@@ -13,6 +13,6 @@ namespace Inventory.Application.Common.Abstracts
         Task<PaginatedList<WarehouseProduct>> GetProductsByWarehousesAsync(Guid id, string? name, int page, int pageSize);
         Task<WarehouseProduct?> GetWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, int productId);
         Task AddProductsToWarehouseAsync(List<WarehouseProduct> warehouseProducts);
-        Task<IEnumerable<Product>> GetProductsDoesntExistByWarehouseAsync(Guid id);
+        Task<PaginatedList<Product>> GetProductsDoesntExistByWarehouseAsync(Guid id, int page, int pageSize);
     }
 }

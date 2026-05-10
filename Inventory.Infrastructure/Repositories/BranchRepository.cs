@@ -108,13 +108,15 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetProductsDoesntExistByBranchAsync(Guid id)
+        public async Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize)
         {
-            return await context.Products
+            var query = context.Products
+                .AsQueryable(); ;
+            return await query
+                .Where(p => !context.BranchProducts.Any(bp => bp.BranchId == id && bp.ProductId == p.Id))
                 .Include(p => p.Measure)
                 .Include(p => p.Category)
-                .Where(p => !context.BranchProducts.Any(bp => bp.BranchId == id && bp.ProductId == p.Id))
-                .ToListAsync();
+                .ToPaginatedListAsync(page, pageSize);
         }
     }
 }

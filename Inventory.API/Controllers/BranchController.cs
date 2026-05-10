@@ -86,9 +86,9 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products/doesnt-exist")]
-        public async Task<IActionResult> GetProductsDoesntExistByBranchAsync(Guid id)
+        public async Task<IActionResult> GetProductsDoesntExistByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
         {
-            return Ok(await service.GetProductsDoesntExistByBranchAsync(id));
+            return Ok(await service.GetProductsDoesntExistByBranchAsync(id, searchParams));
         }
     }
 }

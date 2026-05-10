@@ -70,9 +70,9 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products/doesnt-exist")]
-        public async Task<IActionResult> GetProductsDoesntExistByWarehouseAsync(Guid id)
+        public async Task<IActionResult> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams)
         {
-            return Ok(await service.GetProductsDoesntExistByWarehouseAsync(id));
+            return Ok(await service.GetProductsDoesntExistByWarehouseAsync(id, searchParams));
         }
     }
 }
