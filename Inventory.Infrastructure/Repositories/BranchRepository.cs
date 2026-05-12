@@ -49,6 +49,12 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task DeleteProductAsync(Branch branch,int productId)
+        {
+            context.BranchProducts.RemoveRange(context.BranchProducts.Where(bp => bp.BranchId == branch.Id && bp.ProductId == productId));
+            await context.SaveChangesAsync();
+        }
+
         public async Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize)
         {
             var query = context.BranchProducts
