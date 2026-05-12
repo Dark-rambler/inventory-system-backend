@@ -1,9 +1,8 @@
-﻿using Inventory.Application.Common.Pagination;
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.InventoryMovementDto;
 using Inventory.Application.Services.InventoryMovementService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Inventory.API.Controllers
 {
@@ -21,10 +20,9 @@ namespace Inventory.API.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(InventoryMovementResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateInventoryMovementAsync(InventoryMovementRequest request)
+        public async Task<IActionResult> CreateInventoryMovementAsync([FromBody] InventoryMovementRequest request)
         {
-            Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            return Ok(await service.CreateInventoryMovementAsync(request, user));
+            return Ok(await service.CreateInventoryMovementAsync(request));
         }
     }
 }

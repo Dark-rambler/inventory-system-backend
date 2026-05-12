@@ -2,7 +2,6 @@ using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
-using Inventory.Application.Common.Utils;
 using Inventory.Application.DataTransferObjects.PurchaseDto;
 using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
@@ -12,40 +11,41 @@ namespace Inventory.Application.Services.PurchaseService
     public class PurchaseService(
         IPurchaseRepository repository,
         IMapper mapper,
-        IValidator<PurchaseRequest> validator) : IPurchaseService
+        IValidator<PurchaseRequest> validator,
+        ICurrentUserService currentUserService,
+        IDateTimeProvider dateTimeProvider) : IPurchaseService
     {
-        public async Task CreatePurchaseAsync(PurchaseRequest request, Guid user)
+        public async Task CreatePurchaseAsync(PurchaseRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
+            var user = currentUserService.GetCurrentUserId();
 
             var productIds = request.PurchaseDetails.Select(pd => pd.ProductId).ToList();
-            IEnumerable<BranchProduct>? productsByBranch = null;
             List<BranchProduct>? productsByBranchUpdated = null;
             if (request.BranchId.HasValue)
             {
-                productsByBranch = await repository.GetBranchProductsByProductIdsAsync(request.BranchId.Value, productIds);
-
+                var productsByBranch = await repository.GetBranchProductsByProductIdsAsync(request.BranchId.Value, productIds);
                 productsByBranchUpdated = [.. request.PurchaseDetails.Select(pd =>
                 {
                     var product = productsByBranch.First(p => p.ProductId == pd.ProductId);
-                    StockUtil.AddStock(product, pd.Quantity);
+                    product.AddStock(pd.Quantity);
                     return product;
                 })];
             }
-            IEnumerable<WarehouseProduct>? productsByWarehouse = null;
+
             List<WarehouseProduct>? productsByWarehouseUpdated = null;
             if (request.WarehouseId.HasValue)
             {
-                productsByWarehouse = await repository.GetWarehouseProductsByProductIdsAsync(request.WarehouseId.Value, productIds);
-
+                var productsByWarehouse = await repository.GetWarehouseProductsByProductIdsAsync(request.WarehouseId.Value, productIds);
                 productsByWarehouseUpdated = [.. request.PurchaseDetails.Select(pd =>
                 {
                     var product = productsByWarehouse.First(p => p.ProductId == pd.ProductId);
-                    StockUtil.AddStock(product, pd.Quantity);
+                    product.AddStock(pd.Quantity);
                     return product;
                 })];
             }
-            var createdAt = DateTime.UtcNow;
+
+            var createdAt = dateTimeProvider.UtcNow;
 
             var purchase = new PurchaseBuilder()
                 .WithProviderId(request.ProviderId)

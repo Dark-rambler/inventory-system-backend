@@ -1,4 +1,4 @@
-﻿namespace Inventory.Domain.Entities
+namespace Inventory.Domain.Entities
 {
     public class BranchProduct
     {
@@ -9,5 +9,14 @@
         public double Price { get; set; }
         public int Stock { get; set; }
         public int LowStock { get; set; }
+
+        public void AddStock(int quantity) => Stock += quantity;
+
+        public void ReduceStock(int quantity)
+        {
+            if (Stock < quantity)
+                throw new InvalidOperationException("Insufficient stock for the exit movement.");
+            Stock -= quantity;
+        }
     }
 }

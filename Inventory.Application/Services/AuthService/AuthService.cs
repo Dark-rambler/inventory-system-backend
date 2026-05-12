@@ -6,7 +6,8 @@ namespace Inventory.Application.Services.AuthService
 {
     public class AuthService(
         IUserRepository repository,
-        IJwtService jwtService
+        IJwtService jwtService,
+        IPasswordHasher passwordHasher
     ) : IAuthService
     {
         public async Task<LoginResponse> LoginAsync(LoginRequest request)
@@ -14,10 +15,8 @@ namespace Inventory.Application.Services.AuthService
             var user = await repository.GetUserByUserNameAsync(request.UserName)
                 ?? throw new UnauthorizedAccessException("Invalid credentials");
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
-            {
+            if (!passwordHasher.Verify(request.Password, user.Password))
                 throw new UnauthorizedAccessException("Invalid credentials");
-            }
 
             var token = jwtService.GenerateJwtToken(user);
             return new LoginResponse(token);

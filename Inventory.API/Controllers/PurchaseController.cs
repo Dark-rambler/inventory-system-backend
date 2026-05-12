@@ -3,7 +3,6 @@ using Inventory.Application.DataTransferObjects.PurchaseDto;
 using Inventory.Application.Services.PurchaseService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Inventory.API.Controllers
 {
@@ -16,8 +15,7 @@ namespace Inventory.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CreatePurchaseAsync([FromBody] PurchaseRequest request)
         {
-            Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            await service.CreatePurchaseAsync(request, user);
+            await service.CreatePurchaseAsync(request);
             return NoContent();
         }
 

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public class BranchRepository(InventoryDbContext context) : IBranchRepository
+    public class BranchRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IBranchRepository
     {
         public async Task<PaginatedList<Branch>> GetBranchesAsync(string? name, int page, int pageSize)
         {
@@ -38,7 +38,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task UpdateBranchAsync(Branch branch)
         {
-            branch.UpdatedAt = DateTime.UtcNow;
+            branch.UpdatedAt = dateTimeProvider.UtcNow;
             context.Branches.Update(branch);
             await context.SaveChangesAsync();
         }

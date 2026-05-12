@@ -7,9 +7,12 @@ using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Services.UserService
 {
-    public class UserService(IUserRepository repository, IMapper mapper, IValidator<UserRequest> validator) : IUserService
+    public class UserService(
+        IUserRepository repository,
+        IMapper mapper,
+        IValidator<UserRequest> validator,
+        IPasswordHasher passwordHasher) : IUserService
     {
-
         public async Task<PaginatedList<UserResponse>> GetUsersAsync(UserSearchParams searchParams)
         {
             var paginatedUsers = await repository.GetUsersAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
@@ -30,7 +33,7 @@ namespace Inventory.Application.Services.UserService
         {
             await validator.ValidateAndThrowAsync(request);
             var user = mapper.Map<User>(request);
-            user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            user.Password = passwordHasher.Hash(request.Password);
             return mapper.Map<UserResponse>(await repository.CreateUserAsync(user));
         }
 

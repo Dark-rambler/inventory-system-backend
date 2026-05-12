@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public class UserRepository(InventoryDbContext context) : IUserRepository
+    public class UserRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IUserRepository
     {
         public async Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize)
         {
@@ -45,7 +45,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task UpdateUserAsync(User user)
         {
-            user.UpdatedAt = DateTime.UtcNow;
+            user.UpdatedAt = dateTimeProvider.UtcNow;
             context.Users.Update(user);
             await context.SaveChangesAsync();
         }

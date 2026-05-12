@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public class ProductRepository(InventoryDbContext context) : IProductRepository
+    public class ProductRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IProductRepository
     {
         public async Task<PaginatedList<Product>> GetProductsAsync(string? name, int page, int pageSize)
         {
@@ -39,10 +39,9 @@ namespace Inventory.Infrastructure.Repositories
                 .FirstAsync(p => p.Id == product.Id);
         }
 
-
         public async Task UpdateProductAsync(Product product)
         {
-            product.UpdatedAt = DateTime.UtcNow;
+            product.UpdatedAt = dateTimeProvider.UtcNow;
             context.Products.Update(product);
             await context.SaveChangesAsync();
         }

@@ -5,7 +5,6 @@ using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Inventory.API.Controllers
 {
@@ -73,8 +72,7 @@ namespace Inventory.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> CreateSaleAsync(Guid id, [FromBody] SaleRequest request)
         {
-            Guid user = Guid.Parse(HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value); //temporal
-            await service.CreateSaleAsync(id, request, user);
+            await service.CreateSaleAsync(id, request);
             return NoContent();
         }
 

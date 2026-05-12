@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public class WarehouseRepository(InventoryDbContext context) : IWarehouseRepository
+    public class WarehouseRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IWarehouseRepository
     {
         public async Task<PaginatedList<Warehouse>> GetWarehousesAsync(string? name, int page, int pageSize)
         {
@@ -38,7 +38,7 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task UpdateWarehouseAsync(Warehouse warehouse)
         {
-            warehouse.UpdatedAt = DateTime.UtcNow;
+            warehouse.UpdatedAt = dateTimeProvider.UtcNow;
             context.Warehouses.Update(warehouse);
             await context.SaveChangesAsync();
         }

@@ -2,7 +2,6 @@ using AutoMapper;
 using FluentValidation;
 using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
-using Inventory.Application.Common.Utils;
 using Inventory.Application.DataTransferObjects.BranchDto;
 using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
@@ -15,7 +14,9 @@ namespace Inventory.Application.Services.BranchService
     public class BranchService(
         IBranchRepository repository,
         IMapper mapper,
-        IValidator<BranchRequest> validator) : IBranchService
+        IValidator<BranchRequest> validator,
+        ICurrentUserService currentUserService,
+        IDateTimeProvider dateTimeProvider) : IBranchService
     {
         public async Task<PaginatedList<BranchResponse>> GetBranchesAsync(BranchSearchParams searchParams)
         {
@@ -67,17 +68,18 @@ namespace Inventory.Application.Services.BranchService
             );
         }
 
-        public async Task CreateSaleAsync(Guid id, SaleRequest request, Guid user)
+        public async Task CreateSaleAsync(Guid id, SaleRequest request)
         {
             await FindBranchById(id);
+            var user = currentUserService.GetCurrentUserId();
             var productIds = request.SaleDetails.Select(sd => sd.ProductId).ToList();
             var products = await repository.GetBranchProductsByProductIdsAsync(id, productIds);
-            var createdAt = DateTime.UtcNow;
+            var createdAt = dateTimeProvider.UtcNow;
 
             var productsUpdated = request.SaleDetails.Select(sd =>
             {
                 var product = products.First(p => p.BranchId == id && p.ProductId == sd.ProductId);
-                StockUtil.ReduceStock(product, sd.Quantity);
+                product.ReduceStock(sd.Quantity);
                 return product;
             }).ToList();
 
@@ -94,7 +96,7 @@ namespace Inventory.Application.Services.BranchService
                     .Build())])
                 .Build();
 
-            var intentoryMovements = request.SaleDetails.Select(sd => new InventoryMovementBuilder()
+            var inventoryMovements = request.SaleDetails.Select(sd => new InventoryMovementBuilder()
                 .WithProductId(sd.ProductId)
                 .WithQuantity(sd.Quantity)
                 .WithType(EnumMovementType.Exit)
@@ -112,7 +114,8 @@ namespace Inventory.Application.Services.BranchService
                 .WithCreatedAt(createdAt)
                 .WithDescription($"Sale created with total {sale.Total}")
                 .Build();
-            await repository.CreateSaleAsync(sale, intentoryMovements, productsUpdated, auditHistory);
+
+            await repository.CreateSaleAsync(sale, inventoryMovements, productsUpdated, auditHistory);
         }
 
         public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams)

@@ -4,6 +4,7 @@ using Inventory.Infrastructure.Clients;
 using Inventory.Infrastructure.Configurations;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Repositories;
+using Inventory.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +92,10 @@ public static class DependencyInjection
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IExcelReader, ExcelReader>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         return services;
     }
 }
