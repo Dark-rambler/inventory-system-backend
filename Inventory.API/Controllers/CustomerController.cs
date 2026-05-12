@@ -24,5 +24,13 @@ namespace Inventory.API.Controllers
         {
             return Ok(await service.CreateCustomerAsync(request));
         }
+        
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateCustomerAsync(Guid id, [FromBody] CustomerRequest request) {
+            await service.UpdateCustomerAsync(id, request);
+            return NoContent();
+        }
+
     }
 }

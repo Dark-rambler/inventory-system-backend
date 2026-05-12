@@ -33,17 +33,17 @@ namespace Inventory.Infrastructure.Repositories
                 .FirstAsync(c => c.Id == customer.Id);
         }
 
-        public async Task UpdateCustomerAsync(Customer customer)
-        {
-            customer.UpdatedAt = DateTime.Now;
-            context.Customers.Update(customer);
-            await context.SaveChangesAsync();
-        }
-
         public async Task DeleteCustomerAsync(Customer customer)
         {
             customer.IsDeleted = true;
             await context.SaveChangesAsync();
         }
-    }
+
+        public async Task UpdateCustomerAsync(Customer customer)
+        {
+            customer.UpdatedAt = DateTime.UtcNow;
+            context.Customers.Update(customer);
+            await context.SaveChangesAsync();
+        }
+    }    
 }
