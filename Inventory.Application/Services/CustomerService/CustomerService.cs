@@ -33,7 +33,7 @@ namespace Inventory.Application.Services.CustomerService
         public async Task UpdateCustomerAsync(Guid id, CustomerRequest request)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateCustomerAsync(id, mapper.Map<Customer>(request));
+            await repository.UpdateCustomerAsync(mapper.Map(request, await FindCustomerById(id)));
         }
 
 
