@@ -94,61 +94,6 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Branch>()
                 .HasIndex(b => b.Id)
                 .IsUnique();
-            modelBuilder.Entity<Category>()
-                .HasOne(c => c.Business)
-                .WithMany(b => b.Categories)
-                .HasForeignKey(c => c.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Product>()
-                .HasOne(p => p.Business)
-                .WithMany(b => b.Products)
-                .HasForeignKey(p => p.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Warehouse>()
-                .HasOne(w => w.Business)
-                .WithMany(b => b.Warehouses)
-                .HasForeignKey(w => w.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Branch>()
-                .HasOne(br => br.Business)
-                .WithMany(b => b.Branches)
-                .HasForeignKey(br => br.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Business)
-                .WithMany(b => b.Users)
-                .HasForeignKey(u => u.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Customer>()
-                .HasOne(c => c.Business)
-                .WithMany(b => b.Customers)
-                .HasForeignKey(c => c.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Purchase>()
-                .HasOne(p => p.Business)
-                .WithMany(b => b.Purchases)
-                .HasForeignKey(p => p.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Sale>()
-                .HasOne(s => s.Business)
-                .WithMany(b => b.Sales)
-                .HasForeignKey(s => s.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<AuditHistory>()
-                .HasOne(a => a.Business)
-                .WithMany(b => b.AuditHistories)
-                .HasForeignKey(a => a.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Provider>()
-                .HasOne(p => p.Business)
-                .WithMany(b => b.Providers)
-                .HasForeignKey(p => p.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<InventoryMovement>()
-                .HasOne(im => im.Business)
-                .WithMany(b => b.InventoryMovements)
-                .HasForeignKey(im => im.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict);
             base.OnModelCreating(modelBuilder);
         }
     }
