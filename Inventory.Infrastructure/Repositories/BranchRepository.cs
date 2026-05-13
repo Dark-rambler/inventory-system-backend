@@ -9,23 +9,19 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class BranchRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IBranchRepository
     {
-        public async Task<PaginatedList<Branch>> GetBranchesAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Branches
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<Branch>> GetBranchesAsync(Guid businessId, string? name, int page, int pageSize) =>
+            await context.Branches
+                .AsQueryable()
+                .Where(b => b.BusinessId == businessId)
                 .Include(b => b.Location)
                 .OrderByDescending(b => b.CreatedAt)
                 .FiltersBranch(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task<Branch?> GetBranchByIdAsync(Guid id)
-        {
-            return await context.Branches
+        public async Task<Branch?> GetBranchByIdAsync(Guid id) =>
+            await context.Branches
                 .Include(w => w.Location)
                 .FirstOrDefaultAsync(b => b.Id == id);
-        }
 
         public async Task<Branch> CreateBranchAsync(Branch branch)
         {
@@ -49,26 +45,21 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize)
-        {
-            var query = context.BranchProducts
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize) =>
+            await context.BranchProducts
+                .AsQueryable()
                 .Where(bp => bp.BranchId == id)
                 .Include(bp => bp.Product)
                 .ThenInclude(bp => bp.Category)
                 .OrderByDescending(bp => bp.Product.CreatedAt)
                 .FiltersBranchProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds)
-        {
-            return await context.BranchProducts
+        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds) =>
+             await context.BranchProducts
                 .Include(bp => bp.Product)
                 .Where(bp => bp.BranchId == branchId && productIds.Contains(bp.ProductId))
                 .ToListAsync();
-        }
 
         public async Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory)
         {
@@ -79,11 +70,10 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize)
-        {
-            var query = context.Sales
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid businessId, Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize) =>
+            await context.Sales
+                .AsQueryable()
+                .Where(s => s.BusinessId == businessId)
                 .Include(s => s.Branch)
                 .Include(s => s.Seller)
                 .Include(s => s.Customer)
@@ -93,14 +83,11 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersSales(fromDate, toDate)
                 .OrderByDescending(b => b.Date)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId)
-        {
-            return await context.BranchProducts
+        public async Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId) =>
+             await context.BranchProducts
                 .Include(bp => bp.Product)
                 .FirstOrDefaultAsync(bp => branchId.HasValue && bp.BranchId == branchId && bp.ProductId == productId);
-        }
 
         public async Task AddProductsToBranchAsync(IEnumerable<BranchProduct> branchProducts)
         {
@@ -108,15 +95,12 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize)
-        {
-            var query = context.Products
-                .AsQueryable(); ;
-            return await query
+        public async Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize) =>
+            await context.Products
+                .AsQueryable()
                 .Where(p => !context.BranchProducts.Any(bp => bp.BranchId == id && bp.ProductId == p.Id))
                 .Include(p => p.Measure)
                 .Include(p => p.Category)
                 .ToPaginatedListAsync(page, pageSize);
-        }
     }
 }

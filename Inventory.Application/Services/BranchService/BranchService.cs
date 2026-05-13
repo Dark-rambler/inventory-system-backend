@@ -18,9 +18,9 @@ namespace Inventory.Application.Services.BranchService
         ICurrentUserService currentUserService,
         IDateTimeProvider dateTimeProvider) : IBranchService
     {
-        public async Task<PaginatedList<BranchResponse>> GetBranchesAsync(BranchSearchParams searchParams)
+        public async Task<PaginatedList<BranchResponse>> GetBranchesAsync(BranchSearchParams searchParams, Guid businessId)
         {
-            var paginatedBranches = await repository.GetBranchesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var paginatedBranches = await repository.GetBranchesAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<BranchResponse>(
                 mapper.Map<List<BranchResponse>>(paginatedBranches.Items),
                 paginatedBranches.TotalCount,
@@ -34,10 +34,12 @@ namespace Inventory.Application.Services.BranchService
             return mapper.Map<BranchResponse>(await FindBranchById(id));
         }
 
-        public async Task<BranchResponse> CreateBranchAsync(BranchRequest request)
+        public async Task<BranchResponse> CreateBranchAsync(BranchRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            return mapper.Map<BranchResponse>(await repository.CreateBranchAsync(mapper.Map<Branch>(request)));
+            var branch = mapper.Map<Branch>(request);
+            branch.BusinessId = businessId;
+            return mapper.Map<BranchResponse>(await repository.CreateBranchAsync(branch));
         }
 
         public async Task UpdateBranchAsync(Guid id, BranchRequest request)
@@ -68,7 +70,7 @@ namespace Inventory.Application.Services.BranchService
             );
         }
 
-        public async Task CreateSaleAsync(Guid id, SaleRequest request)
+        public async Task CreateSaleAsync(Guid id, SaleRequest request, Guid businessId)
         {
             await FindBranchById(id);
             var user = currentUserService.GetCurrentUserId();
@@ -84,6 +86,7 @@ namespace Inventory.Application.Services.BranchService
             }).ToList();
 
             var sale = new SaleBuilder()
+                .WithBusinessId(businessId)
                 .WithBranchId(id)
                 .WithSellerId(user)
                 .WithCustomerId(request.CustomerId)
@@ -111,6 +114,7 @@ namespace Inventory.Application.Services.BranchService
                 .WithAction(EnumAction.Create)
                 .WithEntity(EnumEntity.Sale)
                 .WithUserId(user)
+                .WithBusinessId(businessId)
                 .WithCreatedAt(createdAt)
                 .WithDescription($"Sale created with total {sale.Total}")
                 .Build();
@@ -118,10 +122,10 @@ namespace Inventory.Application.Services.BranchService
             await repository.CreateSaleAsync(sale, inventoryMovements, productsUpdated, auditHistory);
         }
 
-        public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams)
+        public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams, Guid businessId)
         {
             await FindBranchById(id);
-            var paginatedSales = await repository.GetSalesByBranchAsync(id, searchParams.FromDate, searchParams.ToDate, searchParams.Page, searchParams.PageSize);
+            var paginatedSales = await repository.GetSalesByBranchAsync(businessId, id, searchParams.FromDate, searchParams.ToDate, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<SaleResponse>(
                 mapper.Map<List<SaleResponse>>(paginatedSales.Items),
                 paginatedSales.TotalCount,

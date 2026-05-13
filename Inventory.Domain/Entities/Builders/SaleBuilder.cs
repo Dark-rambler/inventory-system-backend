@@ -10,6 +10,12 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public SaleBuilder WithBusinessId(Guid businessId)
+        {
+            _sale.BusinessId = businessId;
+            return this;
+        }
+
         public SaleBuilder WithDate(DateTime date)
         {
             _sale.Date = date;

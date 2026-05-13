@@ -16,7 +16,7 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
     {
         public EnumMovementType Type => EnumMovementType.Exit;
 
-        public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request)
+        public async Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, Guid businessId)
         {
             var user = currentUserService.GetCurrentUserId();
             var fromWarehouse = request.FromWarehouseId.HasValue ? await FindWarehouseProductAsync(request.FromWarehouseId, request.ProductId) : null;
@@ -25,8 +25,10 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
             fromBranch?.ReduceStock(request.Quantity);
             var inventoryMovement = mapper.Map<InventoryMovement>(request);
             inventoryMovement.UserId = user;
+            inventoryMovement.BusinessId = businessId;
             var auditHistory = new AuditHistoryBuilder()
                 .WithUserId(user)
+                .WithBusinessId(businessId)
                 .WithAction(EnumAction.Create)
                 .WithEntity(EnumEntity.InventoryMovement)
                 .WithCreatedAt(dateTimeProvider.UtcNow)

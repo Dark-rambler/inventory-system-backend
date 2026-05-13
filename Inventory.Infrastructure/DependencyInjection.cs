@@ -78,6 +78,7 @@ public static class DependencyInjection
                 }
             };
         });
+        services.AddScoped<IBusinessRepository, BusinessRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
@@ -94,6 +95,7 @@ public static class DependencyInjection
         services.AddScoped<IExcelReader, ExcelReader>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IBusinessContextService, BusinessContextService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         return services;

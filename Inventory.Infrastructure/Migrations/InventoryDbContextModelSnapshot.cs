@@ -33,6 +33,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<int>("Action")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -48,6 +51,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("AuditHistories");
                 });
 
@@ -57,6 +62,9 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -76,6 +84,8 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -130,6 +140,9 @@ namespace Inventory.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -149,6 +162,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("Categories");
                 });
 
@@ -158,6 +173,9 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -182,6 +200,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("Customers");
                 });
 
@@ -191,6 +211,9 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -230,6 +253,8 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
 
                     b.HasIndex("FromBranchId");
 
@@ -299,6 +324,9 @@ namespace Inventory.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
@@ -328,6 +356,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("MeasureId");
@@ -341,6 +371,9 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -373,6 +406,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.ToTable("Providers");
                 });
 
@@ -384,6 +419,9 @@ namespace Inventory.Infrastructure.Migrations
                         .HasDefaultValueSql("uuid_generate_v4()");
 
                     b.Property<Guid?>("BranchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BusinessId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("BuyerId")
@@ -404,6 +442,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("BusinessId");
 
                     b.HasIndex("BuyerId");
 
@@ -474,6 +514,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<Guid>("BranchId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("CustomerId")
                         .HasColumnType("uuid");
 
@@ -493,6 +536,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("BusinessId");
 
                     b.HasIndex("CustomerId");
 
@@ -537,6 +582,9 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
 
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -567,6 +615,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessId");
+
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
@@ -578,6 +628,9 @@ namespace Inventory.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -593,6 +646,8 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusinessId");
 
                     b.HasIndex("Id")
                         .IsUnique();
@@ -621,13 +676,32 @@ namespace Inventory.Infrastructure.Migrations
                     b.ToTable("WarehouseProducts");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Entities.AuditHistory", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("AuditHistories")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Entities.Branch", b =>
                 {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Branches")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Location", "Location")
                         .WithOne("Branch")
                         .HasForeignKey("Inventory.Domain.Entities.Branch", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Business");
 
                     b.Navigation("Location");
                 });
@@ -651,8 +725,36 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Categories")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Customer", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Customers")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Entities.InventoryMovement", b =>
                 {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("InventoryMovements")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Branch", "FromBranch")
                         .WithMany()
                         .HasForeignKey("FromBranchId");
@@ -681,6 +783,8 @@ namespace Inventory.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Business");
+
                     b.Navigation("FromBranch");
 
                     b.Navigation("FromWarehouse");
@@ -696,6 +800,12 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.Product", b =>
                 {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Products")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
@@ -706,9 +816,22 @@ namespace Inventory.Infrastructure.Migrations
                         .WithMany("Products")
                         .HasForeignKey("MeasureId");
 
+                    b.Navigation("Business");
+
                     b.Navigation("Category");
 
                     b.Navigation("Measure");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Provider", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Providers")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Purchase", b =>
@@ -716,6 +839,12 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasOne("Inventory.Domain.Entities.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("BranchId");
+
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Purchases")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Inventory.Domain.Entities.User", "Buyer")
                         .WithMany()
@@ -734,6 +863,8 @@ namespace Inventory.Infrastructure.Migrations
                         .HasForeignKey("WarehouseId");
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Business");
 
                     b.Navigation("Buyer");
 
@@ -769,6 +900,12 @@ namespace Inventory.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Sales")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Customer", "Customer")
                         .WithMany("Sales")
                         .HasForeignKey("CustomerId");
@@ -780,6 +917,8 @@ namespace Inventory.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("Business");
 
                     b.Navigation("Customer");
 
@@ -807,22 +946,38 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.User", b =>
                 {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Users")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Business");
+
                     b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Warehouse", b =>
                 {
+                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
+                        .WithMany("Warehouses")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Entities.Location", "Location")
                         .WithOne("Warehouse")
                         .HasForeignKey("Inventory.Domain.Entities.Warehouse", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Business");
 
                     b.Navigation("Location");
                 });
@@ -849,6 +1004,31 @@ namespace Inventory.Infrastructure.Migrations
             modelBuilder.Entity("Inventory.Domain.Entities.Branch", b =>
                 {
                     b.Navigation("BranchProducts");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.Business", b =>
+                {
+                    b.Navigation("AuditHistories");
+
+                    b.Navigation("Branches");
+
+                    b.Navigation("Categories");
+
+                    b.Navigation("Customers");
+
+                    b.Navigation("InventoryMovements");
+
+                    b.Navigation("Products");
+
+                    b.Navigation("Providers");
+
+                    b.Navigation("Purchases");
+
+                    b.Navigation("Sales");
+
+                    b.Navigation("Users");
+
+                    b.Navigation("Warehouses");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>

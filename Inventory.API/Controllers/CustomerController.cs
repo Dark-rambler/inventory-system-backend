@@ -3,6 +3,7 @@ using Inventory.Application.DataTransferObjects.CustomerDto;
 using Inventory.Application.Services.CustomerService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -13,16 +14,16 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<CustomerResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerSearchParams searchParams)
+        public async Task<IActionResult> GetCustomersAsync([FromQuery] CustomerSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetCustomersAsync(searchParams));
+            return Ok(await service.GetCustomersAsync(searchParams, businessId));
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerRequest request)
+        public async Task<IActionResult> CreateCustomerAsync([FromBody] CustomerRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateCustomerAsync(request));
+            return Ok(await service.CreateCustomerAsync(request, businessId));
         }
         
         [HttpPut("{id}")]

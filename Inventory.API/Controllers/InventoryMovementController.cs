@@ -3,6 +3,7 @@ using Inventory.Application.DataTransferObjects.InventoryMovementDto;
 using Inventory.Application.Services.InventoryMovementService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -13,16 +14,16 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<InventoryMovementResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetInventoryMovementsAsync([FromQuery] InventoryMovementSearchParams searchParams)
+        public async Task<IActionResult> GetInventoryMovementsAsync([FromQuery] InventoryMovementSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetInventoryMovementsAsync(searchParams));
+            return Ok(await service.GetInventoryMovementsAsync(searchParams, businessId));
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(InventoryMovementResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateInventoryMovementAsync([FromBody] InventoryMovementRequest request)
+        public async Task<IActionResult> CreateInventoryMovementAsync([FromBody] InventoryMovementRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateInventoryMovementAsync(request));
+            return Ok(await service.CreateInventoryMovementAsync(request, businessId));
         }
     }
 }

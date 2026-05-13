@@ -9,30 +9,24 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class UserRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IUserRepository
     {
-        public async Task<PaginatedList<User>> GetUsersAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Users
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<User>> GetUsersAsync(Guid businessId, string? name, int page, int pageSize) =>
+            await context.Users
+                .AsQueryable()
+                .Where(u => u.BusinessId == businessId)
                 .Include(u => u.Role)
                 .OrderByDescending(u => u.CreatedAt)
                 .FiltersUser(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task<User?> GetUserByIdAsync(Guid id)
-        {
-            return await context.Users
+        public async Task<User?> GetUserByIdAsync(Guid id) =>
+            await context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
-        }
 
-        public async Task<User?> GetUserByUserNameAsync(string userName)
-        {
-            return await context.Users
+        public async Task<User?> GetUserByUserNameAsync(string userName) =>
+            await context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserName == userName && !u.IsDeleted);
-        }
 
         public async Task<User> CreateUserAsync(User user)
         {

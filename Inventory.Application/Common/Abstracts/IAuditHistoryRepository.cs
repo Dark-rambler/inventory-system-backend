@@ -6,6 +6,6 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface IAuditHistoryRepository
     {
-        Task<PaginatedList<AuditHistory>> GetAuditHistoriesAsync(DateTime? fromDate, DateTime? toDate, int page, int pageSize);
+        Task<PaginatedList<AuditHistory>> GetAuditHistoriesAsync(Guid businessId, DateTime? fromDate, DateTime? toDate, int page, int pageSize);
     }
 }

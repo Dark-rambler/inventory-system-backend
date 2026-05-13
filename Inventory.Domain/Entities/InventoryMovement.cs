@@ -22,6 +22,8 @@ namespace Inventory.Domain.Entities
         public Branch? ToBranch { get; set; }
         public Guid UserId { get; set; }
         public User User { get; set; } = default!;
+        public Guid BusinessId { get; set; }
+        public Business Business { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

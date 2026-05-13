@@ -5,6 +5,6 @@ namespace Inventory.Application.Services.AuditHistoryService
 {
     public interface IAuditHistoryService
     {
-        Task<PaginatedList<AuditHistoryResponse>> GetAuditHistoriesAsync(AuditHistorySearchParams searchParams);
+        Task<PaginatedList<AuditHistoryResponse>> GetAuditHistoriesAsync(AuditHistorySearchParams searchParams, Guid businessId);
     }
 }

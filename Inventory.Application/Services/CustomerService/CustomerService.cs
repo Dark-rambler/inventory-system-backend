@@ -9,9 +9,9 @@ namespace Inventory.Application.Services.CustomerService
 {
     public class CustomerService(ICustomerRepository repository, IMapper mapper, IValidator<CustomerRequest> validator) : ICustomerService
     {
-        public async Task<PaginatedList<CustomerResponse>> GetCustomersAsync(CustomerSearchParams searchParams)
+        public async Task<PaginatedList<CustomerResponse>> GetCustomersAsync(CustomerSearchParams searchParams, Guid businessId)
         {
-            var customers = await repository.GetCustomersAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var customers = await repository.GetCustomersAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<CustomerResponse>(
                 mapper.Map<List<CustomerResponse>>(customers.Items),
                 customers.TotalCount,
@@ -25,10 +25,12 @@ namespace Inventory.Application.Services.CustomerService
             return mapper.Map<CustomerResponse>(await FindCustomerById(id));
         }
 
-        public async Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request)
+        public async Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            return mapper.Map<CustomerResponse>(await repository.CreateCustomerAsync(mapper.Map<Customer>(request)));
+            var customer = mapper.Map<Customer>(request);
+            customer.BusinessId = businessId;
+            return mapper.Map<CustomerResponse>(await repository.CreateCustomerAsync(customer));
         }
         public async Task UpdateCustomerAsync(Guid id, CustomerRequest request)
         {

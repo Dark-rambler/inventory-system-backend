@@ -15,7 +15,7 @@ namespace Inventory.Application.Services.PurchaseService
         ICurrentUserService currentUserService,
         IDateTimeProvider dateTimeProvider) : IPurchaseService
     {
-        public async Task CreatePurchaseAsync(PurchaseRequest request)
+        public async Task CreatePurchaseAsync(PurchaseRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
             var user = currentUserService.GetCurrentUserId();
@@ -48,6 +48,7 @@ namespace Inventory.Application.Services.PurchaseService
             var createdAt = dateTimeProvider.UtcNow;
 
             var purchase = new PurchaseBuilder()
+                .WithBusinessId(businessId)
                 .WithProviderId(request.ProviderId)
                 .WithBuyerId(user)
                 .WithBranchId(request.BranchId)
@@ -77,6 +78,7 @@ namespace Inventory.Application.Services.PurchaseService
                 .WithAction(EnumAction.Create)
                 .WithEntity(EnumEntity.Purchase)
                 .WithUserId(user)
+                .WithBusinessId(businessId)
                 .WithCreatedAt(createdAt)
                 .WithDescription($"Purchase created with total {purchase.Total}")
                 .Build();
@@ -84,9 +86,10 @@ namespace Inventory.Application.Services.PurchaseService
             await repository.CreatePurchaseAsync(purchase, inventoryMovements, productsByBranchUpdated, productsByWarehouseUpdated, auditHistory);
         }
 
-        public async Task<PaginatedList<PurchaseResponse>> GetPurchasesAsync(PurchaseSearchParams searchParams)
+        public async Task<PaginatedList<PurchaseResponse>> GetPurchasesAsync(PurchaseSearchParams searchParams, Guid businessId)
         {
             var paginatedPurchases = await repository.GetPurchasesAsync(
+                businessId,
                 searchParams.FromDate,
                 searchParams.ToDate,
                 searchParams.ProviderId,

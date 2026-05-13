@@ -5,7 +5,7 @@ namespace Inventory.Application.Services.InventoryMovementService
 {
     public interface IInventoryMovementService
     {
-        Task<InventoryMovementResponse> CreateInventoryMovementAsync(InventoryMovementRequest request);
-        Task<PaginatedList<InventoryMovementResponse>> GetInventoryMovementsAsync(InventoryMovementSearchParams searchParams);
+        Task<InventoryMovementResponse> CreateInventoryMovementAsync(InventoryMovementRequest request, Guid businessId);
+        Task<PaginatedList<InventoryMovementResponse>> GetInventoryMovementsAsync(InventoryMovementSearchParams searchParams, Guid businessId);
     }
 }

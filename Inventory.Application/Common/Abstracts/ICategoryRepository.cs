@@ -5,7 +5,7 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface ICategoryRepository
     {
-        Task<PaginatedList<Category>> GetCategoriesAsync(string? name, int page, int pageSize);
+        Task<PaginatedList<Category>> GetCategoriesAsync(Guid businessId, string? name, int page, int pageSize);
         Task<Category?> GetCategoryByIdAsync(int id);
         Task<Category> CreateCategoryAsync(Category category);
         Task UpdateCategoryAsync(Category category);

@@ -7,8 +7,12 @@ public static class DatabaseSeeder
 {
     public static async Task SeedAsync(InventoryDbContext context)
     {
-        if (await context.Categories.AnyAsync())
+        if (await context.Businesss.AnyAsync())
             return;
+
+        var business = new Business { Name = "Inventory Co." };
+        context.Businesss.Add(business);
+        await context.SaveChangesAsync();
 
         var locations = new List<Location>
         {
@@ -38,38 +42,38 @@ public static class DatabaseSeeder
 
         var categories = new List<Category>
         {
-            new() { Name = "Electronics", Description = "Electronic devices and accessories" },
-            new() { Name = "Clothing", Description = "Apparel and fashion items" },
-            new() { Name = "Home & Garden", Description = "Home improvement and garden supplies" },
-            new() { Name = "Sports", Description = "Sports equipment and gear" }
+            new() { Name = "Electronics", Description = "Electronic devices and accessories", BusinessId = business.Id },
+            new() { Name = "Clothing", Description = "Apparel and fashion items", BusinessId = business.Id },
+            new() { Name = "Home & Garden", Description = "Home improvement and garden supplies", BusinessId = business.Id },
+            new() { Name = "Sports", Description = "Sports equipment and gear", BusinessId = business.Id }
         };
         context.Categories.AddRange(categories);
         await context.SaveChangesAsync();
 
         var products = new List<Product>
         {
-            new() { Name = "Laptop Pro", Description = "High-performance laptop", Code = "LAP-001", CategoryId = categories[0].Id, MeasureId = measures[0].Id },
-            new() { Name = "Wireless Mouse", Description = "Ergonomic wireless mouse", Code = "MOU-001", CategoryId = categories[0].Id, MeasureId = measures[0].Id },
-            new() { Name = "Cotton T-Shirt", Description = "Comfortable cotton t-shirt", Code = "TSH-001", CategoryId = categories[1].Id, MeasureId = measures[0].Id },
-            new() { Name = "Denim Jeans", Description = "Classic denim jeans", Code = "JNS-001", CategoryId = categories[1].Id, MeasureId = measures[0].Id },
-            new() { Name = "Garden Tools Set", Description = "Complete garden tool set", Code = "GAR-001", CategoryId = categories[2].Id, MeasureId = measures[0].Id },
-            new() { Name = "Yoga Mat", Description = "Non-slip yoga mat", Code = "YOG-001", CategoryId = categories[3].Id, MeasureId = measures[0].Id }
+            new() { Name = "Laptop Pro", Description = "High-performance laptop", Code = "LAP-001", CategoryId = categories[0].Id, MeasureId = measures[0].Id, BusinessId = business.Id },
+            new() { Name = "Wireless Mouse", Description = "Ergonomic wireless mouse", Code = "MOU-001", CategoryId = categories[0].Id, MeasureId = measures[0].Id, BusinessId = business.Id },
+            new() { Name = "Cotton T-Shirt", Description = "Comfortable cotton t-shirt", Code = "TSH-001", CategoryId = categories[1].Id, MeasureId = measures[0].Id, BusinessId = business.Id },
+            new() { Name = "Denim Jeans", Description = "Classic denim jeans", Code = "JNS-001", CategoryId = categories[1].Id, MeasureId = measures[0].Id, BusinessId = business.Id },
+            new() { Name = "Garden Tools Set", Description = "Complete garden tool set", Code = "GAR-001", CategoryId = categories[2].Id, MeasureId = measures[0].Id, BusinessId = business.Id },
+            new() { Name = "Yoga Mat", Description = "Non-slip yoga mat", Code = "YOG-001", CategoryId = categories[3].Id, MeasureId = measures[0].Id, BusinessId = business.Id }
         };
         context.Products.AddRange(products);
         await context.SaveChangesAsync();
 
         var warehouses = new List<Warehouse>
         {
-            new() { Name = "Main Warehouse", Location = locations[0] },
-            new() { Name = "West Coast Warehouse", Location = locations[1] }
+            new() { Name = "Main Warehouse", Location = locations[0], BusinessId = business.Id },
+            new() { Name = "West Coast Warehouse", Location = locations[1], BusinessId = business.Id }
         };
         context.Warehouses.AddRange(warehouses);
         await context.SaveChangesAsync();
 
         var branches = new List<Branch>
         {
-            new() { Name = "Downtown Store", Location = locations[0] },
-            new() { Name = "Uptown Store", Location = locations[2] }
+            new() { Name = "Downtown Store", Location = locations[0], BusinessId = business.Id },
+            new() { Name = "Uptown Store", Location = locations[2], BusinessId = business.Id }
         };
         context.Branches.AddRange(branches);
         await context.SaveChangesAsync();
@@ -107,8 +111,8 @@ public static class DatabaseSeeder
 
         var users = new List<User>
         {
-            new() { UserName = "admin", Email = "admin@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("admin123"), Name = "Administrator", RoleId = 1 },
-            new() { UserName = "manager", Email = "manager@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("manager123"), Name = "Manager", RoleId = 2 }
+            new() { UserName = "admin", Email = "admin@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("admin123"), Name = "Administrator", RoleId = 1, BusinessId = business.Id },
+            new() { UserName = "manager", Email = "manager@inventory.com", Password = BCrypt.Net.BCrypt.HashPassword("manager123"), Name = "Manager", RoleId = 2, BusinessId = business.Id }
         };
         context.Users.AddRange(users);
 

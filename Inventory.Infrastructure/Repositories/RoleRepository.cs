@@ -7,9 +7,7 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class RoleRepository(InventoryDbContext context) : IRoleRepository
     {
-        public async Task<List<Role>> GetRolesAsync()
-        {
-            return await context.Roles.ToListAsync();
-        }
+        public async Task<List<Role>> GetRolesAsync() =>
+            await context.Roles.ToListAsync();
     }
 }

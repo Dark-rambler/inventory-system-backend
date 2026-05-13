@@ -5,6 +5,8 @@ namespace Inventory.Domain.Entities
         public Guid Id { get; set; }
         public DateTime Date { get; set; }
         public double Total { get; set; }
+        public Guid BusinessId { get; set; }
+        public Business Business { get; set; } = null!;
         public Guid ProviderId { get; set; }
         public Provider Provider { get; set; } = default!;
         public Guid BuyerId { get; set; }
