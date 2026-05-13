@@ -8,5 +8,6 @@ namespace Inventory.Application.Services.CustomerService
         Task<PaginatedList<CustomerResponse>> GetCustomersAsync(CustomerSearchParams searchParams);
         Task<CustomerResponse> GetCustomerByIdAsync(Guid id);
         Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request);
+        Task UpdateCustomerAsync(Guid id, CustomerRequest request);
     }
 }
