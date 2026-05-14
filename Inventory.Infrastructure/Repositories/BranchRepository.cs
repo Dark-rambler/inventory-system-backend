@@ -4,6 +4,7 @@ using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Inventory.Infrastructure.Repositories
 {
@@ -69,11 +70,39 @@ namespace Inventory.Infrastructure.Repositories
 
         public async Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory)
         {
+            await using var transaction = await context.Database.BeginTransactionAsync();
+
+            sale.Folio = $"POS-{await GetNextFolioNumberAsync(sale.BusinessId):D4}";
+
             context.Sales.Add(sale);
             context.InventoryMovements.AddRange(intentoryMovements);
             context.BranchProducts.UpdateRange(productsUpdated);
             context.AuditHistories.Add(auditHistory);
             await context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+        }
+
+        private async Task<int> GetNextFolioNumberAsync(Guid businessId)
+        {
+            var connection = context.Database.GetDbConnection();
+            if (connection.State != System.Data.ConnectionState.Open)
+                await connection.OpenAsync();
+
+            await using var command = connection.CreateCommand();
+            command.Transaction = context.Database.CurrentTransaction?.GetDbTransaction();
+            command.CommandText = @"
+                INSERT INTO ""BusinessFolioCounters"" (""BusinessId"", ""LastFolioNumber"")
+                VALUES (@bid, 1)
+                ON CONFLICT (""BusinessId"") DO UPDATE
+                SET ""LastFolioNumber"" = ""BusinessFolioCounters"".""LastFolioNumber"" + 1
+                RETURNING ""LastFolioNumber""";
+            var param = command.CreateParameter();
+            param.ParameterName = "@bid";
+            param.Value = businessId;
+            command.Parameters.Add(param);
+
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
         }
 
         public async Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid businessId, Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize) =>

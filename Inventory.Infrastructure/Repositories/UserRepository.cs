@@ -26,6 +26,7 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<User?> GetUserByUserNameAsync(string userName) =>
             await context.Users
                 .Include(u => u.Role)
+                .Include(u => u.Business)
                 .FirstOrDefaultAsync(u => u.UserName == userName && !u.IsDeleted);
 
         public async Task<User> CreateUserAsync(User user)

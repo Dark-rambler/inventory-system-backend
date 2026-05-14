@@ -58,6 +58,12 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public SaleBuilder WithFolio(string folio)
+        {
+            _sale.Folio = folio;
+            return this;
+        }
+
         public SaleBuilder WithCustomer(Customer customer)
         {
             _sale.Customer = customer;
