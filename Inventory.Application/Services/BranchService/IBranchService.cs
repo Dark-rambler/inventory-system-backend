@@ -12,6 +12,7 @@ namespace Inventory.Application.Services.BranchService
         Task<BranchResponse> CreateBranchAsync(BranchRequest request, Guid businessId);
         Task UpdateBranchAsync(Guid id, BranchRequest request);
         Task DeleteBranchAsync(Guid id);
+        Task DeleteProductsAsync(Guid branchId, IEnumerable<int> productIds);
         Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams);
         Task CreateSaleAsync(Guid id, SaleRequest request, Guid businessId);
         Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams, Guid businessId);

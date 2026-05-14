@@ -46,6 +46,12 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task DeleteProductsAsync(IEnumerable<BranchProduct> products)
+        {
+            context.BranchProducts.RemoveRange(products);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize) =>
             await context.BranchProducts
                 .AsQueryable()

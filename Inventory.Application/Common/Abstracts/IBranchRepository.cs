@@ -17,5 +17,6 @@ namespace Inventory.Application.Common.Abstracts
         Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId);
         Task AddProductsToBranchAsync(IEnumerable<BranchProduct> branchProducts);
         Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize);
+        Task DeleteProductsAsync(IEnumerable<BranchProduct> products);
     }
 }

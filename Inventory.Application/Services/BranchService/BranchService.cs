@@ -53,6 +53,13 @@ namespace Inventory.Application.Services.BranchService
             await repository.DeleteBranchAsync(await FindBranchById(id));
         }
 
+        public async Task DeleteProductsAsync(Guid branchId, IEnumerable<int> productIds)
+        {
+            await FindBranchById(branchId);
+            var products = await repository.GetBranchProductsByProductIdsAsync(branchId, productIds);
+            await repository.DeleteProductsAsync(products);
+        }
+
         private async Task<Branch> FindBranchById(Guid id)
         {
             return await repository.GetBranchByIdAsync(id) ?? throw new KeyNotFoundException($"Branch with id {id} doesn't exist");
