@@ -11,9 +11,9 @@ namespace Inventory.Application.Services.WarehouseService
 {
     public class WarehouseService(IWarehouseRepository repository, IMapper mapper) : IWarehouseService
     {
-        public async Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams)
+        public async Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams, Guid businessId)
         {
-            var warehouses = await repository.GetWarehousesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var warehouses = await repository.GetWarehousesAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<WarehouseResponse>(
                 mapper.Map<List<WarehouseResponse>>(warehouses.Items),
                 warehouses.TotalCount,
@@ -27,9 +27,11 @@ namespace Inventory.Application.Services.WarehouseService
             return mapper.Map<WarehouseResponse>(await FindWarehouseById(id));
         }
 
-        public async Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request)
+        public async Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request, Guid businessId)
         {
-            return mapper.Map<WarehouseResponse>(await repository.CreateWarehouseAsync(mapper.Map<Warehouse>(request)));
+            var warehouse = mapper.Map<Warehouse>(request);
+            warehouse.BusinessId = businessId;
+            return mapper.Map<WarehouseResponse>(await repository.CreateWarehouseAsync(warehouse));
         }
 
         public async Task UpdateWarehouseAsync(Guid id, WarehouseRequest request)

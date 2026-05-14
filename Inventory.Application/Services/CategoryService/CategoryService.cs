@@ -9,9 +9,9 @@ namespace Inventory.Application.Services.CategoryService
 {
     public class CategoryService(ICategoryRepository repository, IMapper mapper, IValidator<CategoryRequest> validator) : ICategoryService
     {
-        public async Task<PaginatedList<CategoryResponse>> GetCategoriesAsync(CategorySearchParams searchParams)
+        public async Task<PaginatedList<CategoryResponse>> GetCategoriesAsync(CategorySearchParams searchParams, Guid businessId)
         {
-            var categories = await repository.GetCategoriesAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var categories = await repository.GetCategoriesAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<CategoryResponse>(
                 mapper.Map<List<CategoryResponse>>(categories.Items),
                 categories.TotalCount,
@@ -25,10 +25,12 @@ namespace Inventory.Application.Services.CategoryService
             return mapper.Map<CategoryResponse>(await FindCategoryById(id));
         }
 
-        public async Task<CategoryResponse> CreateCategoryAsync(CategoryRequest request)
+        public async Task<CategoryResponse> CreateCategoryAsync(CategoryRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            return mapper.Map<CategoryResponse>(await repository.CreateCategoryAsync(mapper.Map<Category>(request)));
+            var category = mapper.Map<Category>(request);
+            category.BusinessId = businessId;
+            return mapper.Map<CategoryResponse>(await repository.CreateCategoryAsync(category));
         }
 
         public async Task UpdateCategoryAsync(int id, CategoryRequest request)

@@ -9,21 +9,17 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class CustomerRepository(InventoryDbContext context) : ICustomerRepository
     {
-        public async Task<PaginatedList<Customer>> GetCustomersAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Customers
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<Customer>> GetCustomersAsync(Guid businessId, string? name, int page, int pageSize) =>
+            await context.Customers
+                .AsQueryable()
+                .Where(c => c.BusinessId == businessId)
                 .OrderByDescending(b => b.CreatedAt)
                 .FiltersCustomer(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public Task<Customer?> GetCustomerByIdAsync(Guid id)
-        {
-            return context.Customers
+        public async Task<Customer?> GetCustomerByIdAsync(Guid id) =>
+            await context.Customers
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
 
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {

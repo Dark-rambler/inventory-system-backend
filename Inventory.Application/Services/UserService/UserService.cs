@@ -13,9 +13,9 @@ namespace Inventory.Application.Services.UserService
         IValidator<UserRequest> validator,
         IPasswordHasher passwordHasher) : IUserService
     {
-        public async Task<PaginatedList<UserResponse>> GetUsersAsync(UserSearchParams searchParams)
+        public async Task<PaginatedList<UserResponse>> GetUsersAsync(UserSearchParams searchParams, Guid businessId)
         {
-            var paginatedUsers = await repository.GetUsersAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var paginatedUsers = await repository.GetUsersAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<UserResponse>(
                 mapper.Map<List<UserResponse>>(paginatedUsers.Items),
                 paginatedUsers.TotalCount,
@@ -29,11 +29,12 @@ namespace Inventory.Application.Services.UserService
             return mapper.Map<UserResponse>(await FindUserById(id));
         }
 
-        public async Task<UserResponse> CreateUserAsync(UserRequest request)
+        public async Task<UserResponse> CreateUserAsync(UserRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
             var user = mapper.Map<User>(request);
             user.Password = passwordHasher.Hash(request.Password);
+            user.BusinessId = businessId;
             return mapper.Map<UserResponse>(await repository.CreateUserAsync(user));
         }
 

@@ -169,6 +169,18 @@ namespace Inventory.Infrastructure.Extensions
             }
         }
 
+        extension(IQueryable<Business> source)
+        {
+            public IQueryable<Business> FiltersBusiness(string? name)
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    source = source.Where(b => b.Name.ToLower().Contains(name.ToLower()));
+                }
+                return source;
+            }
+        }
+
         extension(IQueryable<AuditHistory> source)
         {
             public IQueryable<AuditHistory> FiltersAuditHistory(DateTime? fromDate, DateTime? toDate)
@@ -187,8 +199,9 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<InventoryMovement> source)
         {
-            public IQueryable<InventoryMovement> FiltersInventoryMovement(Guid? warehouseId, Guid? branchId, EnumMovementType? movementType, DateTime? fromDate, DateTime? toDate)
+            public IQueryable<InventoryMovement> FiltersInventoryMovement(Guid businessId, Guid? warehouseId, Guid? branchId, EnumMovementType? movementType, DateTime? fromDate, DateTime? toDate)
             {
+                source = source.Where(s => s.BusinessId == businessId);
                 if (fromDate.HasValue)
                 {
                     source = source.Where(s => s.CreatedAt >= fromDate.Value);

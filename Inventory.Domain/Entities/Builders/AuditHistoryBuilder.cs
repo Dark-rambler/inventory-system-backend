@@ -18,6 +18,12 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public AuditHistoryBuilder WithBusinessId(Guid businessId)
+        {
+            _auditHistory.BusinessId = businessId;
+            return this;
+        }
+
         public AuditHistoryBuilder WithUserId(Guid userId)
         {
             _auditHistory.UserId = userId;

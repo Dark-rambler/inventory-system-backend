@@ -25,11 +25,10 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<Purchase>> GetPurchasesAsync(DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId, int page, int pageSize)
-        {
-            var query = context.Purchases
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<Purchase>> GetPurchasesAsync(Guid businessId, DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId, int page, int pageSize) =>
+            await context.Purchases
+                .AsQueryable()
+                .Where(p => p.BusinessId == businessId)
                 .Include(p => p.Provider)
                 .Include(p => p.Buyer)
                 .Include(p => p.PurchaseDetails)
@@ -37,22 +36,17 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersPurchases(fromDate, toDate, providerId, branchId)
                 .OrderByDescending(b => b.Date)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds)
-        {
-            return await context.BranchProducts
+        public async Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds) =>
+            await context.BranchProducts
                 .Include(bp => bp.Product)
                 .Where(bp => bp.BranchId == branchId && productIds.Contains(bp.ProductId))
                 .ToListAsync();
-        }
 
-        public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProductsByProductIdsAsync(Guid warehouseId, IEnumerable<int> productIds)
-        {
-            return await context.WarehouseProducts
+        public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProductsByProductIdsAsync(Guid warehouseId, IEnumerable<int> productIds) =>
+            await context.WarehouseProducts
                 .Include(wp => wp.Product)
                 .Where(wp => wp.WarehouseId == warehouseId && productIds.Contains(wp.ProductId))
                 .ToListAsync();
-        }
     }
 }

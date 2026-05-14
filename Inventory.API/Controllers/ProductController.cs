@@ -3,6 +3,7 @@ using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.ProductService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -13,9 +14,9 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<ProductResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProductsAsync([FromQuery] ProductSearchParams searchParams)
+        public async Task<IActionResult> GetProductsAsync([FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsAsync(searchParams));
+            return Ok(await service.GetProductsAsync(searchParams, businessId));
         }
 
         [HttpGet("{id}")]
@@ -28,9 +29,9 @@ namespace Inventory.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateProductAsync([FromBody] ProductRequest request)
+        public async Task<IActionResult> CreateProductAsync([FromBody] ProductRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateProductAsync(request));
+            return Ok(await service.CreateProductAsync(request, businessId));
         }
 
         [HttpPut("{id}")]

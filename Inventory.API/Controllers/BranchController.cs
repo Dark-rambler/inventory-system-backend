@@ -5,6 +5,7 @@ using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.Services.BranchService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -15,9 +16,9 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<BranchResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetBranchesAsync([FromQuery] BranchSearchParams searchParams)
+        public async Task<IActionResult> GetBranchesAsync([FromQuery] BranchSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetBranchesAsync(searchParams));
+            return Ok(await service.GetBranchesAsync(searchParams, businessId));
         }
 
         [HttpGet("{id}")]
@@ -30,9 +31,9 @@ namespace Inventory.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(BranchResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateBranchAsync([FromBody] BranchRequest request)
+        public async Task<IActionResult> CreateBranchAsync([FromBody] BranchRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateBranchAsync(request));
+            return Ok(await service.CreateBranchAsync(request, businessId));
         }
 
         [HttpPut("{id}")]
@@ -79,17 +80,17 @@ namespace Inventory.API.Controllers
 
         [HttpPost("{id}/sales")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> CreateSaleAsync(Guid id, [FromBody] SaleRequest request)
+        public async Task<IActionResult> CreateSaleAsync(Guid id, [FromBody] SaleRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.CreateSaleAsync(id, request);
+            await service.CreateSaleAsync(id, request, businessId);
             return NoContent();
         }
 
         [HttpGet("{id}/sales")]
         [ProducesResponseType(typeof(PaginatedList<SaleResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetSalesByBranchAsync(Guid id, [FromQuery] SaleSearchParams searchParams)
+        public async Task<IActionResult> GetSalesByBranchAsync(Guid id, [FromQuery] SaleSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetSalesByBranchAsync(id, searchParams));
+            return Ok(await service.GetSalesByBranchAsync(id, searchParams, businessId));
         }
 
         [HttpGet("{id}/products/doesnt-exist")]

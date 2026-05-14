@@ -7,9 +7,10 @@ namespace Inventory.Application.Services.AuditHistoryService
 {
     public class AuditHistoryService(IAuditHistoryRepository repository, IMapper mapper) : IAuditHistoryService
     {
-        public async Task<PaginatedList<AuditHistoryResponse>> GetAuditHistoriesAsync(AuditHistorySearchParams searchParams)
+        public async Task<PaginatedList<AuditHistoryResponse>> GetAuditHistoriesAsync(AuditHistorySearchParams searchParams, Guid businessId)
         {
             var auditHistories = await repository.GetAuditHistoriesAsync(
+                businessId,
                 searchParams.FromDate,
                 searchParams.ToDate,
                 searchParams.Page,

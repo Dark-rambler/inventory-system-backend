@@ -9,21 +9,17 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class ProviderRepository(InventoryDbContext context) : IProviderRepository
     {
-        public async Task<PaginatedList<Provider>> GetProvidersAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Providers
-                .AsQueryable();
-            return await query
+        public async Task<PaginatedList<Provider>> GetProvidersAsync(Guid businessId, string? name, int page, int pageSize) =>
+            await context.Providers
+                .AsQueryable()
+                .Where(p => p.BusinessId == businessId)
                 .OrderByDescending(b => b.CreatedAt)
                 .FiltersProvider(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public Task<Provider?> GetProviderByIdAsync(Guid id)
-        {
-            return context.Providers
+        public async Task<Provider?> GetProviderByIdAsync(Guid id) =>
+            await context.Providers
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
 
         public async Task<Provider> CreateProviderAsync(Provider provider)
         {

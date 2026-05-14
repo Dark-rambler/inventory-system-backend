@@ -3,6 +3,7 @@ using Inventory.Application.DataTransferObjects.ProviderDto;
 using Inventory.Application.Services.ProviderService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -14,9 +15,9 @@ namespace Inventory.API.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(PaginatedList<ProviderResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProvidersAsync([FromQuery] ProviderSearchParams searchParams)
+        public async Task<IActionResult> GetProvidersAsync([FromQuery] ProviderSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProvidersAsync(searchParams));
+            return Ok(await service.GetProvidersAsync(searchParams, businessId));
         }
 
         [HttpGet("{id}")]
@@ -29,9 +30,9 @@ namespace Inventory.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ProviderResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateProviderAsync([FromBody] ProviderRequest request)
+        public async Task<IActionResult> CreateProviderAsync([FromBody] ProviderRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateProviderAsync(request));
+            return Ok(await service.CreateProviderAsync(request, businessId));
         }
 
         [HttpPut("{id}")]

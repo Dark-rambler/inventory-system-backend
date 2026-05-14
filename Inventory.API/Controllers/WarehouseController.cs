@@ -6,6 +6,7 @@ using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -16,9 +17,9 @@ namespace Inventory.API.Controllers
     {
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<WarehouseResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetWarehousesAsync([FromQuery] WarehouseSearchParams searchParams)
+        public async Task<IActionResult> GetWarehousesAsync([FromQuery] WarehouseSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetWarehousesAsync(searchParams));
+            return Ok(await service.GetWarehousesAsync(searchParams, businessId));
         }
 
         [HttpGet("{id}")]
@@ -31,9 +32,9 @@ namespace Inventory.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(WarehouseResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateWarehouseAsync([FromBody] WarehouseRequest request)
+        public async Task<IActionResult> CreateWarehouseAsync([FromBody] WarehouseRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateWarehouseAsync(request));
+            return Ok(await service.CreateWarehouseAsync(request, businessId));
         }
 
         [HttpPut("{id}")]

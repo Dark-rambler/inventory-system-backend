@@ -7,9 +7,9 @@ namespace Inventory.Application.Services.WarehouseService
 {
     public interface IWarehouseService
     {
-        Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request);
+        Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request, Guid businessId);
         Task<WarehouseResponse> GetWarehouseByIdAsync(Guid id);
-        Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams);
+        Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams, Guid businessId);
         Task UpdateWarehouseAsync(Guid id, WarehouseRequest request);
         Task DeleteWarehouseAsync(Guid id);
         Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams);

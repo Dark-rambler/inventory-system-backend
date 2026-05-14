@@ -7,6 +7,6 @@ namespace Inventory.Application.Services.InventoryMovementService.InventoryMovem
     public interface IInventoryMovementStrategy
     {
         EnumMovementType Type { get; }
-        Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request);
+        Task<InventoryMovement> ExecuteAsync(InventoryMovementRequest request, Guid businessId);
     }
 }

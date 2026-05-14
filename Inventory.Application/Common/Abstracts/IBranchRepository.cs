@@ -5,7 +5,7 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface IBranchRepository
     {
-        Task<PaginatedList<Branch>> GetBranchesAsync(string? name, int page, int pageSize);
+        Task<PaginatedList<Branch>> GetBranchesAsync(Guid businessId, string? name, int page, int pageSize);
         Task<Branch?> GetBranchByIdAsync(Guid id);
         Task<Branch> CreateBranchAsync(Branch branch);
         Task UpdateBranchAsync(Branch branch);
@@ -13,7 +13,7 @@ namespace Inventory.Application.Common.Abstracts
         Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize);
         Task<IEnumerable<BranchProduct>> GetBranchProductsByProductIdsAsync(Guid branchId, IEnumerable<int> productIds);
         Task CreateSaleAsync(Sale sale, List<InventoryMovement> intentoryMovements, List<BranchProduct> productsUpdated, AuditHistory auditHistory);
-        Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize);
+        Task<PaginatedList<Sale>> GetSalesByBranchAsync(Guid businessId, Guid id, DateTime? fromDate, DateTime? toDate, int page, int pageSize);
         Task<BranchProduct?> GetBranchProductByBranchIdAndProductIdAsync(Guid? branchId, int productId);
         Task AddProductsToBranchAsync(IEnumerable<BranchProduct> branchProducts);
         Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize);

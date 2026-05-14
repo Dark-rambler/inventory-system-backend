@@ -1,6 +1,7 @@
 using FluentValidation;
 using Inventory.Application.Common.Validations;
 using Inventory.Application.DataTransferObjects.BranchDto;
+using Inventory.Application.DataTransferObjects.BusinessDto;
 using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.DataTransferObjects.CustomerDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
@@ -12,6 +13,7 @@ using Inventory.Application.Profiles;
 using Inventory.Application.Services.AuthService;
 using Inventory.Application.Services.AuditHistoryService;
 using Inventory.Application.Services.BranchService;
+using Inventory.Application.Services.BusinessService;
 using Inventory.Application.Services.CategoryService;
 using Inventory.Application.Services.CustomerService;
 using Inventory.Application.Services.InventoryMovementService;
@@ -46,7 +48,9 @@ public static class DependencyInjection
             typeof(AuditHistoryProfile),
             typeof(CustomerProfile),
             typeof(ProviderProfile),
-            typeof(PurchaseProfile));
+            typeof(PurchaseProfile),
+            typeof(BusinessProfile));
+        services.AddScoped<IValidator<BusinessRequest>, BusinessRequestValidation>();
         services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidation>();
         services.AddScoped<IValidator<ProductRequest>, ProductRequestValidation>();
         services.AddScoped<IValidator<BranchRequest>, BranchRequestValidation>();
@@ -55,6 +59,7 @@ public static class DependencyInjection
         services.AddScoped<IValidator<CustomerRequest>, CustomerRequestValidation>();
         services.AddScoped<IValidator<ProviderRequest>, ProviderRequestValidation>();
         services.AddScoped<IValidator<PurchaseRequest>, PurchaseRequestValidation>();
+        services.AddScoped<IBusinessService, BusinessService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IProductService, ProductService>();

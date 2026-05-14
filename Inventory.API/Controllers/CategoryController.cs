@@ -3,6 +3,7 @@ using Inventory.Application.DataTransferObjects.CategoryDto;
 using Inventory.Application.Services.CategoryService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Inventory.API.Controllers
 {
@@ -14,9 +15,9 @@ namespace Inventory.API.Controllers
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(PaginatedList<CategoryResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetCategoriesAsync([FromQuery] CategorySearchParams searchParams)
+        public async Task<IActionResult> GetCategoriesAsync([FromQuery] CategorySearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetCategoriesAsync(searchParams));
+            return Ok(await service.GetCategoriesAsync(searchParams, businessId));
         }
 
         [HttpGet("{id}")]
@@ -29,9 +30,9 @@ namespace Inventory.API.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryRequest request)
+        public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.CreateCategoryAsync(request));
+            return Ok(await service.CreateCategoryAsync(request, businessId));
         }
 
         [HttpPut("{id}")]

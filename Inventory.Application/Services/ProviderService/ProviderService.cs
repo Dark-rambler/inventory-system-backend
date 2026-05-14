@@ -9,9 +9,9 @@ namespace Inventory.Application.Services.ProviderService
 {
     public class ProviderService(IProviderRepository repository, IMapper mapper, IValidator<ProviderRequest> validator) : IProviderService
     {
-        public async Task<PaginatedList<ProviderResponse>> GetProvidersAsync(ProviderSearchParams searchParams)
+        public async Task<PaginatedList<ProviderResponse>> GetProvidersAsync(ProviderSearchParams searchParams, Guid businessId)
         {
-            var providers = await repository.GetProvidersAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var providers = await repository.GetProvidersAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<ProviderResponse>(
                 mapper.Map<List<ProviderResponse>>(providers.Items),
                 providers.TotalCount,
@@ -25,10 +25,12 @@ namespace Inventory.Application.Services.ProviderService
             return mapper.Map<ProviderResponse>(await FindProviderById(id));
         }
 
-        public async Task<ProviderResponse> CreateProviderAsync(ProviderRequest request)
+        public async Task<ProviderResponse> CreateProviderAsync(ProviderRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            return mapper.Map<ProviderResponse>(await repository.CreateProviderAsync(mapper.Map<Provider>(request)));
+            var provider = mapper.Map<Provider>(request);
+            provider.BusinessId = businessId;
+            return mapper.Map<ProviderResponse>(await repository.CreateProviderAsync(provider));
         }
 
         public async Task UpdateProviderAsync(Guid id, ProviderRequest request)

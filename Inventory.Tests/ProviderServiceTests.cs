@@ -16,6 +16,7 @@ public class ProviderServiceTests
     private readonly Mock<IMapper> _mapperMock;
     private readonly Mock<IValidator<ProviderRequest>> _validatorMock;
     private readonly ProviderService _service;
+    private readonly Guid _businessId = Guid.NewGuid();
 
     public ProviderServiceTests()
     {
@@ -52,12 +53,12 @@ public class ProviderServiceTests
         var response = new ProviderResponse { Id = provider.Id, Name = provider.Name };
         var paginatedList = new PaginatedList<Provider>(new List<Provider> { provider }, 1, 1, 10);
 
-        _repositoryMock.Setup(r => r.GetProvidersAsync(null, 1, 10))
+        _repositoryMock.Setup(r => r.GetProvidersAsync(_businessId, null, 1, 10))
             .ReturnsAsync(paginatedList);
         _mapperMock.Setup(m => m.Map<List<ProviderResponse>>(It.IsAny<List<Provider>>()))
             .Returns([response]);
 
-        var result = await _service.GetProvidersAsync(new ProviderSearchParams());
+        var result = await _service.GetProvidersAsync(new ProviderSearchParams(), _businessId);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
@@ -109,7 +110,7 @@ public class ProviderServiceTests
         _mapperMock.Setup(m => m.Map<ProviderResponse>(provider))
             .Returns(response);
 
-        var result = await _service.CreateProviderAsync(request);
+        var result = await _service.CreateProviderAsync(request, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(provider.Id, result.Id);

@@ -9,21 +9,20 @@ namespace Inventory.Infrastructure.Repositories
 {
     public class CategoryRepository(InventoryDbContext context) : ICategoryRepository
     {
-        public async Task<PaginatedList<Category>> GetCategoriesAsync(string? name, int page, int pageSize)
+        public async Task<PaginatedList<Category>> GetCategoriesAsync(Guid businessId, string? name, int page, int pageSize)
         {
             var query = context.Categories
                 .AsQueryable();
             return await query
+                .Where(c => c.BusinessId == businessId)
                 .OrderByDescending(b => b.CreatedAt)
                 .FiltersCategory(name)
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public Task<Category?> GetCategoryByIdAsync(int id)
-        {
-            return context.Categories
+        public async Task<Category?> GetCategoryByIdAsync(int id) =>
+            await context.Categories
                 .FirstOrDefaultAsync(c => c.Id == id);
-        }
 
         public async Task<Category> CreateCategoryAsync(Category category)
         {

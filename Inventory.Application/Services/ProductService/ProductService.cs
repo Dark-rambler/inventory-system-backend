@@ -10,9 +10,9 @@ namespace Inventory.Application.Services.ProductService
 {
     public class ProductService(IProductRepository repository, IExcelReader excelReader, IMapper mapper, IValidator<ProductRequest> validator) : IProductService
     {
-        public async Task<PaginatedList<ProductResponse>> GetProductsAsync(ProductSearchParams searchParams)
+        public async Task<PaginatedList<ProductResponse>> GetProductsAsync(ProductSearchParams searchParams, Guid businessId)
         {
-            var product = await repository.GetProductsAsync(searchParams.Name, searchParams.Page, searchParams.PageSize);
+            var product = await repository.GetProductsAsync(businessId, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<ProductResponse>(
                 mapper.Map<List<ProductResponse>>(product.Items),
                 product.TotalCount,
@@ -26,10 +26,12 @@ namespace Inventory.Application.Services.ProductService
             return mapper.Map<ProductResponse>(await FindProductById(id));
         }
 
-        public async Task<ProductResponse> CreateProductAsync(ProductRequest request)
+        public async Task<ProductResponse> CreateProductAsync(ProductRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            return mapper.Map<ProductResponse>(await repository.CreateProductAsync(mapper.Map<Product>(request)));
+            var product = mapper.Map<Product>(request);
+            product.BusinessId = businessId;
+            return mapper.Map<ProductResponse>(await repository.CreateProductAsync(product));
         }
 
         public async Task UpdateProductAsync(int id, ProductRequest request)

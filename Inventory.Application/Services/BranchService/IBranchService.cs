@@ -7,15 +7,15 @@ namespace Inventory.Application.Services.BranchService
 {
     public interface IBranchService
     {
-        Task<PaginatedList<BranchResponse>> GetBranchesAsync(BranchSearchParams searchParams);
+        Task<PaginatedList<BranchResponse>> GetBranchesAsync(BranchSearchParams searchParams, Guid businessId);
         Task<BranchResponse> GetBranchByIdAsync(Guid id);
-        Task<BranchResponse> CreateBranchAsync(BranchRequest request);
+        Task<BranchResponse> CreateBranchAsync(BranchRequest request, Guid businessId);
         Task UpdateBranchAsync(Guid id, BranchRequest request);
         Task DeleteBranchAsync(Guid id);
         Task DeleteProductsAsync(Guid branchId, IEnumerable<int> productIds);
         Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams);
-        Task CreateSaleAsync(Guid id, SaleRequest request);
-        Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams);
+        Task CreateSaleAsync(Guid id, SaleRequest request, Guid businessId);
+        Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams, Guid businessId);
         Task AddProductsToBranchAsync(Guid id, IEnumerable<BranchProductRequest> request);
         Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByBranchAsync(Guid id, ProductSearchParams searchParams);
     }
