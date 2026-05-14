@@ -49,9 +49,9 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task DeleteProductAsync(Branch branch,int productId)
+        public async Task DeleteProductsAsync(IEnumerable<BranchProduct> products)
         {
-            context.BranchProducts.RemoveRange(context.BranchProducts.Where(bp => bp.BranchId == branch.Id && bp.ProductId == productId));
+            context.BranchProducts.RemoveRange(products);
             await context.SaveChangesAsync();
         }
 

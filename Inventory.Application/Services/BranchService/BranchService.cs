@@ -51,11 +51,11 @@ namespace Inventory.Application.Services.BranchService
             await repository.DeleteBranchAsync(await FindBranchById(id));
         }
 
-        public async Task DeleteProductAsync(Guid branchId, int productId)
+        public async Task DeleteProductsAsync(Guid branchId, IEnumerable<int> productIds)
         {
-            var branch = await FindBranchById(branchId);
-            var product = await repository.GetBranchProductByBranchIdAndProductIdAsync(branchId, productId) ?? throw new KeyNotFoundException($"Product with id {productId} doesn't exist in branch with id {branchId}");
-            await repository.DeleteProductAsync(branch, productId);
+            await FindBranchById(branchId);
+            var products = await repository.GetBranchProductsByProductIdsAsync(branchId, productIds);
+            await repository.DeleteProductsAsync(products);
         }
 
         private async Task<Branch> FindBranchById(Guid id)

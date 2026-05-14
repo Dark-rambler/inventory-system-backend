@@ -53,12 +53,12 @@ namespace Inventory.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}/products/{productId}")]
+        [HttpDelete("{id}/products")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteProduct(Guid id, int productId)
+        public async Task<IActionResult> DeleteProductsAsync(Guid id, [FromBody] IEnumerable<int> productIds)
         {
-            await service.DeleteProductAsync(id, productId);
+            await service.DeleteProductsAsync(id, productIds);
             return NoContent();
         }
 
