@@ -45,6 +45,16 @@ namespace Inventory.API.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/products")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateBranchProductAsync(Guid id, [FromBody] BranchProductRequest request)
+        {
+            await service.UpdateBranchProductAsync(id, request);
+            return NoContent();
+        }
+
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

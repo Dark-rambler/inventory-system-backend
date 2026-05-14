@@ -48,6 +48,16 @@ namespace Inventory.Application.Services.BranchService
             await repository.UpdateBranchAsync(mapper.Map(request, await FindBranchById(id)));
         }
 
+        public async Task UpdateBranchProductAsync(Guid id, BranchProductRequest request)
+        {
+            await FindBranchById(id);
+            var product = await repository.GetBranchProductByBranchIdAndProductIdAsync(id, request.ProductId) ?? throw new KeyNotFoundException($"Product with id {request.ProductId} doesn't exist in branch with id {id}");
+            product.Price = request.Price;
+            product.Stock = request.Stock;
+            product.LowStock = request.LowStock;
+            await repository.UpdateBranchProductAsync(product); 
+        }
+
         public async Task DeleteBranchAsync(Guid id)
         {
             await repository.DeleteBranchAsync(await FindBranchById(id));

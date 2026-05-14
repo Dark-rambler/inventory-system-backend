@@ -130,6 +130,12 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task UpdateBranchProductAsync(BranchProduct branchProduct)
+        {
+            context.BranchProducts.Update(branchProduct);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize) =>
             await context.Products
                 .AsQueryable()
