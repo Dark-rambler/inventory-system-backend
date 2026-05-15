@@ -28,7 +28,7 @@ dotnet ef database update --project Inventory.Infrastructure --startup-project I
 
 This is a .NET 10 REST API using Clean Architecture with four layers:
 
-- **Inventory.Domain** — Pure entities with no external dependencies. All entities use the Builder pattern (`Inventory.Domain/Entities/Builders/`).
+- **Inventory.Domain** — Pure entities with no external dependencies. All entities use the Builder pattern (`Inventory.Domain/Entities/Builders/`). Domain enums live in `Inventory.Domain/Enum/`: `EnumMovementType` (Entry, Exit, Transfer), `EnumEntity` (InventoryMovement, Sale, Purchase), `EnumAction` (Create).
 - **Inventory.Application** — Business logic services, DTOs (`DataTransferObjects/*Dto/`), AutoMapper profiles, FluentValidation validators, and repository interfaces (`Common/Abstracts/`).
 - **Inventory.Infrastructure** — EF Core DbContext, repository implementations, `JwtService`, `ExcelReader` for bulk imports, and database seeding.
 - **Inventory.API** — Controllers, global `ExceptionHandlingMiddleware`, and `Program.cs` wiring.
@@ -39,7 +39,11 @@ This is a .NET 10 REST API using Clean Architecture with four layers:
 
 ### Dependency Injection
 
-Each non-API layer exposes a static `DependencyInjection` extension class that registers its own services. `Program.cs` calls all of them. New services, repositories, validators, and AutoMapper profiles must be registered there.
+Each non-API layer exposes a static `DependencyInjection` extension class that registers its own services. `Program.cs` calls all of them. Registration patterns:
+- Services/Repositories: `services.AddScoped<IFoo, Foo>()`
+- Validators: `services.AddScoped<IValidator<FooRequest>, FooRequestValidation>()` in `Inventory.Application/DependencyInjection.cs`
+- AutoMapper profiles: add `typeof(FooProfile)` to the `AddAutoMapper(cfg => {}, typeof(...), ...)` call in `Inventory.Application/DependencyInjection.cs`
+- Movement strategies: `services.AddScoped<IInventoryMovementStrategy, FooStrategy>()` in `Inventory.Infrastructure/DependencyInjection.cs`
 
 ### Repository pattern
 
@@ -86,9 +90,13 @@ Resolved via `MovementStrategyResolver` (Strategy pattern in `Inventory.Applicat
 
 `BranchProduct` and `WarehouseProduct` are junction tables with composite PKs (`{BranchId/WarehouseId, ProductId}`). They expose `AddStock(int)` and `ReduceStock(int)` domain methods that validate quantities — always use these methods instead of assigning the `Stock` property directly.
 
+### Builder pattern
+
+All entities must be constructed via their builder in `Inventory.Domain/Entities/Builders/` — never use `new Entity { ... }` directly. Builders exist for: `Product`, `Category`, `BranchProduct`, `WarehouseProduct`, `InventoryMovement`, `Purchase`, `PurchaseDetail`, `Sale`, `SaleDetail`, and `AuditHistory`. When adding a new entity, create a corresponding builder in the same directory.
+
 ### Audit history
 
-Create via `AuditHistoryBuilder` (never construct `AuditHistory` directly). Wire new write operations into `AuditHistoryService`. When auditing a new entity type, add it to `EnumEntity` in the Domain layer.
+Create via `AuditHistoryBuilder` (never construct `AuditHistory` directly). Wire new write operations into `AuditHistoryService`. When auditing a new entity type, add it to `EnumEntity` in the Domain layer (`Inventory.Domain/Enum/EnumEntity.cs`).
 
 ### Testable time
 
@@ -102,9 +110,15 @@ Products can be imported via Excel using `ExcelReader` (ClosedXML). The template
 
 PostgreSQL via Npgsql EF Core provider. Default dev connection string is in `appsettings.json` (`Host=localhost;Port=5432;Database=inventory;Username=postgres;Password=mysecretpassword`). Warehouse and Branch each have a one-to-one relationship with `Location`.
 
+`DatabaseSeeder.SeedAsync()` runs on every startup (called in `Program.cs`, idempotent). It seeds 1 Business, 2 Roles, 6 Measures, 4 Categories, 6 Products, 2 Warehouses, 2 Branches, and 2 Users (admin/manager with BCrypt-hashed passwords). Add new seed data to `Inventory.Infrastructure/Context/DatabaseSeeder.cs`.
+
 ## Authentication
 
-JWT Bearer tokens. `JwtService` (Infrastructure) generates tokens with user ID, username, role, and email claims. Use `[Authorize]` on protected endpoints and `[Authorize(Roles = "Admin")]` for admin-only routes. The login endpoint in `AuthService` is the only unauthenticated write path.
+JWT Bearer tokens. `JwtService` (Infrastructure) generates tokens with user ID, username, role, email, businessId, and businessName claims. Use `[Authorize]` on protected endpoints and `[Authorize(Roles = "Admin")]` for admin-only routes. The login endpoint in `AuthService` is the only unauthenticated write path.
+
+`IPasswordHasher` (BCrypt.Net) is injected into `AuthService` (login verification) and `UserService` (new user creation). Never hash passwords manually.
+
+`ICurrentUserService` extracts the acting user's `UserId` (Guid) from JWT claims via `IHttpContextAccessor`. Inject this wherever a service needs the current user — do not access `IHttpContextAccessor` directly in services.
 
 In production, CORS allowed origins are read from `Cors:AllowedOrigins` in configuration.
 
