@@ -132,19 +132,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.ToTable("Businesss");
                 });
 
-            modelBuilder.Entity("Inventory.Domain.Entities.BusinessFolioCounter", b =>
-                {
-                    b.Property<Guid>("BusinessId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("LastFolioNumber")
-                        .HasColumnType("integer");
-
-                    b.HasKey("BusinessId");
-
-                    b.ToTable("BusinessFolioCounters");
-                });
-
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -736,17 +723,6 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("Branch");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Inventory.Domain.Entities.BusinessFolioCounter", b =>
-                {
-                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
-                        .WithMany()
-                        .HasForeignKey("BusinessId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Business");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
