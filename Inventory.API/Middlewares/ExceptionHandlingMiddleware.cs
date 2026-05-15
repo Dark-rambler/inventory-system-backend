@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.API.Middlewares
@@ -7,65 +7,58 @@ namespace Inventory.API.Middlewares
         RequestDelegate next,
         ILogger<ExceptionHandlingMiddleware> logger)
     {
+        private static readonly Dictionary<Type, (int StatusCode, string Title)> ExceptionMap = new()
+        {
+            [typeof(KeyNotFoundException)] = (StatusCodes.Status404NotFound, "Resource Not Found"),
+            [typeof(UnauthorizedAccessException)] = (StatusCodes.Status401Unauthorized, "Unauthorized"),
+            [typeof(ArgumentException)] = (StatusCodes.Status400BadRequest, "Bad Request"),
+            [typeof(InvalidOperationException)] = (StatusCodes.Status400BadRequest, "Bad Request"),
+        };
+
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
                 await next(context);
             }
+            catch (ValidationException validationException)
+            {
+                logger.LogError("Validation error: {Message}", validationException.Message);
+                await WriteValidationErrorAsync(context, validationException);
+            }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Exception occurred: {Message}", ex.Message);
+                logger.LogError("Exception occurred: {Message}", ex.Message);
 
-                var problemDetails = new ProblemDetails();
-
-                switch (ex)
-                {
-                    case ValidationException validationException:
-                        problemDetails.Status = StatusCodes.Status400BadRequest;
-                        problemDetails.Title = "Validation Error";
-                        problemDetails.Detail = "One or more validation errors occurred.";
-                        problemDetails.Extensions["errors"] =
-                            validationException.Errors.Select(e => new
-                            {
-                                field = e.PropertyName,
-                                error = e.ErrorMessage
-                            });
-
-                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                        break;
-                    case KeyNotFoundException:
-                        problemDetails.Status = StatusCodes.Status404NotFound;
-                        problemDetails.Title = "Resource Not Found";
-                        problemDetails.Detail = ex.Message;
-                        context.Response.StatusCode = StatusCodes.Status404NotFound;
-                        break;
-
-                    case UnauthorizedAccessException:
-                        problemDetails.Status = StatusCodes.Status401Unauthorized;
-                        problemDetails.Title = "Unauthorized";
-                        problemDetails.Detail = ex.Message;
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        break;
-
-                    case ArgumentException:
-                        problemDetails.Status = StatusCodes.Status400BadRequest;
-                        problemDetails.Title = "Bad Request";
-                        problemDetails.Detail = ex.Message;
-                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                        break;
-
-                    default:
-                        problemDetails.Status = StatusCodes.Status500InternalServerError;
-                        problemDetails.Title = "Server Error";
-                        problemDetails.Detail = ex.Message;
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        break;
-                }
-
-                await context.Response.WriteAsJsonAsync(problemDetails);
+                if (ExceptionMap.TryGetValue(ex.GetType(), out var mapped))
+                    await WriteProblemAsync(context, mapped.StatusCode, mapped.Title, ex.Message);
+                else
+                    await WriteProblemAsync(context, StatusCodes.Status500InternalServerError, "Server Error", ex.Message);
             }
         }
 
+        private static Task WriteValidationErrorAsync(HttpContext context, ValidationException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            var problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Title = "Validation Error",
+                Detail = "One or more validation errors occurred.",
+            };
+            problem.Extensions["errors"] = ex.Errors.Select(e => new { field = e.PropertyName, error = e.ErrorMessage });
+            return context.Response.WriteAsJsonAsync(problem);
+        }
+
+        private static Task WriteProblemAsync(HttpContext context, int statusCode, string title, string detail)
+        {
+            context.Response.StatusCode = statusCode;
+            return context.Response.WriteAsJsonAsync(new ProblemDetails
+            {
+                Status = statusCode,
+                Title = title,
+                Detail = detail,
+            });
+        }
     }
 }

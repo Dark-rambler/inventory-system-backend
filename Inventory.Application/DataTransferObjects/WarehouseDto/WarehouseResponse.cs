@@ -1,11 +1,12 @@
-﻿using Inventory.Application.DataTransferObjects.BranchDto;
-
-namespace Inventory.Application.DataTransferObjects.WarehouseDto
+﻿namespace Inventory.Application.DataTransferObjects.WarehouseDto
 {
     public class WarehouseResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public BranchResponse Branch { get; set; } = default!;
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

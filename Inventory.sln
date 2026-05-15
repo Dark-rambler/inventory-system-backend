@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.1.11312.151 d18.0
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Domain", "Inventory.Domain\Inventory.Domain.csproj", "{48F66B1F-5D76-4CD5-A810-938B386760EB}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.API", "Inventory.API\Inventory.API.csproj", "{20E762EB-42FD-4605-BB33-7ACAEE27C9DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{2445B1FC-4429-45CE-A038-47E762280BA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Tests", "Inventory.Tests\Inventory.Tests.csproj", "{821349BC-8D83-4E74-9870-0A3E649CDD63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,18 @@ Global
 		{20E762EB-42FD-4605-BB33-7ACAEE27C9DA}.Release|x64.Build.0 = Release|Any CPU
 		{20E762EB-42FD-4605-BB33-7ACAEE27C9DA}.Release|x86.ActiveCfg = Release|Any CPU
 		{20E762EB-42FD-4605-BB33-7ACAEE27C9DA}.Release|x86.Build.0 = Release|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Debug|x64.Build.0 = Debug|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Debug|x86.Build.0 = Debug|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Release|x64.ActiveCfg = Release|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Release|x64.Build.0 = Release|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Release|x86.ActiveCfg = Release|Any CPU
+		{821349BC-8D83-4E74-9870-0A3E649CDD63}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

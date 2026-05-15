@@ -9,7 +9,9 @@ namespace Inventory.Application.Profiles
         public BranchProfile()
         {
             CreateMap<BranchRequest, Branch>();
-            CreateMap<Branch, BranchResponse>();
+            CreateMap<Branch, BranchResponse>()
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Location.Address))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Location.City));
         }
     }
 }

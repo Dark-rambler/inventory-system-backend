@@ -1,4 +1,4 @@
-﻿using Inventory.Application.Common.Abstracts;
+using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
@@ -7,25 +7,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public class ProductRepository(InventoryDbContext context) : IProductRepository
+    public class ProductRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IProductRepository
     {
-        public async Task<PaginatedList<Product>> GetProductsAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Products
+        public async Task<PaginatedList<Product>> GetProductsAsync(Guid businessId, string? name, int page, int pageSize) =>
+            await context.Products
+                .AsQueryable()
+                .Where(p => p.BusinessId == businessId)
                 .Include(c => c.Category)
-                .AsQueryable();
-            return await query
+                .Include(c => c.Measure)
                 .OrderByDescending(b => b.CreatedAt)
                 .FiltersProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task<Product?> GetProductByIdAsync(Guid id)
-        {
-            return await context.Products
+        public async Task<Product?> GetProductByIdAsync(int id, Guid businessId) =>
+            await context.Products
                 .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id == id);
-        }
+                .Include(c => c.Measure)
+                .FirstOrDefaultAsync(p => p.Id == id && p.BusinessId == businessId);
 
         public async Task<Product> CreateProductAsync(Product product)
         {
@@ -33,12 +31,13 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
             return await context.Products
                 .Include(p => p.Category)
+                .Include(c => c.Measure)
                 .FirstAsync(p => p.Id == product.Id);
         }
 
-
         public async Task UpdateProductAsync(Product product)
         {
+            product.UpdatedAt = dateTimeProvider.UtcNow;
             context.Products.Update(product);
             await context.SaveChangesAsync();
         }
@@ -47,6 +46,13 @@ namespace Inventory.Infrastructure.Repositories
         {
             product.IsDeleted = true;
             await context.SaveChangesAsync();
+        }
+
+        public async Task<List<Product>> BulkCreateAsync(List<Product> products)
+        {
+            context.Products.AddRange(products);
+            await context.SaveChangesAsync();
+            return products;
         }
     }
 }

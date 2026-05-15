@@ -9,7 +9,9 @@ namespace Inventory.Application.Profiles
         public WarehouseProfile()
         {
             CreateMap<WarehouseRequest, Warehouse>();
-            CreateMap<Warehouse, WarehouseResponse>();
+            CreateMap<Warehouse, WarehouseResponse>()
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Location.Address))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Location.City));
         }
     }
 }

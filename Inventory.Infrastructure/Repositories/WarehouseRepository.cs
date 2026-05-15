@@ -7,14 +7,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
-    public class WarehouseRepository(InventoryDbContext context) : IWarehouseRepository
+    public class WarehouseRepository(InventoryDbContext context, IDateTimeProvider dateTimeProvider) : IWarehouseRepository
     {
+        public async Task<PaginatedList<Warehouse>> GetWarehousesAsync(Guid businessId, string? name, int page, int pageSize) =>
+            await context.Warehouses
+                .AsQueryable()
+                .Where(w => w.BusinessId == businessId)
+                .Include(w => w.Location)
+                .OrderByDescending(w => w.CreatedAt)
+                .FiltersWarehouse(name)
+                .ToPaginatedListAsync(page, pageSize);
+
+        public async Task<Warehouse?> GetWarehouseByIdAsync(Guid id, Guid businessId) =>
+            await context.Warehouses
+                .Include(w => w.Location)
+                .FirstOrDefaultAsync(w => w.Id == id && w.BusinessId == businessId);
+
         public async Task<Warehouse> CreateWarehouseAsync(Warehouse warehouse)
         {
             context.Warehouses.Add(warehouse);
             await context.SaveChangesAsync();
             return await context.Warehouses
+                .Include(w => w.Location)
                 .FirstAsync(w => w.Id == warehouse.Id);
+        }
+
+        public async Task UpdateWarehouseAsync(Warehouse warehouse)
+        {
+            warehouse.UpdatedAt = dateTimeProvider.UtcNow;
+            context.Warehouses.Update(warehouse);
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteWarehouseAsync(Warehouse warehouse)
@@ -23,26 +45,33 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<Warehouse?> GetWarehouseByIdAsync(Guid id)
-        {
-            return await context.Warehouses
-                .FirstOrDefaultAsync(w => w.Id == id);
-        }
-
-        public async Task<PaginatedList<Warehouse>> GetWarehousesAsync(string? name, int page, int pageSize)
-        {
-            var query = context.Warehouses
-                .AsQueryable();
-            return await query
-                .OrderByDescending(w => w.CreatedAt)
-                .FiltersWarehouse(name)
+        public async Task<PaginatedList<WarehouseProduct>> GetProductsByWarehousesAsync(Guid id, string? name, int page, int pageSize) =>
+           await context.WarehouseProducts
+                .AsQueryable()
+                .Where(wp => wp.WarehouseId == id)
+                .Include(wp => wp.Product)
+                .ThenInclude(wp => wp.Category)
+                .OrderByDescending(wp => wp.Product.CreatedAt)
+                .FiltersWarehouseProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
-        }
 
-        public async Task UpdateWarehouseAsync(Warehouse warehouse)
+        public async Task<WarehouseProduct?> GetWarehouseProductByWarehouseIdAndProductIdAsync(Guid? warehouseId, int productId) =>
+            await context.WarehouseProducts
+                .Include(wp => wp.Product)
+                .FirstOrDefaultAsync(bp => warehouseId.HasValue && bp.WarehouseId == warehouseId.Value && bp.ProductId == productId);
+
+        public async Task AddProductsToWarehouseAsync(List<WarehouseProduct> warehouseProducts)
         {
-            context.Warehouses.Update(warehouse);
+            context.AddRange(warehouseProducts);
             await context.SaveChangesAsync();
         }
+
+        public async Task<PaginatedList<Product>> GetProductsDoesntExistByWarehouseAsync(Guid id, Guid businessId, int page, int pageSize) =>
+            await context.Products
+                .AsQueryable()
+                .Where(p => p.BusinessId == businessId && !context.WarehouseProducts.Any(wp => wp.ProductId == p.Id && wp.WarehouseId == id))
+                .Include(p => p.Measure)
+                .Include(p => p.Category)
+                .ToPaginatedListAsync(page, pageSize);
     }
 }

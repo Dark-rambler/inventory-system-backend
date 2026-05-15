@@ -5,6 +5,7 @@
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
-        public Guid CategoryId { get; set; }
+        public int CategoryId { get; set; }
+        public int? MeasureId { get; set; }
     }
 }

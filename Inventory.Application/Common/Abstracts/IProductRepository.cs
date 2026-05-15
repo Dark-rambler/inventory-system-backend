@@ -5,10 +5,11 @@ namespace Inventory.Application.Common.Abstracts
 {
     public interface IProductRepository
     {
-        Task<PaginatedList<Product>> GetProductsAsync(string? name, int page, int pageSize);
-        Task<Product?> GetProductByIdAsync(Guid id);
+        Task<PaginatedList<Product>> GetProductsAsync(Guid businessId, string? name, int page, int pageSize);
+        Task<Product?> GetProductByIdAsync(int id, Guid businessId);
         Task<Product> CreateProductAsync(Product product);
         Task UpdateProductAsync(Product product);
         Task DeleteProductAsync(Product product);
+        Task<List<Product>> BulkCreateAsync(List<Product> products);
     }
 }
