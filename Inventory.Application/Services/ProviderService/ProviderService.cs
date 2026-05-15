@@ -20,9 +20,9 @@ namespace Inventory.Application.Services.ProviderService
             );
         }
 
-        public async Task<ProviderResponse> GetProviderByIdAsync(Guid id)
+        public async Task<ProviderResponse> GetProviderByIdAsync(Guid id, Guid businessId)
         {
-            return mapper.Map<ProviderResponse>(await FindProviderById(id));
+            return mapper.Map<ProviderResponse>(await FindProviderById(id, businessId));
         }
 
         public async Task<ProviderResponse> CreateProviderAsync(ProviderRequest request, Guid businessId)
@@ -33,20 +33,20 @@ namespace Inventory.Application.Services.ProviderService
             return mapper.Map<ProviderResponse>(await repository.CreateProviderAsync(provider));
         }
 
-        public async Task UpdateProviderAsync(Guid id, ProviderRequest request)
+        public async Task UpdateProviderAsync(Guid id, ProviderRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateProviderAsync(mapper.Map(request, await FindProviderById(id)));
+            await repository.UpdateProviderAsync(mapper.Map(request, await FindProviderById(id, businessId)));
         }
 
-        public async Task DeleteProviderAsync(Guid id)
+        public async Task DeleteProviderAsync(Guid id, Guid businessId)
         {
-            await repository.DeleteProviderAsync(await FindProviderById(id));
+            await repository.DeleteProviderAsync(await FindProviderById(id, businessId));
         }
 
-        private async Task<Provider> FindProviderById(Guid id)
+        private async Task<Provider> FindProviderById(Guid id, Guid businessId)
         {
-            return await repository.GetProviderByIdAsync(id) ?? throw new KeyNotFoundException($"Provider with id {id} doesn't exist");
+            return await repository.GetProviderByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Provider with id {id} doesn't exist");
         }
     }
 }

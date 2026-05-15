@@ -24,9 +24,9 @@ namespace Inventory.Application.Services.UserService
             );
         }
 
-        public async Task<UserResponse> GetUserByIdAsync(Guid id)
+        public async Task<UserResponse> GetUserByIdAsync(Guid id, Guid businessId)
         {
-            return mapper.Map<UserResponse>(await FindUserById(id));
+            return mapper.Map<UserResponse>(await FindUserById(id, businessId));
         }
 
         public async Task<UserResponse> CreateUserAsync(UserRequest request, Guid businessId)
@@ -38,20 +38,20 @@ namespace Inventory.Application.Services.UserService
             return mapper.Map<UserResponse>(await repository.CreateUserAsync(user));
         }
 
-        public async Task UpdateUserAsync(Guid id, UserRequest request)
+        public async Task UpdateUserAsync(Guid id, UserRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateUserAsync(mapper.Map(request, await FindUserById(id)));
+            await repository.UpdateUserAsync(mapper.Map(request, await FindUserById(id, businessId)));
         }
 
-        public async Task DeleteUserAsync(Guid id)
+        public async Task DeleteUserAsync(Guid id, Guid businessId)
         {
-            await repository.DeleteUserAsync(await FindUserById(id));
+            await repository.DeleteUserAsync(await FindUserById(id, businessId));
         }
 
-        private async Task<User> FindUserById(Guid id)
+        private async Task<User> FindUserById(Guid id, Guid businessId)
         {
-            return await repository.GetUserByIdAsync(id) ?? throw new KeyNotFoundException($"User with id {id} doesn't exist");
+            return await repository.GetUserByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"User with id {id} doesn't exist");
         }
     }
 }

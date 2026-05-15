@@ -21,9 +21,9 @@ namespace Inventory.API.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetUserByIdAsync(Guid id)
+        public async Task<IActionResult> GetUserByIdAsync(Guid id, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetUserByIdAsync(id));
+            return Ok(await service.GetUserByIdAsync(id, businessId));
         }
 
         [HttpPost]
@@ -37,18 +37,18 @@ namespace Inventory.API.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserRequest request)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.UpdateUserAsync(id, request);
+            await service.UpdateUserAsync(id, request, businessId);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteUserAsync(Guid id)
+        public async Task<IActionResult> DeleteUserAsync(Guid id, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.DeleteUserAsync(id);
+            await service.DeleteUserAsync(id, businessId);
             return NoContent();
         }
     }

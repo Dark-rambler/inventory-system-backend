@@ -18,10 +18,10 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersUser(name)
                 .ToPaginatedListAsync(page, pageSize);
 
-        public async Task<User?> GetUserByIdAsync(Guid id) =>
+        public async Task<User?> GetUserByIdAsync(Guid id, Guid businessId) =>
             await context.Users
                 .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.Id == id && u.BusinessId == businessId);
 
         public async Task<User?> GetUserByUserNameAsync(string userName) =>
             await context.Users

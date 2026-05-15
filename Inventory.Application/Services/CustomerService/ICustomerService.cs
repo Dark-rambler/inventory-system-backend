@@ -6,8 +6,8 @@ namespace Inventory.Application.Services.CustomerService
     public interface ICustomerService
     {
         Task<PaginatedList<CustomerResponse>> GetCustomersAsync(CustomerSearchParams searchParams, Guid businessId);
-        Task<CustomerResponse> GetCustomerByIdAsync(Guid id);
+        Task<CustomerResponse> GetCustomerByIdAsync(Guid id, Guid businessId);
         Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request, Guid businessId);
-        Task UpdateCustomerAsync(Guid id, CustomerRequest request);
+        Task UpdateCustomerAsync(Guid id, CustomerRequest request, Guid businessId);
     }
 }

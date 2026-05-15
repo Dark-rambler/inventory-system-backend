@@ -24,9 +24,9 @@ namespace Inventory.API.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(WarehouseResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetWarehouseByIdAsync(Guid id)
+        public async Task<IActionResult> GetWarehouseByIdAsync(Guid id, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetWarehouseByIdAsync(id));
+            return Ok(await service.GetWarehouseByIdAsync(id, businessId));
         }
 
         [HttpPost]
@@ -40,40 +40,40 @@ namespace Inventory.API.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateWarehouseAsync(Guid id, [FromBody] WarehouseRequest request)
+        public async Task<IActionResult> UpdateWarehouseAsync(Guid id, [FromBody] WarehouseRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.UpdateWarehouseAsync(id, request);
+            await service.UpdateWarehouseAsync(id, request, businessId);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteWarehouseAsync(Guid id)
+        public async Task<IActionResult> DeleteWarehouseAsync(Guid id, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.DeleteWarehouseAsync(id);
+            await service.DeleteWarehouseAsync(id, businessId);
             return NoContent();
         }
 
         [HttpGet("{id}/products")]
         [ProducesResponseType(typeof(PaginatedList<ProductResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
+        public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsByWarehousesAsync(id, searchParams));
+            return Ok(await service.GetProductsByWarehousesAsync(id, searchParams, businessId));
         }
 
         [HttpPost("{id}/products")]
         [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> AddProductsToWarehouseAsync(Guid id, [FromBody] IEnumerable<WarehouseProductRequest> request)
+        public async Task<IActionResult> AddProductsToWarehouseAsync(Guid id, [FromBody] IEnumerable<WarehouseProductRequest> request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.AddProductsToWarehouseAsync(id, request);
+            await service.AddProductsToWarehouseAsync(id, request, businessId);
             return NoContent();
         }
 
         [HttpGet("{id}/products/doesnt-exist")]
-        public async Task<IActionResult> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams)
+        public async Task<IActionResult> GetProductsDoesntExistByWarehouseAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsDoesntExistByWarehouseAsync(id, searchParams));
+            return Ok(await service.GetProductsDoesntExistByWarehouseAsync(id, searchParams, businessId));
         }
     }
 }

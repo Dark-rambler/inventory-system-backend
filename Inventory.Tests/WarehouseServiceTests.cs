@@ -62,12 +62,12 @@ public class WarehouseServiceTests
         var warehouse = CreateWarehouse();
         var response = new WarehouseResponse { Id = warehouse.Id, Name = warehouse.Name };
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id))
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id, _businessId))
             .ReturnsAsync(warehouse);
         _mapperMock.Setup(m => m.Map<WarehouseResponse>(warehouse))
             .Returns(response);
 
-        var result = await _service.GetWarehouseByIdAsync(warehouse.Id);
+        var result = await _service.GetWarehouseByIdAsync(warehouse.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(warehouse.Id, result.Id);
@@ -78,11 +78,11 @@ public class WarehouseServiceTests
     {
         var warehouseId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId))
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId, _businessId))
             .ReturnsAsync((Warehouse?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetWarehouseByIdAsync(warehouseId));
+            () => _service.GetWarehouseByIdAsync(warehouseId, _businessId));
     }
 
     [Fact]
@@ -109,10 +109,10 @@ public class WarehouseServiceTests
         var request = CreateRequest();
         var warehouse = CreateWarehouse(warehouseId);
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId)).ReturnsAsync(warehouse);
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId, _businessId)).ReturnsAsync(warehouse);
         _mapperMock.Setup(m => m.Map(request, warehouse));
 
-        await _service.UpdateWarehouseAsync(warehouseId, request);
+        await _service.UpdateWarehouseAsync(warehouseId, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateWarehouseAsync(It.IsAny<Warehouse>()), Times.Once);
     }
@@ -122,11 +122,11 @@ public class WarehouseServiceTests
     {
         var warehouseId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId))
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId, _businessId))
             .ReturnsAsync((Warehouse?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateWarehouseAsync(warehouseId, CreateRequest()));
+            () => _service.UpdateWarehouseAsync(warehouseId, CreateRequest(), _businessId));
     }
 
     [Fact]
@@ -134,9 +134,9 @@ public class WarehouseServiceTests
     {
         var warehouse = CreateWarehouse();
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id)).ReturnsAsync(warehouse);
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id, _businessId)).ReturnsAsync(warehouse);
 
-        await _service.DeleteWarehouseAsync(warehouse.Id);
+        await _service.DeleteWarehouseAsync(warehouse.Id, _businessId);
 
         _repositoryMock.Verify(r => r.DeleteWarehouseAsync(warehouse), Times.Once);
     }
@@ -146,11 +146,11 @@ public class WarehouseServiceTests
     {
         var warehouseId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId))
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId, _businessId))
             .ReturnsAsync((Warehouse?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.DeleteWarehouseAsync(warehouseId));
+            () => _service.DeleteWarehouseAsync(warehouseId, _businessId));
     }
 
     [Fact]
@@ -161,13 +161,13 @@ public class WarehouseServiceTests
         var response = new WarehouseProductResponse { Id = 1, Name = "Product A" };
         var paginatedList = new PaginatedList<WarehouseProduct>([warehouseProduct], 1, 1, 10);
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id)).ReturnsAsync(warehouse);
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id, _businessId)).ReturnsAsync(warehouse);
         _repositoryMock.Setup(r => r.GetProductsByWarehousesAsync(warehouse.Id, null, 1, 10))
             .ReturnsAsync(paginatedList);
         _mapperMock.Setup(m => m.Map<List<WarehouseProductResponse>>(It.IsAny<List<WarehouseProduct>>()))
             .Returns([response]);
 
-        var result = await _service.GetProductsByWarehousesAsync(warehouse.Id, new ProductSearchParams());
+        var result = await _service.GetProductsByWarehousesAsync(warehouse.Id, new ProductSearchParams(), _businessId);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
@@ -178,11 +178,11 @@ public class WarehouseServiceTests
     {
         var warehouseId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId))
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId, _businessId))
             .ReturnsAsync((Warehouse?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetProductsByWarehousesAsync(warehouseId, new ProductSearchParams()));
+            () => _service.GetProductsByWarehousesAsync(warehouseId, new ProductSearchParams(), _businessId));
     }
 
     [Fact]
@@ -194,9 +194,9 @@ public class WarehouseServiceTests
             new() { ProductId = 1, Stock = 50, LowStock = 5 }
         };
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id)).ReturnsAsync(warehouse);
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouse.Id, _businessId)).ReturnsAsync(warehouse);
 
-        await _service.AddProductsToWarehouseAsync(warehouse.Id, requests);
+        await _service.AddProductsToWarehouseAsync(warehouse.Id, requests, _businessId);
 
         _repositoryMock.Verify(r => r.AddProductsToWarehouseAsync(It.IsAny<List<WarehouseProduct>>()), Times.Once);
     }
@@ -206,10 +206,10 @@ public class WarehouseServiceTests
     {
         var warehouseId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId))
+        _repositoryMock.Setup(r => r.GetWarehouseByIdAsync(warehouseId, _businessId))
             .ReturnsAsync((Warehouse?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.AddProductsToWarehouseAsync(warehouseId, []));
+            () => _service.AddProductsToWarehouseAsync(warehouseId, [], _businessId));
     }
 }

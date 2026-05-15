@@ -19,11 +19,11 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersProduct(name)
                 .ToPaginatedListAsync(page, pageSize);
 
-        public async Task<Product?> GetProductByIdAsync(int id) =>
+        public async Task<Product?> GetProductByIdAsync(int id, Guid businessId) =>
             await context.Products
                 .Include(p => p.Category)
                 .Include(c => c.Measure)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == id && p.BusinessId == businessId);
 
         public async Task<Product> CreateProductAsync(Product product)
         {

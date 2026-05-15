@@ -67,12 +67,12 @@ public class CustomerServiceTests
         var customer = CreateCustomer();
         var response = new CustomerResponse { Id = customer.Id, Name = customer.Name };
 
-        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customer.Id))
+        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customer.Id, _businessId))
             .ReturnsAsync(customer);
         _mapperMock.Setup(m => m.Map<CustomerResponse>(customer))
             .Returns(response);
 
-        var result = await _service.GetCustomerByIdAsync(customer.Id);
+        var result = await _service.GetCustomerByIdAsync(customer.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(customer.Id, result.Id);
@@ -83,11 +83,11 @@ public class CustomerServiceTests
     {
         var customerId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customerId))
+        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customerId, _businessId))
             .ReturnsAsync((Customer?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetCustomerByIdAsync(customerId));
+            () => _service.GetCustomerByIdAsync(customerId, _businessId));
     }
 
     [Fact]
@@ -121,11 +121,11 @@ public class CustomerServiceTests
 
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<CustomerRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customerId))
+        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customerId, _businessId))
             .ReturnsAsync(customer);
         _mapperMock.Setup(m => m.Map(request, customer));
 
-        await _service.UpdateCustomerAsync(customerId, request);
+        await _service.UpdateCustomerAsync(customerId, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateCustomerAsync(It.IsAny<Customer>()), Times.Once);
     }
@@ -136,10 +136,10 @@ public class CustomerServiceTests
         var customerId = Guid.NewGuid();
         var request = CreateRequest();
 
-        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customerId))
+        _repositoryMock.Setup(r => r.GetCustomerByIdAsync(customerId, _businessId))
             .ReturnsAsync((Customer?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateCustomerAsync(customerId, request));
+            () => _service.UpdateCustomerAsync(customerId, request, _businessId));
     }
 }

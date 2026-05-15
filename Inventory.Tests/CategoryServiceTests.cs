@@ -65,12 +65,12 @@ public class CategoryServiceTests
         var category = CreateCategory();
         var response = new CategoryResponse { Id = category.Id, Name = category.Name };
 
-        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(category.Id))
+        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(category.Id, _businessId))
             .ReturnsAsync(category);
         _mapperMock.Setup(m => m.Map<CategoryResponse>(category))
             .Returns(response);
 
-        var result = await _service.GetCategoryByIdAsync(category.Id);
+        var result = await _service.GetCategoryByIdAsync(category.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(category.Id, result.Id);
@@ -79,11 +79,11 @@ public class CategoryServiceTests
     [Fact]
     public async Task GetCategoryByIdAsync_ThrowsKeyNotFoundException_WhenNotExists()
     {
-        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(99))
+        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(99, _businessId))
             .ReturnsAsync((Category?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetCategoryByIdAsync(99));
+            () => _service.GetCategoryByIdAsync(99, _businessId));
     }
 
     [Fact]
@@ -116,11 +116,11 @@ public class CategoryServiceTests
 
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<CategoryRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(5))
+        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(5, _businessId))
             .ReturnsAsync(category);
         _mapperMock.Setup(m => m.Map(request, category));
 
-        await _service.UpdateCategoryAsync(5, request);
+        await _service.UpdateCategoryAsync(5, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateCategoryAsync(It.IsAny<Category>()), Times.Once);
     }
@@ -128,11 +128,11 @@ public class CategoryServiceTests
     [Fact]
     public async Task UpdateCategoryAsync_ThrowsKeyNotFoundException_WhenNotExists()
     {
-        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(99))
+        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(99, _businessId))
             .ReturnsAsync((Category?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateCategoryAsync(99, CreateRequest()));
+            () => _service.UpdateCategoryAsync(99, CreateRequest(), _businessId));
     }
 
     [Fact]
@@ -140,10 +140,10 @@ public class CategoryServiceTests
     {
         var category = CreateCategory(3);
 
-        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(3))
+        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(3, _businessId))
             .ReturnsAsync(category);
 
-        await _service.DeleteCategoryAsync(3);
+        await _service.DeleteCategoryAsync(3, _businessId);
 
         _repositoryMock.Verify(r => r.DeleteCategoryAsync(category), Times.Once);
     }
@@ -151,10 +151,10 @@ public class CategoryServiceTests
     [Fact]
     public async Task DeleteCategoryAsync_ThrowsKeyNotFoundException_WhenNotExists()
     {
-        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(99))
+        _repositoryMock.Setup(r => r.GetCategoryByIdAsync(99, _businessId))
             .ReturnsAsync((Category?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.DeleteCategoryAsync(99));
+            () => _service.DeleteCategoryAsync(99, _businessId));
     }
 }

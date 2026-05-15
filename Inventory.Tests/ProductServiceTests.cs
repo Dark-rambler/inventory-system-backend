@@ -76,10 +76,10 @@ public class ProductServiceTests
         var product = CreateProduct();
         var response = new ProductResponse { Id = product.Id, Name = product.Name };
 
-        _repositoryMock.Setup(r => r.GetProductByIdAsync(product.Id)).ReturnsAsync(product);
+        _repositoryMock.Setup(r => r.GetProductByIdAsync(product.Id, _businessId)).ReturnsAsync(product);
         _mapperMock.Setup(m => m.Map<ProductResponse>(product)).Returns(response);
 
-        var result = await _service.GetProductByIdAsync(product.Id);
+        var result = await _service.GetProductByIdAsync(product.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(product.Id, result.Id);
@@ -88,11 +88,11 @@ public class ProductServiceTests
     [Fact]
     public async Task GetProductByIdAsync_ThrowsKeyNotFoundException_WhenNotExists()
     {
-        _repositoryMock.Setup(r => r.GetProductByIdAsync(99))
+        _repositoryMock.Setup(r => r.GetProductByIdAsync(99, _businessId))
             .ReturnsAsync((Product?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetProductByIdAsync(99));
+            () => _service.GetProductByIdAsync(99, _businessId));
     }
 
     [Fact]
@@ -122,10 +122,10 @@ public class ProductServiceTests
 
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<ProductRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        _repositoryMock.Setup(r => r.GetProductByIdAsync(5)).ReturnsAsync(product);
+        _repositoryMock.Setup(r => r.GetProductByIdAsync(5, _businessId)).ReturnsAsync(product);
         _mapperMock.Setup(m => m.Map(request, product));
 
-        await _service.UpdateProductAsync(5, request);
+        await _service.UpdateProductAsync(5, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateProductAsync(It.IsAny<Product>()), Times.Once);
     }
@@ -133,11 +133,11 @@ public class ProductServiceTests
     [Fact]
     public async Task UpdateProductAsync_ThrowsKeyNotFoundException_WhenNotExists()
     {
-        _repositoryMock.Setup(r => r.GetProductByIdAsync(99))
+        _repositoryMock.Setup(r => r.GetProductByIdAsync(99, _businessId))
             .ReturnsAsync((Product?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateProductAsync(99, CreateRequest()));
+            () => _service.UpdateProductAsync(99, CreateRequest(), _businessId));
     }
 
     [Fact]
@@ -145,9 +145,9 @@ public class ProductServiceTests
     {
         var product = CreateProduct(3);
 
-        _repositoryMock.Setup(r => r.GetProductByIdAsync(3)).ReturnsAsync(product);
+        _repositoryMock.Setup(r => r.GetProductByIdAsync(3, _businessId)).ReturnsAsync(product);
 
-        await _service.DeleteProductAsync(3);
+        await _service.DeleteProductAsync(3, _businessId);
 
         _repositoryMock.Verify(r => r.DeleteProductAsync(product), Times.Once);
     }
@@ -155,11 +155,11 @@ public class ProductServiceTests
     [Fact]
     public async Task DeleteProductAsync_ThrowsKeyNotFoundException_WhenNotExists()
     {
-        _repositoryMock.Setup(r => r.GetProductByIdAsync(99))
+        _repositoryMock.Setup(r => r.GetProductByIdAsync(99, _businessId))
             .ReturnsAsync((Product?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.DeleteProductAsync(99));
+            () => _service.DeleteProductAsync(99, _businessId));
     }
 
     [Fact]

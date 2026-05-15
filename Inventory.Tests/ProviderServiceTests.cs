@@ -71,12 +71,12 @@ public class ProviderServiceTests
         var provider = CreateProvider();
         var response = new ProviderResponse { Id = provider.Id, Name = provider.Name };
 
-        _repositoryMock.Setup(r => r.GetProviderByIdAsync(provider.Id))
+        _repositoryMock.Setup(r => r.GetProviderByIdAsync(provider.Id, _businessId))
             .ReturnsAsync(provider);
         _mapperMock.Setup(m => m.Map<ProviderResponse>(provider))
             .Returns(response);
 
-        var result = await _service.GetProviderByIdAsync(provider.Id);
+        var result = await _service.GetProviderByIdAsync(provider.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(provider.Id, result.Id);
@@ -87,11 +87,11 @@ public class ProviderServiceTests
     {
         var providerId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId))
+        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId, _businessId))
             .ReturnsAsync((Provider?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetProviderByIdAsync(providerId));
+            () => _service.GetProviderByIdAsync(providerId, _businessId));
     }
 
     [Fact]
@@ -125,11 +125,11 @@ public class ProviderServiceTests
 
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ProviderRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId))
+        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId, _businessId))
             .ReturnsAsync(provider);
         _mapperMock.Setup(m => m.Map(request, provider));
 
-        await _service.UpdateProviderAsync(providerId, request);
+        await _service.UpdateProviderAsync(providerId, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateProviderAsync(It.IsAny<Provider>()), Times.Once);
     }
@@ -140,11 +140,11 @@ public class ProviderServiceTests
         var providerId = Guid.NewGuid();
         var request = CreateRequest();
 
-        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId))
+        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId, _businessId))
             .ReturnsAsync((Provider?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateProviderAsync(providerId, request));
+            () => _service.UpdateProviderAsync(providerId, request, _businessId));
     }
 
     [Fact]
@@ -152,10 +152,10 @@ public class ProviderServiceTests
     {
         var provider = CreateProvider();
 
-        _repositoryMock.Setup(r => r.GetProviderByIdAsync(provider.Id))
+        _repositoryMock.Setup(r => r.GetProviderByIdAsync(provider.Id, _businessId))
             .ReturnsAsync(provider);
 
-        await _service.DeleteProviderAsync(provider.Id);
+        await _service.DeleteProviderAsync(provider.Id, _businessId);
 
         _repositoryMock.Verify(r => r.DeleteProviderAsync(provider), Times.Once);
     }
@@ -165,10 +165,10 @@ public class ProviderServiceTests
     {
         var providerId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId))
+        _repositoryMock.Setup(r => r.GetProviderByIdAsync(providerId, _businessId))
             .ReturnsAsync((Provider?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.DeleteProviderAsync(providerId));
+            () => _service.DeleteProviderAsync(providerId, _businessId));
     }
 }

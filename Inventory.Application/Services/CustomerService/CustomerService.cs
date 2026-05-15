@@ -20,9 +20,9 @@ namespace Inventory.Application.Services.CustomerService
             );
         }
 
-        public async Task<CustomerResponse> GetCustomerByIdAsync(Guid id)
+        public async Task<CustomerResponse> GetCustomerByIdAsync(Guid id, Guid businessId)
         {
-            return mapper.Map<CustomerResponse>(await FindCustomerById(id));
+            return mapper.Map<CustomerResponse>(await FindCustomerById(id, businessId));
         }
 
         public async Task<CustomerResponse> CreateCustomerAsync(CustomerRequest request, Guid businessId)
@@ -32,16 +32,16 @@ namespace Inventory.Application.Services.CustomerService
             customer.BusinessId = businessId;
             return mapper.Map<CustomerResponse>(await repository.CreateCustomerAsync(customer));
         }
-        public async Task UpdateCustomerAsync(Guid id, CustomerRequest request)
+
+        public async Task UpdateCustomerAsync(Guid id, CustomerRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateCustomerAsync(mapper.Map(request, await FindCustomerById(id)));
+            await repository.UpdateCustomerAsync(mapper.Map(request, await FindCustomerById(id, businessId)));
         }
 
-
-        private async Task<Customer> FindCustomerById(Guid id)
+        private async Task<Customer> FindCustomerById(Guid id, Guid businessId)
         {
-            return await repository.GetCustomerByIdAsync(id) ?? throw new KeyNotFoundException($"Customer with id {id} doesn't exist");
+            return await repository.GetCustomerByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Customer with id {id} doesn't exist");
         }
     }
 }

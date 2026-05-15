@@ -29,9 +29,9 @@ namespace Inventory.Application.Services.BranchService
             );
         }
 
-        public async Task<BranchResponse> GetBranchByIdAsync(Guid id)
+        public async Task<BranchResponse> GetBranchByIdAsync(Guid id, Guid businessId)
         {
-            return mapper.Map<BranchResponse>(await FindBranchById(id));
+            return mapper.Map<BranchResponse>(await FindBranchById(id, businessId));
         }
 
         public async Task<BranchResponse> CreateBranchAsync(BranchRequest request, Guid businessId)
@@ -42,42 +42,42 @@ namespace Inventory.Application.Services.BranchService
             return mapper.Map<BranchResponse>(await repository.CreateBranchAsync(branch));
         }
 
-        public async Task UpdateBranchAsync(Guid id, BranchRequest request)
+        public async Task UpdateBranchAsync(Guid id, BranchRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateBranchAsync(mapper.Map(request, await FindBranchById(id)));
+            await repository.UpdateBranchAsync(mapper.Map(request, await FindBranchById(id, businessId)));
         }
 
-        public async Task UpdateBranchProductAsync(Guid id, BranchProductRequest request)
+        public async Task UpdateBranchProductAsync(Guid id, BranchProductRequest request, Guid businessId)
         {
-            await FindBranchById(id);
+            await FindBranchById(id, businessId);
             var product = await repository.GetBranchProductByBranchIdAndProductIdAsync(id, request.ProductId) ?? throw new KeyNotFoundException($"Product with id {request.ProductId} doesn't exist in branch with id {id}");
             product.Price = request.Price;
             product.Stock = request.Stock;
             product.LowStock = request.LowStock;
-            await repository.UpdateBranchProductAsync(product); 
+            await repository.UpdateBranchProductAsync(product);
         }
 
-        public async Task DeleteBranchAsync(Guid id)
+        public async Task DeleteBranchAsync(Guid id, Guid businessId)
         {
-            await repository.DeleteBranchAsync(await FindBranchById(id));
+            await repository.DeleteBranchAsync(await FindBranchById(id, businessId));
         }
 
-        public async Task DeleteProductsAsync(Guid branchId, IEnumerable<int> productIds)
+        public async Task DeleteProductsAsync(Guid branchId, IEnumerable<int> productIds, Guid businessId)
         {
-            await FindBranchById(branchId);
+            await FindBranchById(branchId, businessId);
             var products = await repository.GetBranchProductsByProductIdsAsync(branchId, productIds);
             await repository.DeleteProductsAsync(products);
         }
 
-        private async Task<Branch> FindBranchById(Guid id)
+        private async Task<Branch> FindBranchById(Guid id, Guid businessId)
         {
-            return await repository.GetBranchByIdAsync(id) ?? throw new KeyNotFoundException($"Branch with id {id} doesn't exist");
+            return await repository.GetBranchByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Branch with id {id} doesn't exist");
         }
 
-        public async Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams)
+        public async Task<PaginatedList<BranchProductResponse>> GetProductsByBranchAsync(Guid id, ProductSearchParams searchParams, Guid businessId)
         {
-            await FindBranchById(id);
+            await FindBranchById(id, businessId);
             var paginatedBranchProducts = await repository.GetProductsByBranchAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<BranchProductResponse>(
                 mapper.Map<List<BranchProductResponse>>(paginatedBranchProducts.Items),
@@ -89,7 +89,7 @@ namespace Inventory.Application.Services.BranchService
 
         public async Task CreateSaleAsync(Guid id, SaleRequest request, Guid businessId)
         {
-            await FindBranchById(id);
+            await FindBranchById(id, businessId);
             var user = currentUserService.GetCurrentUserId();
             var productIds = request.SaleDetails.Select(sd => sd.ProductId).ToList();
             var products = await repository.GetBranchProductsByProductIdsAsync(id, productIds);
@@ -141,7 +141,7 @@ namespace Inventory.Application.Services.BranchService
 
         public async Task<PaginatedList<SaleResponse>> GetSalesByBranchAsync(Guid id, SaleSearchParams searchParams, Guid businessId)
         {
-            await FindBranchById(id);
+            await FindBranchById(id, businessId);
             var paginatedSales = await repository.GetSalesByBranchAsync(businessId, id, searchParams.FromDate, searchParams.ToDate, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<SaleResponse>(
                 mapper.Map<List<SaleResponse>>(paginatedSales.Items),
@@ -151,9 +151,9 @@ namespace Inventory.Application.Services.BranchService
             );
         }
 
-        public async Task AddProductsToBranchAsync(Guid id, IEnumerable<BranchProductRequest> request)
+        public async Task AddProductsToBranchAsync(Guid id, IEnumerable<BranchProductRequest> request, Guid businessId)
         {
-            await FindBranchById(id);
+            await FindBranchById(id, businessId);
             var branchProducts = request.Select(r => new BranchProductBuilder()
                 .WithBranchId(id)
                 .WithProductId(r.ProductId)
@@ -165,10 +165,10 @@ namespace Inventory.Application.Services.BranchService
             await repository.AddProductsToBranchAsync(branchProducts);
         }
 
-        public async Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByBranchAsync(Guid id, ProductSearchParams searchParams)
+        public async Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByBranchAsync(Guid id, ProductSearchParams searchParams, Guid businessId)
         {
-            await FindBranchById(id);
-            var products = await repository.GetProductsDoesntExistByBranchAsync(id, searchParams.Page, searchParams.PageSize);
+            await FindBranchById(id, businessId);
+            var products = await repository.GetProductsDoesntExistByBranchAsync(id, businessId, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<ProductResponse>(
                 mapper.Map<List<ProductResponse>>(products.Items),
                 products.TotalCount,

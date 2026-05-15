@@ -22,9 +22,9 @@ namespace Inventory.Application.Services.WarehouseService
             );
         }
 
-        public async Task<WarehouseResponse> GetWarehouseByIdAsync(Guid id)
+        public async Task<WarehouseResponse> GetWarehouseByIdAsync(Guid id, Guid businessId)
         {
-            return mapper.Map<WarehouseResponse>(await FindWarehouseById(id));
+            return mapper.Map<WarehouseResponse>(await FindWarehouseById(id, businessId));
         }
 
         public async Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request, Guid businessId)
@@ -34,24 +34,24 @@ namespace Inventory.Application.Services.WarehouseService
             return mapper.Map<WarehouseResponse>(await repository.CreateWarehouseAsync(warehouse));
         }
 
-        public async Task UpdateWarehouseAsync(Guid id, WarehouseRequest request)
+        public async Task UpdateWarehouseAsync(Guid id, WarehouseRequest request, Guid businessId)
         {
-            await repository.UpdateWarehouseAsync(mapper.Map(request, await FindWarehouseById(id)));
+            await repository.UpdateWarehouseAsync(mapper.Map(request, await FindWarehouseById(id, businessId)));
         }
 
-        public async Task DeleteWarehouseAsync(Guid id)
+        public async Task DeleteWarehouseAsync(Guid id, Guid businessId)
         {
-            await repository.DeleteWarehouseAsync(await FindWarehouseById(id));
+            await repository.DeleteWarehouseAsync(await FindWarehouseById(id, businessId));
         }
 
-        private async Task<Warehouse> FindWarehouseById(Guid id)
+        private async Task<Warehouse> FindWarehouseById(Guid id, Guid businessId)
         {
-            return await repository.GetWarehouseByIdAsync(id) ?? throw new KeyNotFoundException($"Warehouse with id {id} doesn't exist");
+            return await repository.GetWarehouseByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Warehouse with id {id} doesn't exist");
         }
 
-        public async Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams)
+        public async Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams, Guid businessId)
         {
-            await FindWarehouseById(id);
+            await FindWarehouseById(id, businessId);
             var warehouseProducts = await repository.GetProductsByWarehousesAsync(id, searchParams.Name, searchParams.Page, searchParams.PageSize);
             return new PaginatedList<WarehouseProductResponse>(
                 mapper.Map<List<WarehouseProductResponse>>(warehouseProducts.Items),
@@ -61,9 +61,9 @@ namespace Inventory.Application.Services.WarehouseService
             );
         }
 
-        public async Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request)
+        public async Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request, Guid businessId)
         {
-            await FindWarehouseById(id);
+            await FindWarehouseById(id, businessId);
             var warehouseProducts = request.Select(r => new WarehouseProductBuilder()
                 .WithWarehouseId(id)
                 .WithProductId(r.ProductId)
@@ -74,10 +74,10 @@ namespace Inventory.Application.Services.WarehouseService
             await repository.AddProductsToWarehouseAsync(warehouseProducts);
         }
 
-        public async Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams)
+        public async Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams, Guid businessId)
         {
-            await FindWarehouseById(id);
-            var products = await repository.GetProductsDoesntExistByWarehouseAsync(id, searchParams.Page, searchParams.PageSize);
+            await FindWarehouseById(id, businessId);
+            var products = await repository.GetProductsDoesntExistByWarehouseAsync(id, businessId, searchParams.Page, searchParams.PageSize);
             return mapper.Map<PaginatedList<ProductResponse>>(products);
         }
     }

@@ -20,9 +20,9 @@ namespace Inventory.Application.Services.CategoryService
             );
         }
 
-        public async Task<CategoryResponse> GetCategoryByIdAsync(int id)
+        public async Task<CategoryResponse> GetCategoryByIdAsync(int id, Guid businessId)
         {
-            return mapper.Map<CategoryResponse>(await FindCategoryById(id));
+            return mapper.Map<CategoryResponse>(await FindCategoryById(id, businessId));
         }
 
         public async Task<CategoryResponse> CreateCategoryAsync(CategoryRequest request, Guid businessId)
@@ -33,20 +33,20 @@ namespace Inventory.Application.Services.CategoryService
             return mapper.Map<CategoryResponse>(await repository.CreateCategoryAsync(category));
         }
 
-        public async Task UpdateCategoryAsync(int id, CategoryRequest request)
+        public async Task UpdateCategoryAsync(int id, CategoryRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateCategoryAsync(mapper.Map(request, await FindCategoryById(id)));
+            await repository.UpdateCategoryAsync(mapper.Map(request, await FindCategoryById(id, businessId)));
         }
 
-        public async Task DeleteCategoryAsync(int id)
+        public async Task DeleteCategoryAsync(int id, Guid businessId)
         {
-            await repository.DeleteCategoryAsync(await FindCategoryById(id));
+            await repository.DeleteCategoryAsync(await FindCategoryById(id, businessId));
         }
 
-        private async Task<Category> FindCategoryById(int id)
+        private async Task<Category> FindCategoryById(int id, Guid businessId)
         {
-            return await repository.GetCategoryByIdAsync(id) ?? throw new KeyNotFoundException($"Category with id {id} doesn't exist");
+            return await repository.GetCategoryByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Category with id {id} doesn't exist");
         }
     }
 }

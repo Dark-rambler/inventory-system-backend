@@ -8,12 +8,12 @@ namespace Inventory.Application.Services.WarehouseService
     public interface IWarehouseService
     {
         Task<WarehouseResponse> CreateWarehouseAsync(WarehouseRequest request, Guid businessId);
-        Task<WarehouseResponse> GetWarehouseByIdAsync(Guid id);
+        Task<WarehouseResponse> GetWarehouseByIdAsync(Guid id, Guid businessId);
         Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams, Guid businessId);
-        Task UpdateWarehouseAsync(Guid id, WarehouseRequest request);
-        Task DeleteWarehouseAsync(Guid id);
-        Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams);
-        Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request);
-        Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams);
+        Task UpdateWarehouseAsync(Guid id, WarehouseRequest request, Guid businessId);
+        Task DeleteWarehouseAsync(Guid id, Guid businessId);
+        Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams, Guid businessId);
+        Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request, Guid businessId);
+        Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams, Guid businessId);
     }
 }

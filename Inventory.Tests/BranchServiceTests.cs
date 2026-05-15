@@ -78,10 +78,10 @@ public class BranchServiceTests
         var branch = CreateBranch();
         var response = new BranchResponse { Id = branch.Id, Name = branch.Name };
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id, _businessId)).ReturnsAsync(branch);
         _mapperMock.Setup(m => m.Map<BranchResponse>(branch)).Returns(response);
 
-        var result = await _service.GetBranchByIdAsync(branch.Id);
+        var result = await _service.GetBranchByIdAsync(branch.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(branch.Id, result.Id);
@@ -92,11 +92,11 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetBranchByIdAsync(branchId));
+            () => _service.GetBranchByIdAsync(branchId, _businessId));
     }
 
     [Fact]
@@ -127,10 +127,10 @@ public class BranchServiceTests
 
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<BranchRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId)).ReturnsAsync(branch);
         _mapperMock.Setup(m => m.Map(request, branch));
 
-        await _service.UpdateBranchAsync(branchId, request);
+        await _service.UpdateBranchAsync(branchId, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateBranchAsync(It.IsAny<Branch>()), Times.Once);
     }
@@ -140,11 +140,11 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateBranchAsync(branchId, CreateRequest()));
+            () => _service.UpdateBranchAsync(branchId, CreateRequest(), _businessId));
     }
 
     [Fact]
@@ -152,9 +152,9 @@ public class BranchServiceTests
     {
         var branch = CreateBranch();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id, _businessId)).ReturnsAsync(branch);
 
-        await _service.DeleteBranchAsync(branch.Id);
+        await _service.DeleteBranchAsync(branch.Id, _businessId);
 
         _repositoryMock.Verify(r => r.DeleteBranchAsync(branch), Times.Once);
     }
@@ -164,11 +164,11 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.DeleteBranchAsync(branchId));
+            () => _service.DeleteBranchAsync(branchId, _businessId));
     }
 
     [Fact]
@@ -179,13 +179,13 @@ public class BranchServiceTests
         var response = new BranchProductResponse { Id = 1, Name = "Product A" };
         var paginatedList = new PaginatedList<BranchProduct>([branchProduct], 1, 1, 10);
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id, _businessId)).ReturnsAsync(branch);
         _repositoryMock.Setup(r => r.GetProductsByBranchAsync(branch.Id, null, 1, 10))
             .ReturnsAsync(paginatedList);
         _mapperMock.Setup(m => m.Map<List<BranchProductResponse>>(It.IsAny<List<BranchProduct>>()))
             .Returns([response]);
 
-        var result = await _service.GetProductsByBranchAsync(branch.Id, new ProductSearchParams());
+        var result = await _service.GetProductsByBranchAsync(branch.Id, new ProductSearchParams(), _businessId);
 
         Assert.NotNull(result);
         Assert.Single(result.Items);
@@ -196,11 +196,11 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetProductsByBranchAsync(branchId, new ProductSearchParams()));
+            () => _service.GetProductsByBranchAsync(branchId, new ProductSearchParams(), _businessId));
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public class BranchServiceTests
             SaleDetails = [new SaleDetailRequest { ProductId = productId, Quantity = 5 }]
         };
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id, _businessId)).ReturnsAsync(branch);
         _currentUserServiceMock.Setup(u => u.GetCurrentUserId()).Returns(_userId);
         _dateTimeProviderMock.Setup(d => d.UtcNow).Returns(DateTime.UtcNow);
         _repositoryMock.Setup(r => r.GetBranchProductsByProductIdsAsync(branch.Id, It.IsAny<IEnumerable<int>>()))
@@ -241,7 +241,7 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
@@ -257,9 +257,9 @@ public class BranchServiceTests
             new() { ProductId = 1, Price = 9.99, Stock = 50, LowStock = 5 }
         };
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id, _businessId)).ReturnsAsync(branch);
 
-        await _service.AddProductsToBranchAsync(branch.Id, requests);
+        await _service.AddProductsToBranchAsync(branch.Id, requests, _businessId);
 
         _repositoryMock.Verify(r => r.AddProductsToBranchAsync(It.IsAny<IEnumerable<BranchProduct>>()), Times.Once);
     }
@@ -269,11 +269,11 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.AddProductsToBranchAsync(branchId, []));
+            () => _service.AddProductsToBranchAsync(branchId, [], _businessId));
     }
 
     [Fact]
@@ -284,7 +284,7 @@ public class BranchServiceTests
         var response = new SaleResponse { Id = sale.Id, Total = sale.Total };
         var paginatedList = new PaginatedList<Sale>([sale], 1, 1, 10);
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id)).ReturnsAsync(branch);
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branch.Id, _businessId)).ReturnsAsync(branch);
         _repositoryMock.Setup(r => r.GetSalesByBranchAsync(_businessId, branch.Id, null, null, 1, 10))
             .ReturnsAsync(paginatedList);
         _mapperMock.Setup(m => m.Map<List<SaleResponse>>(It.IsAny<List<Sale>>()))
@@ -302,7 +302,7 @@ public class BranchServiceTests
     {
         var branchId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId))
+        _repositoryMock.Setup(r => r.GetBranchByIdAsync(branchId, _businessId))
             .ReturnsAsync((Branch?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(

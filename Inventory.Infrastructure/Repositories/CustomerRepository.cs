@@ -17,9 +17,9 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersCustomer(name)
                 .ToPaginatedListAsync(page, pageSize);
 
-        public async Task<Customer?> GetCustomerByIdAsync(Guid id) =>
+        public async Task<Customer?> GetCustomerByIdAsync(Guid id, Guid businessId) =>
             await context.Customers
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id && c.BusinessId == businessId);
 
         public async Task<Customer> CreateCustomerAsync(Customer customer)
         {

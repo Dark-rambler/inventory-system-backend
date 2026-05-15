@@ -77,12 +77,12 @@ public class UserServiceTests
         var user = CreateUser();
         var response = new UserResponse { Id = user.Id, Name = user.Name };
 
-        _repositoryMock.Setup(r => r.GetUserByIdAsync(user.Id))
+        _repositoryMock.Setup(r => r.GetUserByIdAsync(user.Id, _businessId))
             .ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map<UserResponse>(user))
             .Returns(response);
 
-        var result = await _service.GetUserByIdAsync(user.Id);
+        var result = await _service.GetUserByIdAsync(user.Id, _businessId);
 
         Assert.NotNull(result);
         Assert.Equal(user.Id, result.Id);
@@ -93,11 +93,11 @@ public class UserServiceTests
     {
         var userId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId))
+        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId, _businessId))
             .ReturnsAsync((User?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.GetUserByIdAsync(userId));
+            () => _service.GetUserByIdAsync(userId, _businessId));
     }
 
     [Fact]
@@ -134,11 +134,11 @@ public class UserServiceTests
 
         _validatorMock.Setup(v => v.ValidateAsync(It.IsAny<ValidationContext<UserRequest>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
-        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId))
+        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId, _businessId))
             .ReturnsAsync(user);
         _mapperMock.Setup(m => m.Map(request, user));
 
-        await _service.UpdateUserAsync(userId, request);
+        await _service.UpdateUserAsync(userId, request, _businessId);
 
         _repositoryMock.Verify(r => r.UpdateUserAsync(It.IsAny<User>()), Times.Once);
     }
@@ -148,11 +148,11 @@ public class UserServiceTests
     {
         var userId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId))
+        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId, _businessId))
             .ReturnsAsync((User?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.UpdateUserAsync(userId, CreateRequest()));
+            () => _service.UpdateUserAsync(userId, CreateRequest(), _businessId));
     }
 
     [Fact]
@@ -160,10 +160,10 @@ public class UserServiceTests
     {
         var user = CreateUser();
 
-        _repositoryMock.Setup(r => r.GetUserByIdAsync(user.Id))
+        _repositoryMock.Setup(r => r.GetUserByIdAsync(user.Id, _businessId))
             .ReturnsAsync(user);
 
-        await _service.DeleteUserAsync(user.Id);
+        await _service.DeleteUserAsync(user.Id, _businessId);
 
         _repositoryMock.Verify(r => r.DeleteUserAsync(user), Times.Once);
     }
@@ -173,10 +173,10 @@ public class UserServiceTests
     {
         var userId = Guid.NewGuid();
 
-        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId))
+        _repositoryMock.Setup(r => r.GetUserByIdAsync(userId, _businessId))
             .ReturnsAsync((User?)null);
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _service.DeleteUserAsync(userId));
+            () => _service.DeleteUserAsync(userId, _businessId));
     }
 }

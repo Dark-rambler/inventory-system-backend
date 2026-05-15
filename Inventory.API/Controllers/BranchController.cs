@@ -23,9 +23,9 @@ namespace Inventory.API.Controllers
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(BranchResponse), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetBranchByIdAsync(Guid id)
+        public async Task<IActionResult> GetBranchByIdAsync(Guid id, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetBranchByIdAsync(id));
+            return Ok(await service.GetBranchByIdAsync(id, businessId));
         }
 
         [HttpPost]
@@ -39,52 +39,51 @@ namespace Inventory.API.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateBranchAsync(Guid id, [FromBody] BranchRequest request)
+        public async Task<IActionResult> UpdateBranchAsync(Guid id, [FromBody] BranchRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.UpdateBranchAsync(id, request);
+            await service.UpdateBranchAsync(id, request, businessId);
             return NoContent();
         }
 
         [HttpPut("{id}/products")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> UpdateBranchProductAsync(Guid id, [FromBody] BranchProductRequest request)
+        public async Task<IActionResult> UpdateBranchProductAsync(Guid id, [FromBody] BranchProductRequest request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.UpdateBranchProductAsync(id, request);
+            await service.UpdateBranchProductAsync(id, request, businessId);
             return NoContent();
         }
-
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteBranchAsync(Guid id)
+        public async Task<IActionResult> DeleteBranchAsync(Guid id, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.DeleteBranchAsync(id);
+            await service.DeleteBranchAsync(id, businessId);
             return NoContent();
         }
 
         [HttpDelete("{id}/products")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> DeleteProductsAsync(Guid id, [FromBody] IEnumerable<int> productIds)
+        public async Task<IActionResult> DeleteProductsAsync(Guid id, [FromBody] IEnumerable<int> productIds, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.DeleteProductsAsync(id, productIds);
+            await service.DeleteProductsAsync(id, productIds, businessId);
             return NoContent();
         }
 
         [HttpGet("{id}/products")]
         [ProducesResponseType(typeof(PaginatedList<ProductResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProductsByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
+        public async Task<IActionResult> GetProductsByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsByBranchAsync(id, searchParams));
+            return Ok(await service.GetProductsByBranchAsync(id, searchParams, businessId));
         }
 
         [HttpPost("{id}/products")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> AddProductToBranchAsync(Guid id, [FromBody] IEnumerable<BranchProductRequest> request)
+        public async Task<IActionResult> AddProductToBranchAsync(Guid id, [FromBody] IEnumerable<BranchProductRequest> request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.AddProductsToBranchAsync(id, request);
+            await service.AddProductsToBranchAsync(id, request, businessId);
             return NoContent();
         }
 
@@ -104,9 +103,9 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products/doesnt-exist")]
-        public async Task<IActionResult> GetProductsDoesntExistByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams)
+        public async Task<IActionResult> GetProductsDoesntExistByBranchAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsDoesntExistByBranchAsync(id, searchParams));
+            return Ok(await service.GetProductsDoesntExistByBranchAsync(id, searchParams, businessId));
         }
     }
 }

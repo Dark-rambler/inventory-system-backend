@@ -18,10 +18,10 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersBranch(name)
                 .ToPaginatedListAsync(page, pageSize);
 
-        public async Task<Branch?> GetBranchByIdAsync(Guid id) =>
+        public async Task<Branch?> GetBranchByIdAsync(Guid id, Guid businessId) =>
             await context.Branches
                 .Include(w => w.Location)
-                .FirstOrDefaultAsync(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id && b.BusinessId == businessId);
 
         public async Task<Branch> CreateBranchAsync(Branch branch)
         {
@@ -107,10 +107,10 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, int page, int pageSize) =>
+        public async Task<PaginatedList<Product>> GetProductsDoesntExistByBranchAsync(Guid id, Guid businessId, int page, int pageSize) =>
             await context.Products
                 .AsQueryable()
-                .Where(p => !context.BranchProducts.Any(bp => bp.BranchId == id && bp.ProductId == p.Id))
+                .Where(p => p.BusinessId == businessId && !context.BranchProducts.Any(bp => bp.BranchId == id && bp.ProductId == p.Id))
                 .Include(p => p.Measure)
                 .Include(p => p.Category)
                 .ToPaginatedListAsync(page, pageSize);

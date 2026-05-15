@@ -20,9 +20,9 @@ namespace Inventory.Infrastructure.Repositories
                 .ToPaginatedListAsync(page, pageSize);
         }
 
-        public async Task<Category?> GetCategoryByIdAsync(int id) =>
+        public async Task<Category?> GetCategoryByIdAsync(int id, Guid businessId) =>
             await context.Categories
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id && c.BusinessId == businessId);
 
         public async Task<Category> CreateCategoryAsync(Category category)
         {

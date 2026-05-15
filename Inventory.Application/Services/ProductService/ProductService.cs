@@ -21,9 +21,9 @@ namespace Inventory.Application.Services.ProductService
             );
         }
 
-        public async Task<ProductResponse> GetProductByIdAsync(int id)
+        public async Task<ProductResponse> GetProductByIdAsync(int id, Guid businessId)
         {
-            return mapper.Map<ProductResponse>(await FindProductById(id));
+            return mapper.Map<ProductResponse>(await FindProductById(id, businessId));
         }
 
         public async Task<ProductResponse> CreateProductAsync(ProductRequest request, Guid businessId)
@@ -34,20 +34,20 @@ namespace Inventory.Application.Services.ProductService
             return mapper.Map<ProductResponse>(await repository.CreateProductAsync(product));
         }
 
-        public async Task UpdateProductAsync(int id, ProductRequest request)
+        public async Task UpdateProductAsync(int id, ProductRequest request, Guid businessId)
         {
             await validator.ValidateAndThrowAsync(request);
-            await repository.UpdateProductAsync(mapper.Map(request, await FindProductById(id)));
+            await repository.UpdateProductAsync(mapper.Map(request, await FindProductById(id, businessId)));
         }
 
-        private async Task<Product> FindProductById(int id)
+        private async Task<Product> FindProductById(int id, Guid businessId)
         {
-            return await repository.GetProductByIdAsync(id) ?? throw new KeyNotFoundException($"Product with id {id} doesn't exist");
+            return await repository.GetProductByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Product with id {id} doesn't exist");
         }
 
-        public async Task DeleteProductAsync(int id)
+        public async Task DeleteProductAsync(int id, Guid businessId)
         {
-            await repository.DeleteProductAsync(await FindProductById(id));
+            await repository.DeleteProductAsync(await FindProductById(id, businessId));
         }
 
         public async Task BulkUploadProductsAsync(Stream fileStream)

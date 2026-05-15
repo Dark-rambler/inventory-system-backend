@@ -17,9 +17,9 @@ namespace Inventory.Infrastructure.Repositories
                 .FiltersProvider(name)
                 .ToPaginatedListAsync(page, pageSize);
 
-        public async Task<Provider?> GetProviderByIdAsync(Guid id) =>
+        public async Task<Provider?> GetProviderByIdAsync(Guid id, Guid businessId) =>
             await context.Providers
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id && c.BusinessId == businessId);
 
         public async Task<Provider> CreateProviderAsync(Provider provider)
         {
