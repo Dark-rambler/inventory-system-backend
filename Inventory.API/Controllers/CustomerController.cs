@@ -25,7 +25,7 @@ namespace Inventory.API.Controllers
         {
             return Ok(await service.CreateCustomerAsync(request, businessId));
         }
-        
+
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateCustomerAsync(Guid id, [FromBody] CustomerRequest request, [FromHeader][BindRequired] Guid businessId)

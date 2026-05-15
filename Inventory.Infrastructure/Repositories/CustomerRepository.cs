@@ -41,5 +41,5 @@ namespace Inventory.Infrastructure.Repositories
             context.Customers.Update(customer);
             await context.SaveChangesAsync();
         }
-    }    
+    }
 }

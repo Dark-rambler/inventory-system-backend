@@ -19,8 +19,8 @@ namespace Inventory.Application.Profiles
                 .ForMember(dest => dest.Branch, opt => opt.MapFrom(src => src.Branch.Name))
                 .ForMember(dest => dest.Seller, opt => opt.MapFrom(src => src.Seller.Name))
                 .ForMember(dest => dest.Customer, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Name : null));
-             CreateMap<SaleDetail, SaleDetailResponse>()
-                .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product.Name));
+            CreateMap<SaleDetail, SaleDetailResponse>()
+               .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product.Name));
         }
     }
 }

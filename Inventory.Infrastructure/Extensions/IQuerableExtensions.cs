@@ -111,13 +111,13 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<Sale> source)
         {
-            public IQueryable<Sale> FiltersSales( DateTime? fromDate, DateTime? toDate)
+            public IQueryable<Sale> FiltersSales(DateTime? fromDate, DateTime? toDate)
             {
-                if(fromDate.HasValue)
+                if (fromDate.HasValue)
                 {
                     source = source.Where(s => s.Date >= fromDate.Value);
                 }
-                if(toDate.HasValue)
+                if (toDate.HasValue)
                 {
                     source = source.Where(s => s.Date <= toDate.Value);
                 }
@@ -129,15 +129,15 @@ namespace Inventory.Infrastructure.Extensions
         {
             public IQueryable<Purchase> FiltersPurchases(DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId)
             {
-                if(fromDate.HasValue)
+                if (fromDate.HasValue)
                 {
                     source = source.Where(s => s.Date >= fromDate.Value);
                 }
-                if(toDate.HasValue)
+                if (toDate.HasValue)
                 {
                     source = source.Where(s => s.Date <= toDate.Value);
                 }
-                if(providerId.HasValue)
+                if (providerId.HasValue)
                 {
                     source = source.Where(s => s.ProviderId == providerId.Value);
                 }

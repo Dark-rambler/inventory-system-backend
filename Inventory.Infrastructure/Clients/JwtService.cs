@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Inventory.Infrastructure.Clients
 {
-    public class JwtService( IOptions<JwtSettings> jwtSettings) : IJwtService
+    public class JwtService(IOptions<JwtSettings> jwtSettings) : IJwtService
     {
 
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;

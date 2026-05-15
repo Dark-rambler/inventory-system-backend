@@ -4,7 +4,7 @@ using Inventory.Domain.Entities;
 
 namespace Inventory.Application.Profiles
 {
-    public class WarehouseProductProfile: Profile
+    public class WarehouseProductProfile : Profile
     {
         public WarehouseProductProfile()
         {

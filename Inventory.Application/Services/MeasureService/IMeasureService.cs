@@ -2,7 +2,7 @@
 
 namespace Inventory.Application.Services.MeasureService
 {
-        public interface IMeasureService
+    public interface IMeasureService
     {
         Task<List<MeasureResponse>> GetMeasuresAsync();
     }
