@@ -45,6 +45,12 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task DeleteProductsAsync(IEnumerable<BranchProduct> products)
+        {
+            context.BranchProducts.RemoveRange(products);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<PaginatedList<BranchProduct>> GetProductsByBranchAsync(Guid id, string? name, int page, int pageSize) =>
             await context.BranchProducts
                 .AsQueryable()
@@ -92,6 +98,12 @@ namespace Inventory.Infrastructure.Repositories
         public async Task AddProductsToBranchAsync(IEnumerable<BranchProduct> branchProducts)
         {
             context.BranchProducts.AddRange(branchProducts);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateBranchProductAsync(BranchProduct branchProduct)
+        {
+            context.BranchProducts.Update(branchProduct);
             await context.SaveChangesAsync();
         }
 

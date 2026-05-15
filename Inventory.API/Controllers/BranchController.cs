@@ -45,12 +45,31 @@ namespace Inventory.API.Controllers
             return NoContent();
         }
 
+        [HttpPut("{id}/products")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> UpdateBranchProductAsync(Guid id, [FromBody] BranchProductRequest request)
+        {
+            await service.UpdateBranchProductAsync(id, request);
+            return NoContent();
+        }
+
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteBranchAsync(Guid id)
         {
             await service.DeleteBranchAsync(id);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}/products")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> DeleteProductsAsync(Guid id, [FromBody] IEnumerable<int> productIds)
+        {
+            await service.DeleteProductsAsync(id, productIds);
             return NoContent();
         }
 
