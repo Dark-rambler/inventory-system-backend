@@ -15,5 +15,12 @@ namespace Inventory.API.Controllers
         {
             return Ok(await service.LoginAsync(request));
         }
+
+        [HttpPost("refresh")]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request)
+        {
+            return Ok(await service.RefreshTokenAsync(request));
+        }
     }
 }

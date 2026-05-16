@@ -91,6 +91,7 @@ public static class DependencyInjection
         services.AddScoped<IAuditHistoryRepository, AuditHistoryRepository>();
         services.AddScoped<IProviderRepository, ProviderRepository>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IExcelReader, ExcelReader>();
         services.AddHttpContextAccessor();

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Inventory.Infrastructure.Clients
@@ -27,7 +28,6 @@ namespace Inventory.Infrastructure.Clients
                 new Claim("role", user.Role.Name.ToString()),
                 new Claim("businessId", user.BusinessId.ToString()),
                 new Claim("businessName", user.Business.Name.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.Name),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
@@ -41,6 +41,13 @@ namespace Inventory.Infrastructure.Clients
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateRefreshToken()
+        {
+            var bytes = new byte[64];
+            RandomNumberGenerator.Fill(bytes);
+            return Convert.ToBase64String(bytes);
         }
     }
 }

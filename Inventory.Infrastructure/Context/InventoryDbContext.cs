@@ -24,6 +24,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Provider> Providers { get; set; }
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -56,6 +57,12 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<Provider>()
                 .Property(p => p.Id)
                 .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<RefreshToken>()
+                .Property(rt => rt.Id)
+                .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<RefreshToken>()
+                .HasIndex(rt => rt.Token)
+                .IsUnique();
             modelBuilder.Entity<AuditHistory>()
                 .Ignore(a => a.User);
             modelBuilder.Entity<BranchProduct>()
