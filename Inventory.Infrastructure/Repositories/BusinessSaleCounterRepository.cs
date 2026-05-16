@@ -8,7 +8,7 @@ namespace Inventory.Infrastructure.Repositories
     {
         public async Task<string> GetNextFolioAsync(Guid businessId)
         {
-            var results = await context.Database
+            var counter = context.Database
                 .SqlQuery<int>(
                     $"""
                      INSERT INTO business_sale_counters (business_id, counter)
@@ -17,9 +17,8 @@ namespace Inventory.Infrastructure.Repositories
                          SET counter = business_sale_counters.counter + 1
                      RETURNING counter
                      """)
-                .ToListAsync();
-
-            var counter = results.First();
+                .AsEnumerable()
+                .First();
 
             return $"POS-{counter:D4}";
         }
