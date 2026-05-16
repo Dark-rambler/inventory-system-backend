@@ -25,6 +25,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<BusinessSaleCounter> BusinessSaleCounters { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -63,6 +64,11 @@ namespace Inventory.Infrastructure.Context
             modelBuilder.Entity<RefreshToken>()
                 .HasIndex(rt => rt.Token)
                 .IsUnique();
+            modelBuilder.Entity<BusinessSaleCounter>()
+                .HasKey(c => c.BusinessId);
+            modelBuilder.Entity<BusinessSaleCounter>()
+                .Property(c => c.Counter)
+                .HasDefaultValue(0);
             modelBuilder.Entity<AuditHistory>()
                 .Ignore(a => a.User);
             modelBuilder.Entity<BranchProduct>()

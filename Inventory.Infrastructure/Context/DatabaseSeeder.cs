@@ -116,6 +116,8 @@ public static class DatabaseSeeder
         };
         context.Users.AddRange(users);
 
+        context.BusinessSaleCounters.Add(new BusinessSaleCounter { BusinessId = business.Id, Counter = 0 });
+
         await context.SaveChangesAsync();
     }
 }

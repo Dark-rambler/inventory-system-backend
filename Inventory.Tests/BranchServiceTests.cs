@@ -19,6 +19,7 @@ public class BranchServiceTests
     private readonly Mock<IValidator<BranchRequest>> _validatorMock;
     private readonly Mock<ICurrentUserService> _currentUserServiceMock;
     private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+    private readonly Mock<IBusinessSaleCounterRepository> _saleCounterRepositoryMock;
     private readonly BranchService _service;
     private readonly Guid _businessId = Guid.NewGuid();
     private readonly Guid _userId = Guid.NewGuid();
@@ -30,12 +31,14 @@ public class BranchServiceTests
         _validatorMock = new Mock<IValidator<BranchRequest>>();
         _currentUserServiceMock = new Mock<ICurrentUserService>();
         _dateTimeProviderMock = new Mock<IDateTimeProvider>();
+        _saleCounterRepositoryMock = new Mock<IBusinessSaleCounterRepository>();
         _service = new BranchService(
             _repositoryMock.Object,
             _mapperMock.Object,
             _validatorMock.Object,
             _currentUserServiceMock.Object,
-            _dateTimeProviderMock.Object);
+            _dateTimeProviderMock.Object,
+            _saleCounterRepositoryMock.Object);
     }
 
     private static Branch CreateBranch(Guid? id = null) => new()
@@ -226,6 +229,7 @@ public class BranchServiceTests
         _dateTimeProviderMock.Setup(d => d.UtcNow).Returns(DateTime.UtcNow);
         _repositoryMock.Setup(r => r.GetBranchProductsByProductIdsAsync(branch.Id, It.IsAny<IEnumerable<int>>()))
             .ReturnsAsync([branchProduct]);
+        _saleCounterRepositoryMock.Setup(c => c.GetNextFolioAsync(_businessId)).ReturnsAsync("POS-0001");
 
         await _service.CreateSaleAsync(branch.Id, request, _businessId);
 

@@ -16,7 +16,8 @@ namespace Inventory.Application.Services.BranchService
         IMapper mapper,
         IValidator<BranchRequest> validator,
         ICurrentUserService currentUserService,
-        IDateTimeProvider dateTimeProvider) : IBranchService
+        IDateTimeProvider dateTimeProvider,
+        IBusinessSaleCounterRepository saleCounterRepository) : IBranchService
     {
         public async Task<PaginatedList<BranchResponse>> GetBranchesAsync(BranchSearchParams searchParams, Guid businessId)
         {
@@ -99,11 +100,14 @@ namespace Inventory.Application.Services.BranchService
                 return product;
             }).ToList();
 
+            var folio = await saleCounterRepository.GetNextFolioAsync(businessId);
+
             var sale = new SaleBuilder()
                 .WithBusinessId(businessId)
                 .WithBranchId(id)
                 .WithSellerId(user)
                 .WithCustomerId(request.CustomerId)
+                .WithFolio(folio)
                 .WithDate(createdAt)
                 .WithTotal(request.SaleDetails.Sum(sd => sd.Quantity * products.First(p => p.BranchId == id && p.ProductId == sd.ProductId).Price))
                 .WithSaleDetails([.. request.SaleDetails.Select(sd => new SaleDetailBuilder()
