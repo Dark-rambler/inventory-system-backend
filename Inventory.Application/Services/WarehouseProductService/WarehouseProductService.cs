@@ -38,7 +38,12 @@ namespace Inventory.Application.Services.WarehouseProductService
         {
             await FindWarehouseById(id, businessId);
             var products = await repository.GetProductsDoesntExistByWarehouseAsync(id, businessId, searchParams.Page, searchParams.PageSize);
-            return mapper.Map<PaginatedList<ProductResponse>>(products);
+            return new PaginatedList<ProductResponse>(
+                mapper.Map<List<ProductResponse>>(products.Items),
+                products.TotalCount,
+                products.PageIndex,
+                products.PageSize
+            );
         }
 
         public async Task DeleteProductsAsync(Guid warehouseId, IEnumerable<int> productIds, Guid businessId)
