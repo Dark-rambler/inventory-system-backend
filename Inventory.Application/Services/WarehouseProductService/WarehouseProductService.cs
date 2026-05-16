@@ -41,6 +41,13 @@ namespace Inventory.Application.Services.WarehouseProductService
             return mapper.Map<PaginatedList<ProductResponse>>(products);
         }
 
+        public async Task DeleteProductsAsync(Guid warehouseId, IEnumerable<int> productIds, Guid businessId)
+        {
+            await FindWarehouseById(warehouseId, businessId);
+            var products = await repository.GetWarehouseProductsByProductIdsAsync(warehouseId, productIds);
+            await repository.DeleteProductsAsync(products);
+        }
+
         private async Task FindWarehouseById(Guid id, Guid businessId)
         {
             _ = await repository.GetWarehouseByIdAsync(id, businessId) ?? throw new KeyNotFoundException($"Warehouse with id {id} doesn't exist");

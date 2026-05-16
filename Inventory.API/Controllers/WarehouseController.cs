@@ -57,6 +57,15 @@ namespace Inventory.API.Controllers
             return NoContent();
         }
 
+        [HttpDelete("{id}/products")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> DeleteProductsAsync(Guid id, [FromBody] IEnumerable<int> productIds, [FromHeader][BindRequired] Guid businessId)
+        {
+            await warehouseProductService.DeleteProductsAsync(id, productIds, businessId);
+            return NoContent();
+        }
+
         [HttpGet("{id}/products")]
         [ProducesResponseType(typeof(PaginatedList<WarehouseProductResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)

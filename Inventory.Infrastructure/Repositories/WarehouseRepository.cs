@@ -73,5 +73,17 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(p => p.Measure)
                 .Include(p => p.Category)
                 .ToPaginatedListAsync(page, pageSize);
+
+        public async Task<IEnumerable<WarehouseProduct>> GetWarehouseProductsByProductIdsAsync(Guid warehouseId, IEnumerable<int> productIds) =>
+            await context.WarehouseProducts
+                .Include(wp => wp.Product)
+                .Where(wp => wp.WarehouseId == warehouseId && productIds.Contains(wp.ProductId))
+                .ToListAsync();
+
+        public async Task DeleteProductsAsync(IEnumerable<WarehouseProduct> products)
+        {
+            context.WarehouseProducts.RemoveRange(products);
+            await context.SaveChangesAsync();
+        }
     }
 }
