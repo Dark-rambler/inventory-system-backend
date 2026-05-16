@@ -24,6 +24,9 @@ using Inventory.Application.Services.ProviderService;
 using Inventory.Application.Services.PurchaseService;
 using Inventory.Application.Services.RoleService;
 using Inventory.Application.Services.UserService;
+using Inventory.Application.Services.BranchProductService;
+using Inventory.Application.Services.SaleService;
+using Inventory.Application.Services.WarehouseProductService;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -65,6 +68,9 @@ public static class DependencyInjection
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IBranchService, BranchService>();
         services.AddScoped<IWarehouseService, WarehouseService>();
+        services.AddScoped<IBranchProductService, BranchProductService>();
+        services.AddScoped<ISaleService, SaleService>();
+        services.AddScoped<IWarehouseProductService, WarehouseProductService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IMeasureService, MeasureService>();

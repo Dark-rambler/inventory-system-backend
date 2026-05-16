@@ -1,8 +1,8 @@
 using Inventory.Application.Common.Pagination;
-using Inventory.Application.DataTransferObjects.BranchProductDto;
 using Inventory.Application.DataTransferObjects.ProductDto;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
 using Inventory.Application.DataTransferObjects.WarehouseProductDto;
+using Inventory.Application.Services.WarehouseProductService;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,9 @@ namespace Inventory.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class WarehouseController(IWarehouseService service) : ControllerBase
+    public class WarehouseController(
+        IWarehouseService service,
+        IWarehouseProductService warehouseProductService) : ControllerBase
     {
         [HttpGet]
         [ProducesResponseType(typeof(PaginatedList<WarehouseResponse>), StatusCodes.Status200OK)]
@@ -56,24 +58,24 @@ namespace Inventory.API.Controllers
         }
 
         [HttpGet("{id}/products")]
-        [ProducesResponseType(typeof(PaginatedList<ProductResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedList<WarehouseProductResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWarehousesByProductAndQuantityAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsByWarehousesAsync(id, searchParams, businessId));
+            return Ok(await warehouseProductService.GetProductsByWarehousesAsync(id, searchParams, businessId));
         }
 
         [HttpPost("{id}/products")]
-        [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> AddProductsToWarehouseAsync(Guid id, [FromBody] IEnumerable<WarehouseProductRequest> request, [FromHeader][BindRequired] Guid businessId)
         {
-            await service.AddProductsToWarehouseAsync(id, request, businessId);
+            await warehouseProductService.AddProductsToWarehouseAsync(id, request, businessId);
             return NoContent();
         }
 
         [HttpGet("{id}/products/doesnt-exist")]
         public async Task<IActionResult> GetProductsDoesntExistByWarehouseAsync(Guid id, [FromQuery] ProductSearchParams searchParams, [FromHeader][BindRequired] Guid businessId)
         {
-            return Ok(await service.GetProductsDoesntExistByWarehouseAsync(id, searchParams, businessId));
+            return Ok(await warehouseProductService.GetProductsDoesntExistByWarehouseAsync(id, searchParams, businessId));
         }
     }
 }

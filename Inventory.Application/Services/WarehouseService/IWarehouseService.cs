@@ -1,7 +1,5 @@
-﻿using Inventory.Application.Common.Pagination;
-using Inventory.Application.DataTransferObjects.ProductDto;
+using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.WarehouseDto;
-using Inventory.Application.DataTransferObjects.WarehouseProductDto;
 
 namespace Inventory.Application.Services.WarehouseService
 {
@@ -12,8 +10,5 @@ namespace Inventory.Application.Services.WarehouseService
         Task<PaginatedList<WarehouseResponse>> GetWarehousesAsync(WarehouseSearchParams searchParams, Guid businessId);
         Task UpdateWarehouseAsync(Guid id, WarehouseRequest request, Guid businessId);
         Task DeleteWarehouseAsync(Guid id, Guid businessId);
-        Task<PaginatedList<WarehouseProductResponse>> GetProductsByWarehousesAsync(Guid id, ProductSearchParams searchParams, Guid businessId);
-        Task AddProductsToWarehouseAsync(Guid id, IEnumerable<WarehouseProductRequest> request, Guid businessId);
-        Task<PaginatedList<ProductResponse>> GetProductsDoesntExistByWarehouseAsync(Guid id, ProductSearchParams searchParams, Guid businessId);
     }
 }
