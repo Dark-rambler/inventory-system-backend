@@ -92,7 +92,7 @@ Resolved via `MovementStrategyResolver` (Strategy pattern in `Inventory.Applicat
 
 ### Builder pattern
 
-All entities must be constructed via their builder in `Inventory.Domain/Entities/Builders/` — never use `new Entity { ... }` directly. Builders exist for: `Product`, `Category`, `BranchProduct`, `WarehouseProduct`, `InventoryMovement`, `Purchase`, `PurchaseDetail`, `Sale`, `SaleDetail`, and `AuditHistory`. When adding a new entity, create a corresponding builder in the same directory.
+All entities must be constructed via their builder in `Inventory.Domain/Entities/Builders/` — never use `new Entity { ... }` directly. Builders exist for: `Product`, `Category`, `BranchProduct`, `WarehouseProduct`, `InventoryMovement`, `Purchase`, `PurchaseDetail`, `Sale`, `SaleDetail`, `AuditHistory`, and `RefreshToken`. When adding a new entity, create a corresponding builder in the same directory.
 
 ### Audit history
 
@@ -114,11 +114,15 @@ PostgreSQL via Npgsql EF Core provider. Default dev connection string is in `app
 
 ## Authentication
 
-JWT Bearer tokens. `JwtService` (Infrastructure) generates tokens with user ID, username, role, email, businessId, and businessName claims. Use `[Authorize]` on protected endpoints and `[Authorize(Roles = "Admin")]` for admin-only routes. The login endpoint in `AuthService` is the only unauthenticated write path.
+JWT Bearer tokens. `JwtService` (Infrastructure) generates tokens with user ID, username, role, email, businessId, and businessName claims. Use `[Authorize]` on protected endpoints and `[Authorize(Roles = "Admin")]` for admin-only routes. Only `POST /api/auth/login` and `POST /api/auth/refresh` are unauthenticated.
+
+**Refresh tokens** — `AuthService.RefreshTokenAsync()` validates an incoming refresh token, revokes it, and issues a new JWT + refresh token pair (7-day rotation). The `RefreshToken` entity has `IsRevoked` and an expiry timestamp; store it via `IRefreshTokenRepository`. Auth DTOs (`LoginRequest`, `RefreshTokenRequest`, `LoginResponse`) are C# `record` types.
 
 `IPasswordHasher` (BCrypt.Net) is injected into `AuthService` (login verification) and `UserService` (new user creation). Never hash passwords manually.
 
 `ICurrentUserService` extracts the acting user's `UserId` (Guid) from JWT claims via `IHttpContextAccessor`. Inject this wherever a service needs the current user — do not access `IHttpContextAccessor` directly in services.
+
+`IBusinessContextService` (Infrastructure) extracts `businessId` from the request header, throwing `UnauthorizedAccessException` if the header is absent and `ArgumentException` if it is not a valid GUID.
 
 In production, CORS allowed origins are read from `Cors:AllowedOrigins` in configuration.
 
