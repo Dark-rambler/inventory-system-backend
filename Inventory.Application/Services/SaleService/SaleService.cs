@@ -49,10 +49,11 @@ namespace Inventory.Application.Services.SaleService
 
             var inventoryMovements = request.SaleDetails.Select(sd => new InventoryMovementBuilder()
                 .WithProductId(sd.ProductId)
+                .WithBusinessId(businessId)
+                .WithFromBranchId(id)
                 .WithQuantity(sd.Quantity)
                 .WithType(EnumMovementType.Exit)
                 .WithIsSale(true)
-                .WithFromBranchId(id)
                 .WithUserId(user)
                 .WithCreatedAt(createdAt)
                 .Build()

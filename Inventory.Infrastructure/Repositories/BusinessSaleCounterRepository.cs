@@ -11,11 +11,11 @@ namespace Inventory.Infrastructure.Repositories
             var counter = context.Database
                 .SqlQuery<int>(
                     $"""
-                     INSERT INTO business_sale_counters (business_id, counter)
+                     INSERT INTO "BusinessSaleCounters" ("Id", "Counter")
                      VALUES ({businessId}, 1)
-                     ON CONFLICT (business_id) DO UPDATE
-                         SET counter = business_sale_counters.counter + 1
-                     RETURNING counter
+                     ON CONFLICT ("Id") DO UPDATE
+                         SET "Counter" = "BusinessSaleCounters"."Counter" + 1
+                     RETURNING "Counter"
                      """)
                 .AsEnumerable()
                 .First();

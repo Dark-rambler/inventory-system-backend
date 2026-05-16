@@ -30,6 +30,18 @@ namespace Inventory.Domain.Entities
             return this;
         }
 
+        public InventoryMovementBuilder WithBusinessId(Guid businessId)
+        {
+            _inventoryMovement.BusinessId = businessId;
+            return this;
+        }
+
+        public InventoryMovementBuilder WithBusiness(Business business)
+        {
+            _inventoryMovement.Business = business;
+            return this;
+        }
+
         public InventoryMovementBuilder WithQuantity(int quantity)
         {
             _inventoryMovement.Quantity = quantity;
