@@ -4,6 +4,7 @@ using Inventory.Application.Common.Abstracts;
 using Inventory.Application.Common.Pagination;
 using Inventory.Application.DataTransferObjects.PurchaseDto;
 using Inventory.Domain.Entities;
+using Inventory.Domain.Entities.Builders;
 using Inventory.Domain.Enum;
 
 namespace Inventory.Application.Services.PurchaseService

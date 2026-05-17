@@ -1,6 +1,6 @@
 using Inventory.Domain.Enum;
 
-namespace Inventory.Domain.Entities
+namespace Inventory.Domain.Entities.Builders
 {
     public class AuditHistoryBuilder
     {

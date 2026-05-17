@@ -51,7 +51,7 @@ public class ProviderServiceTests
     {
         var provider = CreateProvider();
         var response = new ProviderResponse { Id = provider.Id, Name = provider.Name };
-        var paginatedList = new PaginatedList<Provider>(new List<Provider> { provider }, 1, 1, 10);
+        var paginatedList = new PaginatedList<Provider>([provider], 1, 1, 10);
 
         _repositoryMock.Setup(r => r.GetProvidersAsync(_businessId, null, 1, 10))
             .ReturnsAsync(paginatedList);

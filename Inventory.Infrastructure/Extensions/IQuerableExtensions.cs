@@ -1,3 +1,4 @@
+#pragma warning disable CA1862 // EF Core cannot translate StringComparison overloads; ToLower().Contains() is intentional
 using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
@@ -127,7 +128,7 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<Purchase> source)
         {
-            public IQueryable<Purchase> FiltersPurchases(DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId)
+            public IQueryable<Purchase> FiltersPurchases(DateTime? fromDate, DateTime? toDate, Guid? providerId)
             {
                 if (fromDate.HasValue)
                 {

@@ -33,7 +33,7 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(p => p.Buyer)
                 .Include(p => p.PurchaseDetails)
                     .ThenInclude(pd => pd.Product)
-                .FiltersPurchases(fromDate, toDate, providerId, branchId)
+                .FiltersPurchases(fromDate, toDate, providerId)
                 .OrderByDescending(b => b.Date)
                 .ToPaginatedListAsync(page, pageSize);
 
