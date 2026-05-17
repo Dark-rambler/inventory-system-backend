@@ -1,4 +1,5 @@
 using Inventory.Application.Common.Abstracts;
+using Inventory.Domain.Entities;
 using Inventory.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,19 +9,26 @@ namespace Inventory.Infrastructure.Repositories
     {
         public async Task<string> GetNextFolioAsync(Guid businessId)
         {
-            var counter = context.Database
-                .SqlQuery<int>(
-                    $"""
-                     INSERT INTO "BusinessSaleCounters" ("Id", "Counter")
-                     VALUES ({businessId}, 1)
-                     ON CONFLICT ("Id") DO UPDATE
-                         SET "Counter" = "BusinessSaleCounters"."Counter" + 1
-                     RETURNING "Counter"
-                     """)
-                .AsEnumerable()
-                .First();
-
-            return $"POS-{counter:D4}";
+            var counterEntity = await context.BusinessSaleCounters
+                .FirstOrDefaultAsync(c => c.BusinessId == businessId);
+            int nextValue;
+            if (counterEntity == null)
+            {
+                nextValue = 1;
+                counterEntity = new BusinessSaleCounter
+                {
+                    BusinessId = businessId,
+                    Counter = nextValue
+                };
+                context.BusinessSaleCounters.Add(counterEntity);
+            }
+            else
+            {
+                counterEntity.Counter += 1;
+                nextValue = counterEntity.Counter;
+            }
+            await context.SaveChangesAsync();
+            return $"POS-{nextValue:D4}";
         }
     }
 }

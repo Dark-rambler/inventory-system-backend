@@ -24,6 +24,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Inventory.sln
 
+      - name: Check Code Format & Style
+        run: dotnet format Inventory.sln --verify-no-changes --severity info
+
       - name: Build
         run: dotnet build Inventory.sln --no-restore --configuration Release
 

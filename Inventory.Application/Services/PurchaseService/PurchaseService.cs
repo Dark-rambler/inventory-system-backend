@@ -64,6 +64,7 @@ namespace Inventory.Application.Services.PurchaseService
 
             var inventoryMovements = request.PurchaseDetails.Select(pd => new InventoryMovementBuilder()
                 .WithProductId(pd.ProductId)
+                .WithBusinessId(businessId)
                 .WithQuantity(pd.Quantity)
                 .WithType(EnumMovementType.Entry)
                 .WithIsPurchase(true)
