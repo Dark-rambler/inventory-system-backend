@@ -17,6 +17,12 @@ dotnet test
 # Run a single test class
 dotnet test --filter "FullyQualifiedName~ProviderServiceTests"
 
+# Check formatting (also enforced by CI — must pass before merging)
+dotnet format Inventory.sln --verify-no-changes --severity info
+
+# Fix formatting automatically
+dotnet format Inventory.sln --severity info
+
 # Add a new migration
 dotnet ef migrations add <MigrationName> --project Inventory.Infrastructure --startup-project Inventory.API
 
@@ -44,6 +50,17 @@ Each non-API layer exposes a static `DependencyInjection` extension class that r
 - Validators: `services.AddScoped<IValidator<FooRequest>, FooRequestValidation>()` in `Inventory.Application/DependencyInjection.cs`
 - AutoMapper profiles: add `typeof(FooProfile)` to the `AddAutoMapper(cfg => {}, typeof(...), ...)` call in `Inventory.Application/DependencyInjection.cs`
 - Movement strategies: `services.AddScoped<IInventoryMovementStrategy, FooStrategy>()` in `Inventory.Infrastructure/DependencyInjection.cs`
+
+### Controller conventions
+
+All controllers use `[Route("api/[controller]")]` and `[Authorize]` at the class level. Write operations (`POST`, `PUT`, `DELETE`) require `[Authorize(Roles = "Admin")]`. Standard HTTP responses:
+- `GET` (list) → 200 with `PaginatedList<T>`
+- `GET` (by id) → 200 with response DTO
+- `POST` → 200 with the created entity response DTO
+- `PUT` → 204 NoContent
+- `DELETE` → 204 NoContent
+
+Document response types with `[ProducesResponseType]`.
 
 ### Repository pattern
 
@@ -111,6 +128,8 @@ Products can be imported via Excel using `ExcelReader` (ClosedXML). The template
 PostgreSQL via Npgsql EF Core provider. Default dev connection string is in `appsettings.json` (`Host=localhost;Port=5432;Database=inventory;Username=postgres;Password=mysecretpassword`). Warehouse and Branch each have a one-to-one relationship with `Location`.
 
 `DatabaseSeeder.SeedAsync()` runs on every startup (called in `Program.cs`, idempotent). It seeds 1 Business, 2 Roles, 6 Measures, 4 Categories, 6 Products, 2 Warehouses, 2 Branches, and 2 Users (admin/manager with BCrypt-hashed passwords). Add new seed data to `Inventory.Infrastructure/Context/DatabaseSeeder.cs`.
+
+`BusinessSaleCounter` tracks per-business sale totals. It has no soft-delete filter and is managed directly by `BusinessSaleCounterRepository` using raw SQL (`FromSql` / `ExecuteSql`).
 
 ## Authentication
 
