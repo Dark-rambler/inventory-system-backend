@@ -51,7 +51,7 @@ public class PurchaseServiceTests
         var response = new PurchaseResponse { Id = purchase.Id, Total = purchase.Total };
         var paginatedList = new PaginatedList<Purchase>([purchase], 1, 1, 10);
 
-        _repositoryMock.Setup(r => r.GetPurchasesAsync(_businessId, null, null, null, null, 1, 10))
+        _repositoryMock.Setup(r => r.GetPurchasesAsync(_businessId, null, null, null, null, null, 1, 10))
             .ReturnsAsync(paginatedList);
         _mapperMock.Setup(m => m.Map<List<PurchaseResponse>>(It.IsAny<List<Purchase>>()))
             .Returns([response]);
