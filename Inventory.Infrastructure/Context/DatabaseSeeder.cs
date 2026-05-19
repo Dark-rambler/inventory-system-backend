@@ -7,11 +7,11 @@ public static class DatabaseSeeder
 {
     public static async Task SeedAsync(InventoryDbContext context)
     {
-        if (await context.Businesss.AnyAsync())
+        if (await context.Businesses.AnyAsync())
             return;
 
         var business = new Business { Name = "Inventory Co." };
-        context.Businesss.Add(business);
+        context.Businesses.Add(business);
         await context.SaveChangesAsync();
 
         var locations = new List<Location>

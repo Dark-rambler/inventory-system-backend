@@ -11,13 +11,13 @@ namespace Inventory.Infrastructure.Repositories
     {
         public async Task<Business> CreateBusinessAsync(Business business)
         {
-            context.Businesss.Add(business);
+            context.Businesses.Add(business);
             await context.SaveChangesAsync();
-            return await context.Businesss.FirstAsync(b => b.Id == business.Id);
+            return await context.Businesses.FirstAsync(b => b.Id == business.Id);
         }
 
         public async Task<PaginatedList<Business>> GetBusinessesAsync(string? name, int page, int pageSize) =>
-            await context.Businesss
+            await context.Businesses
                 .AsQueryable()
                 .OrderBy(b => b.Name)
                 .FiltersBusiness(name)

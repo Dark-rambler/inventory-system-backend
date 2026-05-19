@@ -10,7 +10,7 @@ namespace Inventory.Infrastructure.Context
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Warehouse> Warehouses { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Business> Businesss { get; set; }
+        public DbSet<Business> Businesses { get; set; }
         public DbSet<BranchProduct> BranchProducts { get; set; }
         public DbSet<WarehouseProduct> WarehouseProducts { get; set; }
         public DbSet<InventoryMovement> InventoryMovements { get; set; }
@@ -26,87 +26,101 @@ namespace Inventory.Infrastructure.Context
         public DbSet<PurchaseDetail> PurchaseDetails { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<BusinessSaleCounter> BusinessSaleCounters { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Product>()
-                .Property(p => p.Id)
-                .UseIdentityByDefaultColumn();
-            modelBuilder.Entity<Category>()
-                .Property(c => c.Id)
-                .UseIdentityByDefaultColumn();
-            modelBuilder.Entity<Branch>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<Warehouse>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<User>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
+            modelBuilder.Entity<Business>(entity =>
+            {
+                entity.ToTable("Businesss");
+                entity.Property(b => b.Id).HasDefaultValueSql("uuid_generate_v4()");
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.Property(p => p.Id).UseIdentityByDefaultColumn();
+                entity.HasQueryFilter(p => !p.IsDeleted);
+            });
+
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.Property(c => c.Id).UseIdentityByDefaultColumn();
+                entity.HasQueryFilter(c => !c.IsDeleted);
+            });
+
+            modelBuilder.Entity<Branch>(entity =>
+            {
+                entity.Property(b => b.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasQueryFilter(b => !b.IsDeleted);
+                entity.HasOne(b => b.Location)
+                    .WithOne(l => l.Branch)
+                    .HasForeignKey<Branch>(b => b.Id)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Warehouse>(entity =>
+            {
+                entity.Property(w => w.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasQueryFilter(w => !w.IsDeleted);
+                entity.HasOne(w => w.Location)
+                    .WithOne(l => l.Warehouse)
+                    .HasForeignKey<Warehouse>(w => w.Id)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.Property(l => l.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasQueryFilter(l => !l.IsDeleted);
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(u => u.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasQueryFilter(u => !u.IsDeleted);
+            });
+
+            modelBuilder.Entity<Customer>(entity =>
+            {
+                entity.Property(c => c.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasQueryFilter(c => !c.IsDeleted);
+            });
+
+            modelBuilder.Entity<Provider>(entity =>
+            {
+                entity.Property(p => p.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasQueryFilter(p => !p.IsDeleted);
+            });
+
             modelBuilder.Entity<InventoryMovement>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
+                .Property(im => im.Id).HasDefaultValueSql("uuid_generate_v4()");
+
             modelBuilder.Entity<Sale>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<Customer>()
-                .Property(c => c.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
+                .Property(s => s.Id).HasDefaultValueSql("uuid_generate_v4()");
+
             modelBuilder.Entity<Purchase>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<Provider>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<RefreshToken>()
-                .Property(rt => rt.Id)
-                .HasDefaultValueSql("uuid_generate_v4()");
-            modelBuilder.Entity<RefreshToken>()
-                .HasIndex(rt => rt.Token)
-                .IsUnique();
-            modelBuilder.Entity<BusinessSaleCounter>()
-                .HasKey(c => c.BusinessId);
-            modelBuilder.Entity<BusinessSaleCounter>()
-                .Property(c => c.Counter)
-                .HasDefaultValue(0);
-            modelBuilder.Entity<AuditHistory>()
-                .Ignore(a => a.Business);
+                .Property(p => p.Id).HasDefaultValueSql("uuid_generate_v4()");
+
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.Property(rt => rt.Id).HasDefaultValueSql("uuid_generate_v4()");
+                entity.HasIndex(rt => rt.Token).IsUnique();
+            });
+
             modelBuilder.Entity<BranchProduct>()
                 .HasKey(bp => new { bp.BranchId, bp.ProductId });
+
             modelBuilder.Entity<WarehouseProduct>()
                 .HasKey(wp => new { wp.WarehouseId, wp.ProductId });
-            modelBuilder.Entity<Product>()
-                .HasQueryFilter(p => !p.IsDeleted);
-            modelBuilder.Entity<Category>()
-                .HasQueryFilter(c => !c.IsDeleted);
-            modelBuilder.Entity<Warehouse>()
-                .HasQueryFilter(w => !w.IsDeleted);
-            modelBuilder.Entity<Branch>()
-                .HasQueryFilter(b => !b.IsDeleted);
-            modelBuilder.Entity<User>()
-                .HasQueryFilter(u => !u.IsDeleted);
-            modelBuilder.Entity<Location>()
-                .HasQueryFilter(l => !l.IsDeleted);
-            modelBuilder.Entity<Customer>()
-                .HasQueryFilter(c => !c.IsDeleted);
-            modelBuilder.Entity<Provider>()
-                .HasQueryFilter(p => !p.IsDeleted);
-            modelBuilder.Entity<Warehouse>()
-                .HasOne(w => w.Location)
-                .WithOne(l => l.Warehouse)
-                .HasForeignKey<Warehouse>(w => w.Id)
-                .IsRequired();
-            modelBuilder.Entity<Warehouse>()
-                .HasIndex(w => w.Id)
-                .IsUnique();
-            modelBuilder.Entity<Branch>()
-                .HasOne(b => b.Location)
-                .WithOne(l => l.Branch)
-                .HasForeignKey<Branch>(b => b.Id)
-                .IsRequired();
-            modelBuilder.Entity<Branch>()
-                .HasIndex(b => b.Id)
-                .IsUnique();
+
+            modelBuilder.Entity<BusinessSaleCounter>(entity =>
+            {
+                entity.HasKey(c => c.BusinessId);
+                entity.Property(c => c.Counter).HasDefaultValue(0);
+            });
+
+            modelBuilder.Entity<AuditHistory>()
+                .Ignore(a => a.Business);
+
             base.OnModelCreating(modelBuilder);
         }
     }
