@@ -8,7 +8,8 @@ namespace Inventory.Application.Profiles
     {
         public AuditHistoryProfile()
         {
-            CreateMap<AuditHistory, AuditHistoryResponse>();
+            CreateMap<AuditHistory, AuditHistoryResponse>()
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty));
         }
     }
 }

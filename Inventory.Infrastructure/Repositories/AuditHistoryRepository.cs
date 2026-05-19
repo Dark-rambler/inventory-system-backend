@@ -4,6 +4,7 @@ using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
 using Inventory.Infrastructure.Context;
 using Inventory.Infrastructure.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Infrastructure.Repositories
 {
@@ -12,6 +13,7 @@ namespace Inventory.Infrastructure.Repositories
         public async Task<PaginatedList<AuditHistory>> GetAuditHistoriesAsync(Guid businessId, DateTime? fromDate, DateTime? toDate, int page, int pageSize) =>
             await context.AuditHistories.AsQueryable()
                 .Where(a => a.BusinessId == businessId)
+                .Include(a => a.User)
                 .OrderByDescending(a => a.CreatedAt)
                 .FiltersAuditHistory(fromDate, toDate)
                 .ToPaginatedListAsync(page, pageSize);

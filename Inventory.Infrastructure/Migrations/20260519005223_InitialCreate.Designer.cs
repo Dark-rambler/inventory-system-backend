@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(InventoryDbContext))]
-    [Migration("20260513232904_UpdateDbContext")]
-    partial class UpdateDbContext
+    [Migration("20260519005223_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AuditHistories");
                 });
@@ -133,6 +133,22 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Businesss");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Entities.BusinessSaleCounter", b =>
+                {
+                    b.Property<Guid>("BusinessId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Counter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("BusinessId");
+
+                    b.ToTable("BusinessSaleCounters");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Category", b =>
@@ -486,6 +502,39 @@ namespace Inventory.Infrastructure.Migrations
                     b.ToTable("PurchaseDetails");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuid_generate_v4()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -681,13 +730,13 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.AuditHistory", b =>
                 {
-                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
-                        .WithMany("AuditHistories")
-                        .HasForeignKey("BusinessId")
+                    b.HasOne("Inventory.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Business");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Branch", b =>
@@ -895,6 +944,17 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("Purchase");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("Inventory.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Entities.Sale", b =>
                 {
                     b.HasOne("Inventory.Domain.Entities.Branch", "Branch")
@@ -1011,8 +1071,6 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.Business", b =>
                 {
-                    b.Navigation("AuditHistories");
-
                     b.Navigation("Branches");
 
                     b.Navigation("Categories");

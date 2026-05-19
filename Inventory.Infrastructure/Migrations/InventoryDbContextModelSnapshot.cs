@@ -51,7 +51,7 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BusinessId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("AuditHistories");
                 });
@@ -727,13 +727,13 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.AuditHistory", b =>
                 {
-                    b.HasOne("Inventory.Domain.Entities.Business", "Business")
-                        .WithMany("AuditHistories")
-                        .HasForeignKey("BusinessId")
+                    b.HasOne("Inventory.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Business");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Entities.Branch", b =>
@@ -1068,8 +1068,6 @@ namespace Inventory.Infrastructure.Migrations
 
             modelBuilder.Entity("Inventory.Domain.Entities.Business", b =>
                 {
-                    b.Navigation("AuditHistories");
-
                     b.Navigation("Branches");
 
                     b.Navigation("Categories");

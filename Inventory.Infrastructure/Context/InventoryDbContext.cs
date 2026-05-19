@@ -70,7 +70,7 @@ namespace Inventory.Infrastructure.Context
                 .Property(c => c.Counter)
                 .HasDefaultValue(0);
             modelBuilder.Entity<AuditHistory>()
-                .Ignore(a => a.User);
+                .Ignore(a => a.Business);
             modelBuilder.Entity<BranchProduct>()
                 .HasKey(bp => new { bp.BranchId, bp.ProductId });
             modelBuilder.Entity<WarehouseProduct>()

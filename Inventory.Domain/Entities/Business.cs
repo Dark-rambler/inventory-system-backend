@@ -12,7 +12,6 @@
         public ICollection<Customer> Customers { get; set; } = [];
         public ICollection<Purchase> Purchases { get; set; } = [];
         public ICollection<Sale> Sales { get; set; } = [];
-        public ICollection<AuditHistory> AuditHistories { get; set; } = [];
         public ICollection<Provider> Providers { get; set; } = [];
         public ICollection<InventoryMovement> InventoryMovements { get; set; } = [];
     }
