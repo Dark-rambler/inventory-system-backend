@@ -1,4 +1,4 @@
-#pragma warning disable CA1862 // EF Core cannot translate StringComparison overloads; ToLower().Contains() is intentional
+#pragma warning disable CA1862
 using Inventory.Application.Common.Pagination;
 using Inventory.Domain.Entities;
 using Inventory.Domain.Enum;
