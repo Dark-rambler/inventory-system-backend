@@ -25,7 +25,7 @@ namespace Inventory.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<PaginatedList<Purchase>> GetPurchasesAsync(Guid businessId, DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId, int page, int pageSize) =>
+        public async Task<PaginatedList<Purchase>> GetPurchasesAsync(Guid businessId, DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId, Guid? warehouseId, int page, int pageSize) =>
             await context.Purchases
                 .AsQueryable()
                 .Where(p => p.BusinessId == businessId)
@@ -33,7 +33,7 @@ namespace Inventory.Infrastructure.Repositories
                 .Include(p => p.Buyer)
                 .Include(p => p.PurchaseDetails)
                     .ThenInclude(pd => pd.Product)
-                .FiltersPurchases(fromDate, toDate, providerId)
+                .FiltersPurchases(fromDate, toDate, providerId, branchId, warehouseId)
                 .OrderByDescending(b => b.Date)
                 .ToPaginatedListAsync(page, pageSize);
 

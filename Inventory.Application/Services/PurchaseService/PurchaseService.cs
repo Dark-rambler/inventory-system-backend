@@ -96,6 +96,7 @@ namespace Inventory.Application.Services.PurchaseService
                 searchParams.ToDate,
                 searchParams.ProviderId,
                 searchParams.BranchId,
+                searchParams.WarehouseId,
                 searchParams.Page,
                 searchParams.PageSize);
 

@@ -35,7 +35,7 @@ dotnet ef database update --project Inventory.Infrastructure --startup-project I
 This is a .NET 10 REST API using Clean Architecture with four layers:
 
 - **Inventory.Domain** — Pure entities with no external dependencies. All entities use the Builder pattern (`Inventory.Domain/Entities/Builders/`). Domain enums live in `Inventory.Domain/Enum/`: `EnumMovementType` (Entry, Exit, Transfer), `EnumEntity` (InventoryMovement, Sale, Purchase), `EnumAction` (Create).
-- **Inventory.Application** — Business logic services, DTOs (`DataTransferObjects/*Dto/`), AutoMapper profiles, FluentValidation validators, and repository interfaces (`Common/Abstracts/`).
+- **Inventory.Application** — Business logic services, DTOs (`DataTransferObjects/*Dto/`), AutoMapper profiles, FluentValidation validators, repository interfaces, and cross-cutting abstractions (`Common/Abstracts/`).
 - **Inventory.Infrastructure** — EF Core DbContext, repository implementations, `JwtService`, `ExcelReader` for bulk imports, and database seeding.
 - **Inventory.API** — Controllers, global `ExceptionHandlingMiddleware`, and `Program.cs` wiring.
 
@@ -56,15 +56,28 @@ Each non-API layer exposes a static `DependencyInjection` extension class that r
 All controllers use `[Route("api/[controller]")]` and `[Authorize]` at the class level. Write operations (`POST`, `PUT`, `DELETE`) require `[Authorize(Roles = "Admin")]`. Standard HTTP responses:
 - `GET` (list) → 200 with `PaginatedList<T>`
 - `GET` (by id) → 200 with response DTO
-- `POST` → 200 with the created entity response DTO
+- `POST` (simple CRUD) → 200 with the created entity response DTO
+- `POST` (transactional, e.g. Purchase, Sale) → 204 NoContent — these orchestrate stock updates, inventory movements, and audit history in one transaction; there is nothing meaningful to return
 - `PUT` → 204 NoContent
 - `DELETE` → 204 NoContent
 
 Document response types with `[ProducesResponseType]`.
 
+### Abstracts layout
+
+`Common/Abstracts/` contains two kinds of interfaces:
+- **Repository interfaces** (`IProductRepository`, `IBranchRepository`, etc.) — one per aggregate, implemented in `Inventory.Infrastructure/Repositories/`.
+- **Cross-cutting services** (`ICurrentUserService`, `IDateTimeProvider`, `IPasswordHasher`, `IBusinessContextService`) — infrastructure concerns injected into Application services.
+
+Service business-logic interfaces (`IPurchaseService`, `ISaleService`, etc.) live **alongside** their implementation in `Inventory.Application/Services/{Entity}Service/`, not in `Common/Abstracts/`.
+
 ### Repository pattern
 
-All data access goes through interfaces defined in `Inventory.Application/Common/Abstracts/`. Implementations live in `Inventory.Infrastructure/Repositories/`. Repositories always filter by `businessId` for tenant isolation. Complex filtering logic (name search, date ranges, etc.) belongs in `Inventory.Infrastructure/Extensions/IQuerableExtensions.cs` as extension methods — keep repositories thin.
+All data access goes through interfaces in `Common/Abstracts/`. Implementations live in `Inventory.Infrastructure/Repositories/`. Repositories always filter by `businessId` for tenant isolation. Complex filtering logic (name search, date ranges, etc.) belongs in `Inventory.Infrastructure/Extensions/IQuerableExtensions.cs` — keep repositories thin.
+
+`IQuerableExtensions.cs` uses the **C# 14 `extension` block syntax** (not traditional static extension methods). When adding a new filter, add a new `extension(IQueryable<YourEntity> source) { ... }` block following the existing pattern. The file-level `#pragma warning disable CA1862` suppresses EF Core case-sensitivity warnings on `.ToLower()` comparisons.
+
+Sale-related data access (creating sales, fetching by branch) runs through `IBranchRepository` — there is no separate `ISaleRepository`. Sales are always scoped to a branch.
 
 ### Exception handling
 
@@ -94,7 +107,9 @@ Set `IsDeleted = true`; never hard-delete. The DbContext applies `HasQueryFilter
 
 ### Pagination
 
-Use `PaginatedList<T>` for list endpoints (`Inventory.Application/Common/Pagination/`). Create via the `ToPaginatedListAsync(pageIndex, pageSize)` extension in `IQuerableExtensions`. GET endpoints accept a `*SearchParams` DTO via `[FromQuery]` containing `pageIndex`, `pageSize`, and optional filters.
+Use `PaginatedList<T>` for list endpoints (`Inventory.Application/Common/Pagination/`). Create via the `ToPaginatedListAsync(pageIndex, pageSize)` extension in `IQuerableExtensions`. GET endpoints accept a `*SearchParams` DTO via `[FromQuery]` containing pagination fields and optional filters.
+
+Pagination field naming is **inconsistent across SearchParams**: most use `PageIndex`/`PageSize` (1-based), but `PurchaseSearchParams` uses `Page`/`PageSize`. When adding a new endpoint, check the existing SearchParams in that domain and match the convention already used there. Pass the correct field to the repository method.
 
 ### Inventory movements
 

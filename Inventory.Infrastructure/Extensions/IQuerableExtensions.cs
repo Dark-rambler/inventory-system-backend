@@ -128,7 +128,7 @@ namespace Inventory.Infrastructure.Extensions
 
         extension(IQueryable<Purchase> source)
         {
-            public IQueryable<Purchase> FiltersPurchases(DateTime? fromDate, DateTime? toDate, Guid? providerId)
+            public IQueryable<Purchase> FiltersPurchases(DateTime? fromDate, DateTime? toDate, Guid? providerId, Guid? branchId, Guid? warehouseId)
             {
                 if (fromDate.HasValue)
                 {
@@ -141,6 +141,14 @@ namespace Inventory.Infrastructure.Extensions
                 if (providerId.HasValue)
                 {
                     source = source.Where(s => s.ProviderId == providerId.Value);
+                }
+                if (branchId.HasValue)
+                {
+                    source = source.Where(s => s.BranchId == branchId.Value);
+                }
+                if (warehouseId.HasValue)
+                {
+                    source = source.Where(s => s.WarehouseId == warehouseId.Value);
                 }
                 return source;
             }
