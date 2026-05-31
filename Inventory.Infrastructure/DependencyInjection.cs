@@ -93,6 +93,7 @@ public static class DependencyInjection
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IBusinessSaleCounterRepository, BusinessSaleCounterRepository>();
+        services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IExcelReader, ExcelReader>();
         services.AddHttpContextAccessor();

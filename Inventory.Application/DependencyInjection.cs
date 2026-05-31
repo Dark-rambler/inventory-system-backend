@@ -27,6 +27,7 @@ using Inventory.Application.Services.UserService;
 using Inventory.Application.Services.BranchProductService;
 using Inventory.Application.Services.SaleService;
 using Inventory.Application.Services.WarehouseProductService;
+using Inventory.Application.Services.DashboardService;
 using Inventory.Application.Services.WarehouseService;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -79,6 +80,7 @@ public static class DependencyInjection
         services.AddScoped<IAuditHistoryService, AuditHistoryService>();
         services.AddScoped<IProviderService, ProviderService>();
         services.AddScoped<IPurchaseService, PurchaseService>();
+        services.AddScoped<IDashboardService, DashboardService>();
         services.AddScoped<IInventoryMovementStrategy, EntryMovementStrategy>();
         services.AddScoped<IInventoryMovementStrategy, ExitMovementStrategy>();
         services.AddScoped<IInventoryMovementStrategy, TransferMovementStrategy>();
