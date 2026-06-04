@@ -66,10 +66,11 @@ Document response types with `[ProducesResponseType]`.
 ### Abstracts layout
 
 `Common/Abstracts/` contains two kinds of interfaces:
-- **Repository interfaces** (`IProductRepository`, `IBranchRepository`, etc.) — one per aggregate, implemented in `Inventory.Infrastructure/Repositories/`.
+- **Repository interfaces** (`IProductRepository`, `IBranchRepository`, `IDashboardRepository`, etc.) — one per aggregate, implemented in `Inventory.Infrastructure/Repositories/`.
 - **Cross-cutting services** (`ICurrentUserService`, `IDateTimeProvider`, `IPasswordHasher`, `IBusinessContextService`) — infrastructure concerns injected into Application services.
+- **Client abstractions** (`IExcelReader`, `IJwtService`) — live in the `Common/Abstracts/Clients/` subdirectory.
 
-Service business-logic interfaces (`IPurchaseService`, `ISaleService`, etc.) live **alongside** their implementation in `Inventory.Application/Services/{Entity}Service/`, not in `Common/Abstracts/`.
+Service business-logic interfaces (`IPurchaseService`, `ISaleService`, `IDashboardService`, etc.) live **alongside** their implementation in `Inventory.Application/Services/{Entity}Service/`, not in `Common/Abstracts/`.
 
 ### Repository pattern
 
