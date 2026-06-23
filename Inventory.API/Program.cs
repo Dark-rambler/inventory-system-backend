@@ -7,6 +7,9 @@ using Microsoft.OpenApi;
 var builder = WebApplication.CreateBuilder(args);
 var CustomCors = "MyCustomCors";
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://+:{port}");
+
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
@@ -52,6 +55,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+    await context.Database.MigrateAsync();
     await DatabaseSeeder.SeedAsync(context);
 }
 
@@ -64,9 +68,11 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapSwagger().RequireAuthorization();
 app.UseCors(CustomCors);
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok()).AllowAnonymous();
 
 app.Run();
